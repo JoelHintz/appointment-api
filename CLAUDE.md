@@ -64,47 +64,73 @@ Do **not** introduce heavy frameworks, complex abstractions, or production-only 
 Use a **feature-first structure**. Keep each feature self-contained.
 
 src/
-  app.module.ts
-  main.ts
+├── app.module.ts
+├── main.ts
+├── appointments/
+|   └── dto/
+|   └── entity/
+|   └── appointments.controller.ts
+|   └── appointments.service.ts
+|   └── appointments.module.ts
+|   └── appointments.controller.spec.ts
+|   └── appointments.service.spec.ts
+├── common/
+|   └── config/
+|   └── validation/
+|   └── utils/
 
-  appointments/
-    dto/
-    entity/
-    appointments.controller.ts
-    appointments.service.ts
-    appointments.mapper.ts
-    appointments.module.ts
-    appointments.controller.spec.ts
-    appointments.service.spec.ts
+## API Route Conventions
 
-  offices/
-    dto/
-    entity/
-    offices.controller.ts
-    offices.service.ts
-    offices.module.ts
-    offices.controller.spec.ts
-    offices.service.spec.ts
+- Use **English** for all route names, query parameters, and Swagger descriptions.
+- Use **plural, lowercase, resource-oriented** route names:
+  - `/appointments`
+  - `/offices`
+- Prefer **nouns** in routes, not verbs.
+- Use standard REST-style endpoints where possible:
+  - `POST /appointments`
+  - `GET /appointments`
+  - `GET /appointments/:id`
+  - `PATCH /appointments/:id`
+  - `DELETE /appointments/:id`
+- Keep routes **predictable and consistent** across features.
+- Use **query parameters** for filtering, pagination, and optional search criteria.
+- Use **path parameters** only for resource identification.
+- Avoid action-style routes unless there is a strong domain reason.
+- Keep route names short, explicit, and easy to understand.
+- Return DTO-based responses, not entities.
 
-  common/
-    config/
-    validation/
-    utils/
+### Route Design Rules
 
-## API conventions
-Base route: `/appointments`
+- One route should represent **one clear responsibility**.
+- Prefer flat routes unless a nested route expresses a real ownership relationship.
+- Keep filtering in query parameters, not in custom endpoint names.
+- Use consistent naming for ids and references:
+  - `:id`
+  - `officeId`
+- Reuse the same route conventions across all modules.
 
-Hands-on baseline endpoints:
-- `POST /appointments` → create
-- `GET /appointments` → list / find
-- `PATCH /appointments/:id` → update
+### Query Parameter Rules
 
-For `GET /appointments`:
-- return a list
-- support a simple `limit` filter
-- keep filtering intentionally lightweight unless explicitly requested otherwise
+- Use query parameters for optional filters such as:
+  - `limit`
+  - `status`
+  - `officeId`
+- Keep query parameter names aligned with DTO field names.
+- Prefer explicit names over abbreviations.
 
-Avoid unnecessary pagination metadata.
+### HTTP Semantics
+
+- `GET` for read operations
+- `POST` for create operations
+- `PATCH` for partial updates
+- `PUT` only for full replacement if actually needed
+- `DELETE` for deletion
+
+### Documentation
+
+- Document all routes with Swagger.
+- Keep summaries short and explicit.
+- Ensure request DTOs, response DTOs, and route behavior stay aligned.
 
 ## DTO conventions
 Rules:
