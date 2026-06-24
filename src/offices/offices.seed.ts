@@ -15,7 +15,7 @@ export const INITIAL_OFFICE_DATA: Array<Partial<Office>> = [
     closesAt: '15:00',
   },
   {
-    name: 'Nuremberg Citizens East',
+    name: 'Nuremberg Citizens Office East',
     opensAt: '08:00',
     closesAt: '14:00',
   },

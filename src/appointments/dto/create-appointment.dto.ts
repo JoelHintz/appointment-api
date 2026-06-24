@@ -13,8 +13,4 @@ export class CreateAppointmentDto {
   @IsISO8601()
   @ApiProperty({ description: 'Start time in ISO-8601 format', example: '2026-06-20T09:00:00.000Z' })
   startsAt!: string;
-
-  @IsISO8601()
-  @ApiProperty({ description: 'End time in ISO-8601 format', example: '2026-06-20T09:30:00.000Z' })
-  endsAt!: string;
 }

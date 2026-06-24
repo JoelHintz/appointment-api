@@ -154,15 +154,15 @@ describe('AppointmentsService', () => {
       const dto: CreateAppointmentDto = {
         title: 'New appointment',
         startsAt: '2026-06-21T09:00:00.000Z',
-        endsAt: '2026-06-21T10:00:00.000Z',
         officeId: office.id,
       };
 
+      const expectedEnd = '2026-06-21T10:00:00.000Z';
       const createdEntity = createAppointment({
         id: undefined,
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt: expectedEnd,
         office,
       });
 
@@ -170,7 +170,7 @@ describe('AppointmentsService', () => {
         id: 2,
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt: expectedEnd,
         office,
       });
 
@@ -178,7 +178,7 @@ describe('AppointmentsService', () => {
         id: 2,
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt: expectedEnd,
         officeId: office.id,
       });
 
@@ -195,7 +195,7 @@ describe('AppointmentsService', () => {
       expect(appointmentRepository.create).toHaveBeenCalledWith({
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt: expectedEnd,
         office,
       });
       expect(appointmentRepository.save).toHaveBeenCalledWith(createdEntity);
@@ -206,7 +206,6 @@ describe('AppointmentsService', () => {
       const dto: CreateAppointmentDto = {
         title: 'New appointment',
         startsAt: '2026-06-21T09:00:00.000Z',
-        endsAt: '2026-06-21T10:00:00.000Z',
         officeId: 999,
       };
 
@@ -218,33 +217,16 @@ describe('AppointmentsService', () => {
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when startsAt is after endsAt', async () => {
+    it('should throw BadRequestException when appointment does not start at full hour', async () => {
       const dto: CreateAppointmentDto = {
         title: 'Invalid appointment',
-        startsAt: '2026-06-21T11:00:00.000Z',
-        endsAt: '2026-06-21T10:00:00.000Z',
+        startsAt: '2026-06-21T09:30:00.000Z',
         officeId: 1,
       };
 
       officeRepository.findOne.mockResolvedValue(createOffice());
 
-      await expectBadRequest(service.create(dto), 'Start time must be before end time');
-
-      expect(appointmentRepository.create).not.toHaveBeenCalled();
-      expect(appointmentRepository.save).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException when duration is not exactly 60 minutes', async () => {
-      const dto: CreateAppointmentDto = {
-        title: 'Invalid appointment',
-        startsAt: '2026-06-21T09:00:00.000Z',
-        endsAt: '2026-06-21T09:30:00.000Z',
-        officeId: 1,
-      };
-
-      officeRepository.findOne.mockResolvedValue(createOffice());
-
-      await expectBadRequest(service.create(dto), 'Appointment must be exactly 60 minutes long');
+      await expectBadRequest(service.create(dto), 'Appointment must start at a full hour');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -255,14 +237,13 @@ describe('AppointmentsService', () => {
       const dto: CreateAppointmentDto = {
         title: 'New appointment',
         startsAt: '2026-06-21T09:00:00.000Z',
-        endsAt: '2026-06-21T10:00:00.000Z',
         officeId: office.id,
       };
 
       officeRepository.findOne.mockResolvedValue(office);
       mockQueryBuilder(createAppointment());
 
-      await expectBadRequest(service.create(dto), 'Office is already booked for the requested time range');
+      await expectBadRequest(service.create(dto), 'Office is already booked for the requested time');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -277,15 +258,15 @@ describe('AppointmentsService', () => {
       const dto: UpdateAppointmentDto = {
         title: 'Updated title',
         startsAt: '2026-06-22T09:00:00.000Z',
-        endsAt: '2026-06-22T10:00:00.000Z',
         officeId: 1,
       };
 
+      const endsAt = '2026-06-22T10:00:00.000Z';
       const savedEntity = createAppointment({
         ...existingAppointment,
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt,
         office,
       });
 
@@ -293,7 +274,7 @@ describe('AppointmentsService', () => {
         id: 1,
         title: dto.title,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt,
         officeId: 1,
       });
 
@@ -314,7 +295,7 @@ describe('AppointmentsService', () => {
           id: 1,
           title: dto.title,
           startsAt: dto.startsAt,
-          endsAt: dto.endsAt,
+          endsAt,
           office,
         }),
       );
@@ -381,36 +362,18 @@ describe('AppointmentsService', () => {
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
 
-    it('should throw BadRequestException when updated dates are invalid', async () => {
+    it('should throw BadRequestException when updated start is not at full hour', async () => {
       const existingAppointment = createAppointment({
         office: createOffice({ id: 1 }),
       });
 
       const dto: UpdateAppointmentDto = {
-        startsAt: '2026-06-22T12:00:00.000Z',
-        endsAt: '2026-06-22T10:00:00.000Z',
+        startsAt: '2026-06-22T09:30:01.000Z',
       };
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
 
-      await expectBadRequest(service.update(1, dto), 'Start time must be before end time');
-
-      expect(appointmentRepository.save).not.toHaveBeenCalled();
-    });
-
-    it('should throw BadRequestException when updated duration is not exactly 60 minutes', async () => {
-      const existingAppointment = createAppointment({
-        office: createOffice({ id: 1 }),
-      });
-
-      const dto: UpdateAppointmentDto = {
-        startsAt: '2026-06-22T09:00:00.000Z',
-        endsAt: '2026-06-22T09:30:00.000Z',
-      };
-
-      appointmentRepository.findOne.mockResolvedValue(existingAppointment);
-
-      await expectBadRequest(service.update(1, dto), 'Appointment must be exactly 60 minutes long');
+      await expectBadRequest(service.update(1, dto), 'Appointment must start at a full hour');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
@@ -422,13 +385,12 @@ describe('AppointmentsService', () => {
 
       const dto: UpdateAppointmentDto = {
         startsAt: '2026-06-22T09:00:00.000Z',
-        endsAt: '2026-06-22T10:00:00.000Z',
       };
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
       mockQueryBuilder(conflictingAppointment);
 
-      await expectBadRequest(service.update(1, dto), 'Office is already booked for the requested time range');
+      await expectBadRequest(service.update(1, dto), 'Office is already booked for the requested time');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
@@ -439,13 +401,12 @@ describe('AppointmentsService', () => {
 
       const dto: UpdateAppointmentDto = {
         startsAt: '2026-06-20T10:00:00.000Z',
-        endsAt: '2026-06-20T11:00:00.000Z',
       };
 
       const savedEntity = createAppointment({
         ...existingAppointment,
         startsAt: dto.startsAt,
-        endsAt: dto.endsAt,
+        endsAt: '2026-06-20T11:00:00.000Z',
       });
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
@@ -470,7 +431,6 @@ describe('AppointmentsService', () => {
       const dto: UpdateAppointmentDto = {
         officeId: 2,
         startsAt: existingAppointment.startsAt,
-        endsAt: existingAppointment.endsAt,
       };
 
       const savedEntity = createAppointment({

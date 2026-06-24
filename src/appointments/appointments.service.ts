@@ -50,21 +50,21 @@ export class AppointmentsService {
   }
 
   async create(dto: CreateAppointmentDto): Promise<AppointmentResponseDto> {
+    this.validateStartsAt(dto.startsAt);
+
     const office = await this.loadOffice(dto.officeId);
+
+    await this.validateOfficeIsAvailable({
+      officeId: office.id,
+      startsAt: dto.startsAt,
+    });
 
     const toSave = {
       title: dto.title,
       startsAt: dto.startsAt,
-      endsAt: dto.endsAt,
+      endsAt: this.calculateEndTime(dto.startsAt),
       office,
     };
-
-    this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
-    await this.validateOfficeIsAvailable({
-      officeId: office.id,
-      startTime: dto.startsAt,
-      endTime: dto.endsAt,
-    });
 
     const entity = this.appointmentRepository.create(toSave);
     const saved = await this.appointmentRepository.save(entity);
@@ -84,11 +84,10 @@ export class AppointmentsService {
 
     const toSave = await this.mergeDtoIntoEntity(appointment, dto);
 
-    this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
+    this.validateStartsAt(toSave.startsAt);
     await this.validateOfficeIsAvailable({
       officeId: toSave.office.id,
-      startTime: toSave.startsAt,
-      endTime: toSave.endsAt,
+      startsAt: toSave.startsAt,
       ignoredAppointmentId: id,
     });
 
@@ -102,9 +101,7 @@ export class AppointmentsService {
     }
     if (dto.startsAt !== undefined) {
       appointment.startsAt = dto.startsAt;
-    }
-    if (dto.endsAt !== undefined) {
-      appointment.endsAt = dto.endsAt;
+      appointment.endsAt = this.calculateEndTime(dto.startsAt);
     }
     if (dto.officeId !== undefined && appointment.office.id !== dto.officeId) {
       appointment.office = await this.loadOffice(dto.officeId);
@@ -124,45 +121,45 @@ export class AppointmentsService {
     return office;
   }
 
-  private validateStartAndEnd(startsAt: string, endsAt: string): void {
+  private calculateEndTime(startsAt: string): string {
     const start = new Date(startsAt);
-    const end = new Date(endsAt);
+    const end = new Date(start.getTime() + this.appointmentDurationMinutes * 60 * 1000);
 
-    if (start >= end) {
-      throw new BadRequestException('Start time must be before end time');
+    return end.toISOString();
+  }
+
+  private validateStartsAt(startsAt: string): void {
+    const start = new Date(startsAt);
+
+    if (Number.isNaN(start.getTime())) {
+      throw new BadRequestException('startsAt must be a valid ISO date string');
     }
 
-    const durationInMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-
-    if (durationInMinutes !== this.appointmentDurationMinutes) {
-      throw new BadRequestException(`Appointment must be exactly ${this.appointmentDurationMinutes} minutes long`);
+    if (start.getUTCMinutes() !== 0 || start.getUTCSeconds() !== 0 || start.getUTCMilliseconds() !== 0) {
+      throw new BadRequestException('Appointment must start at a full hour');
     }
   }
 
   private async validateOfficeIsAvailable(params: {
     officeId: number;
-    startTime: string;
-    endTime: string;
+    startsAt: string;
     ignoredAppointmentId?: number;
   }): Promise<void> {
-    const { officeId, startTime, endTime, ignoredAppointmentId } = params;
+    const { officeId, startsAt, ignoredAppointmentId } = params;
 
     const query = this.appointmentRepository
       .createQueryBuilder('appointment')
       .where('appointment.officeId = :officeId', { officeId })
-      .andWhere('appointment.startsAt < :endTime', { endTime })
-      .andWhere('appointment.endsAt > :startTime', { startTime });
+      .andWhere('appointment.startsAt = :startsAt', { startsAt });
 
     if (ignoredAppointmentId !== undefined) {
-      query.andWhere('appointment.id != :ignoredAppointmentId', {
-        ignoredAppointmentId,
-      });
+      query.andWhere('appointment.id != :ignoredAppointmentId', { ignoredAppointmentId });
     }
 
     const conflictingAppointment = await query.getOne();
 
     if (conflictingAppointment) {
-      throw new BadRequestException('Office is already booked for the requested time range');
+      throw new BadRequestException('Office is already booked for the requested time');
     }
   }
 }

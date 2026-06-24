@@ -43,7 +43,6 @@ export const createAppointmentResponseDto = (
 export const createCreateAppointmentDto = (overrides: Partial<CreateAppointmentDto> = {}): CreateAppointmentDto => ({
   title: 'New appointment',
   startsAt: DEFAULT_START,
-  endsAt: DEFAULT_END,
   officeId: 1,
   ...overrides,
 });
