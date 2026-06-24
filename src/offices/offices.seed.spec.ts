@@ -2,7 +2,6 @@ import { INITIAL_OFFICE_DATA, OfficesSeedService } from './offices.seed';
 import { Office } from './entity/office.entity';
 import { TestingModule, Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { OfficesService } from './offices.service';
 
 type MockOfficeRepository = {
   count: jest.Mock<Promise<number>, []>;
