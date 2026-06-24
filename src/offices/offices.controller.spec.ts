@@ -6,19 +6,12 @@ describe('OfficesController', () => {
   let controller: OfficesController;
   let service: jest.Mocked<OfficesService>;
 
-  const mockOfficesService = {
-    findAll: jest.fn(),
-  };
+  const mockOfficesService = { findAll: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OfficesController],
-      providers: [
-        {
-          provide: OfficesService,
-          useValue: mockOfficesService,
-        },
-      ],
+      providers: [{ provide: OfficesService, useValue: mockOfficesService }],
     }).compile();
 
     controller = module.get<OfficesController>(OfficesController);

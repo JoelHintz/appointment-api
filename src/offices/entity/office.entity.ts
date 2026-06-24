@@ -10,7 +10,7 @@ export class Office {
 
   @Column()
   opensAt!: string;
-  
+
   @Column()
   closesAt!: string;
 }

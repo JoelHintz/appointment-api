@@ -11,158 +11,158 @@ import { Office } from '../offices/entity/office.entity';
 
 @Injectable()
 export class AppointmentsService {
+  private readonly appointmentDurationMinutes = 60;
 
-    private readonly appointmentDurationMinutes = 60;
+  constructor(
+    @InjectRepository(Appointment)
+    private readonly appointmentRepository: Repository<Appointment>,
+    @InjectRepository(Office)
+    private readonly officeRepository: Repository<Office>,
+  ) {}
 
-    constructor(
-        @InjectRepository(Appointment)
-        private readonly appointmentRepository: Repository<Appointment>,
-        @InjectRepository(Office)
-        private readonly officeRepository: Repository<Office>
-    ) {}
+  async findAll(query: FindAppointmentsDto): Promise<AppointmentResponseDto[]> {
+    const where: FindOptionsWhere<Appointment> = {};
 
-    async findAll(query: FindAppointmentsDto): Promise<AppointmentResponseDto[]> {
-        const where: FindOptionsWhere<Appointment> = {};
-
-        if (query.status) {
-            where.status = query.status;
-        }
-
-        const appointments = await this.appointmentRepository.find({
-            where,
-            take: query.limit ?? 10,
-            order: { id: 'ASC' },
-        });
-
-        return AppointmentMapper.toResponseDtoList(appointments);
+    if (query.status) {
+      where.status = query.status;
     }
 
-    async findOne(id: number): Promise<AppointmentResponseDto> {
-        const appointment = await this.appointmentRepository.findOne({
-            where: { id },
-            relations: { office: true },
-        });
+    const appointments = await this.appointmentRepository.find({
+      where,
+      take: query.limit ?? 10,
+      order: { id: 'ASC' },
+    });
 
-        if (!appointment) {
-            throw new NotFoundException(`Appointment ${id} not found`);
-        }
+    return AppointmentMapper.toResponseDtoList(appointments);
+  }
 
-        return AppointmentMapper.toResponseDto(appointment);
-    }
-    
-    async create(dto: CreateAppointmentDto): Promise<AppointmentResponseDto> {
-        const office = await this.loadOffice(dto.officeId);
+  async findOne(id: number): Promise<AppointmentResponseDto> {
+    const appointment = await this.appointmentRepository.findOne({
+      where: { id },
+      relations: { office: true },
+    });
 
-        const toSave = {
-            title: dto.title,
-            startsAt: dto.startsAt,
-            endsAt: dto.endsAt,
-            office,
-        };
-
-        this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
-        await this.validateOfficeIsAvailable({
-            officeId: office.id,
-            startTime: dto.startsAt,
-            endTime: dto.endsAt,
-        });
-
-        const entity = this.appointmentRepository.create(toSave);
-        const saved = await this.appointmentRepository.save(entity);
-
-        return AppointmentMapper.toResponseDto(saved);
+    if (!appointment) {
+      throw new NotFoundException(`Appointment ${id} not found`);
     }
 
-    async update(id: number, dto: UpdateAppointmentDto): Promise<AppointmentResponseDto> {
-        const appointment = await this.appointmentRepository.findOne({
-            where: { id },
-            relations: { office: true },
-        });
+    return AppointmentMapper.toResponseDto(appointment);
+  }
 
-        if (!appointment) {
-            throw new NotFoundException(`Appointment ${id} not found`);
-        }
+  async create(dto: CreateAppointmentDto): Promise<AppointmentResponseDto> {
+    const office = await this.loadOffice(dto.officeId);
 
-        const toSave = await this.mergeDtoIntoEntity(appointment, dto);
+    const toSave = {
+      title: dto.title,
+      startsAt: dto.startsAt,
+      endsAt: dto.endsAt,
+      office,
+    };
 
-        this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
-        await this.validateOfficeIsAvailable({
-            officeId: toSave.office.id,
-            startTime: toSave.startsAt,
-            endTime: toSave.endsAt,
-            ignoredAppointmentId: id
-        });
+    this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
+    await this.validateOfficeIsAvailable({
+      officeId: office.id,
+      startTime: dto.startsAt,
+      endTime: dto.endsAt,
+    });
 
-        const saved = await this.appointmentRepository.save(toSave);
-        return AppointmentMapper.toResponseDto(saved);
+    const entity = this.appointmentRepository.create(toSave);
+    const saved = await this.appointmentRepository.save(entity);
+
+    return AppointmentMapper.toResponseDto(saved);
+  }
+
+  async update(id: number, dto: UpdateAppointmentDto): Promise<AppointmentResponseDto> {
+    const appointment = await this.appointmentRepository.findOne({
+      where: { id },
+      relations: { office: true },
+    });
+
+    if (!appointment) {
+      throw new NotFoundException(`Appointment ${id} not found`);
     }
 
-    private async mergeDtoIntoEntity(appointment: Appointment, dto: UpdateAppointmentDto) {
-        if (dto.title !== undefined) {
-            appointment.title = dto.title;
-        }
-        if (dto.startsAt !== undefined) {
-            appointment.startsAt = dto.startsAt;
-        }
-        if (dto.endsAt !== undefined) {
-            appointment.endsAt = dto.endsAt;
-        }
-        if (dto.officeId !== undefined && appointment.office.id !== dto.officeId) {
-            appointment.office = await this.loadOffice(dto.officeId);
-        }
-        return appointment;
+    const toSave = await this.mergeDtoIntoEntity(appointment, dto);
+
+    this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
+    await this.validateOfficeIsAvailable({
+      officeId: toSave.office.id,
+      startTime: toSave.startsAt,
+      endTime: toSave.endsAt,
+      ignoredAppointmentId: id,
+    });
+
+    const saved = await this.appointmentRepository.save(toSave);
+    return AppointmentMapper.toResponseDto(saved);
+  }
+
+  private async mergeDtoIntoEntity(appointment: Appointment, dto: UpdateAppointmentDto) {
+    if (dto.title !== undefined) {
+      appointment.title = dto.title;
+    }
+    if (dto.startsAt !== undefined) {
+      appointment.startsAt = dto.startsAt;
+    }
+    if (dto.endsAt !== undefined) {
+      appointment.endsAt = dto.endsAt;
+    }
+    if (dto.officeId !== undefined && appointment.office.id !== dto.officeId) {
+      appointment.office = await this.loadOffice(dto.officeId);
+    }
+    return appointment;
+  }
+
+  private async loadOffice(officeId: number): Promise<Office> {
+    const office = await this.officeRepository.findOne({
+      where: { id: officeId },
+    });
+
+    if (!office) {
+      throw new NotFoundException(`Office with id ${officeId} was not found`);
     }
 
-    private async loadOffice(officeId: number): Promise<Office> {
-        const office = await this.officeRepository.findOne({
-            where: { id: officeId },
-        });
+    return office;
+  }
 
-        if (!office) {
-            throw new NotFoundException(`Office with id ${officeId} was not found`);
-        }
+  private validateStartAndEnd(startsAt: string, endsAt: string): void {
+    const start = new Date(startsAt);
+    const end = new Date(endsAt);
 
-        return office;
+    if (start >= end) {
+      throw new BadRequestException('Start time must be before end time');
     }
 
-    private validateStartAndEnd(startsAt: string, endsAt: string): void {
-        const start = new Date(startsAt);
-        const end = new Date(endsAt);
+    const durationInMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
 
-        if (start >= end) {
-            throw new BadRequestException('Start time must be before end time');
-        }
+    if (durationInMinutes !== this.appointmentDurationMinutes) {
+      throw new BadRequestException(`Appointment must be exactly ${this.appointmentDurationMinutes} minutes long`);
+    }
+  }
 
-        const durationInMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+  private async validateOfficeIsAvailable(params: {
+    officeId: number;
+    startTime: string;
+    endTime: string;
+    ignoredAppointmentId?: number;
+  }): Promise<void> {
+    const { officeId, startTime, endTime, ignoredAppointmentId } = params;
 
-        if (durationInMinutes !== this.appointmentDurationMinutes) {
-            throw new BadRequestException(`Appointment must be exactly ${this.appointmentDurationMinutes} minutes long`);
-        }
+    const query = this.appointmentRepository
+      .createQueryBuilder('appointment')
+      .where('appointment.officeId = :officeId', { officeId })
+      .andWhere('appointment.startsAt < :endTime', { endTime })
+      .andWhere('appointment.endsAt > :startTime', { startTime });
+
+    if (ignoredAppointmentId !== undefined) {
+      query.andWhere('appointment.id != :ignoredAppointmentId', {
+        ignoredAppointmentId,
+      });
     }
 
-    
-    private async validateOfficeIsAvailable(params: {
-        officeId: number;
-        startTime: string;
-        endTime: string;
-        ignoredAppointmentId?: number;
-    }): Promise<void> {
-        const { officeId, startTime, endTime, ignoredAppointmentId } = params;
+    const conflictingAppointment = await query.getOne();
 
-        const query = this.appointmentRepository
-            .createQueryBuilder('appointment')
-            .where('appointment.officeId = :officeId', { officeId })
-            .andWhere('appointment.startsAt < :endTime', { endTime })
-            .andWhere('appointment.endsAt > :startTime', { startTime });
-
-        if (ignoredAppointmentId !== undefined) {
-            query.andWhere('appointment.id != :ignoredAppointmentId', { ignoredAppointmentId });
-        }
-
-        const conflictingAppointment = await query.getOne();
-
-        if (conflictingAppointment) {
-            throw new BadRequestException('Office is already booked for the requested time range',);
-        }
+    if (conflictingAppointment) {
+      throw new BadRequestException('Office is already booked for the requested time range');
     }
+  }
 }

@@ -9,10 +9,10 @@ import { OfficesModule } from './offices/offices.module';
       type: 'better-sqlite3',
       database: 'data/appointements.db',
       synchronize: true,
-      autoLoadEntities: true
+      autoLoadEntities: true,
     }),
     AppointmentsModule,
-    OfficesModule
-  ]
+    OfficesModule,
+  ],
 })
 export class AppModule {}

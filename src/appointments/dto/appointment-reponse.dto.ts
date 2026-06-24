@@ -1,25 +1,25 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { AppointmentStatus } from "../entity/appointment.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { AppointmentStatus } from '../entity/appointment.entity';
 
 export class AppointmentResponseDto {
-    @ApiProperty()
-    id!: number;
+  @ApiProperty()
+  id!: number;
 
-    @ApiProperty()
-    title!: string;
+  @ApiProperty()
+  title!: string;
 
-    @ApiProperty()
-    startsAt!: string;
+  @ApiProperty()
+  startsAt!: string;
 
-    @ApiProperty()
-    endsAt!: string;
+  @ApiProperty()
+  endsAt!: string;
 
-    @ApiProperty({ enum: AppointmentStatus })
-    status!: AppointmentStatus;
+  @ApiProperty({ enum: AppointmentStatus })
+  status!: AppointmentStatus;
 
-    @ApiProperty()
-    officeId!: number;
+  @ApiProperty()
+  officeId!: number;
 
-    @ApiProperty()
-    officeName!: string;
+  @ApiProperty()
+  officeName!: string;
 }

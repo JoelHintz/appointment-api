@@ -1,6 +1,11 @@
 import { AppointmentsController } from './appointments.controller';
 import { AppointmentsService } from './appointments.service';
-import { createAppointmentResponseDto, createCreateAppointmentDto, createFindAppointmentsDto, createUpdateAppointmentDto } from '../../test/testdata.factory';
+import {
+  createAppointmentResponseDto,
+  createCreateAppointmentDto,
+  createFindAppointmentsDto,
+  createUpdateAppointmentDto,
+} from '../../test/testdata.factory';
 
 describe('AppointmentsController', () => {
   let controller: AppointmentsController;
@@ -41,7 +46,10 @@ describe('AppointmentsController', () => {
       const query = createFindAppointmentsDto({ limit: 5 });
       const expected = [
         createAppointmentResponseDto({ id: 1 }),
-        createAppointmentResponseDto({ id: 2, title: 'Second appointment' }),
+        createAppointmentResponseDto({
+          id: 2,
+          title: 'Second appointment',
+        }),
       ];
 
       appointmentsService.findAll.mockResolvedValue(expected);
@@ -111,10 +119,7 @@ describe('AppointmentsController', () => {
         officeId: 3,
       });
 
-      const expected = createAppointmentResponseDto({
-        id,
-        officeId: 3,
-      });
+      const expected = createAppointmentResponseDto({ id, officeId: 3 });
 
       appointmentsService.update.mockResolvedValue(expected);
 

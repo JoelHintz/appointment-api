@@ -1,5 +1,5 @@
-import { Appointment, AppointmentStatus } from "./entity/appointment.entity";
-import { AppointmentResponseDto } from "./dto/appointment-reponse.dto";
+import { Appointment, AppointmentStatus } from './entity/appointment.entity';
+import { AppointmentResponseDto } from './dto/appointment-reponse.dto';
 
 export class AppointmentMapper {
   static toResponseDto(entity: Appointment): AppointmentResponseDto {
@@ -10,7 +10,7 @@ export class AppointmentMapper {
       endsAt: entity.endsAt,
       status: entity.status ?? AppointmentStatus.SCHEDULED,
       officeName: entity.office.name,
-      officeId: entity.office.id
+      officeId: entity.office.id,
     };
   }
 

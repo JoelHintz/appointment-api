@@ -23,18 +23,12 @@ describe('AppointmentsService', () => {
   const mockMappedDtoList = (dtos = [createAppointmentResponseDto()]) =>
     jest.spyOn(AppointmentMapper, 'toResponseDtoList').mockReturnValue(dtos as any);
 
-  const expectNotFound = async (
-    promise: Promise<unknown>,
-    message: string,
-  ) => {
+  const expectNotFound = async (promise: Promise<unknown>, message: string) => {
     await expect(promise).rejects.toThrow(NotFoundException);
     await expect(promise).rejects.toThrow(message);
   };
 
-  const expectBadRequest = async (
-    promise: Promise<unknown>,
-    message: string,
-  ) => {
+  const expectBadRequest = async (promise: Promise<unknown>, message: string) => {
     await expect(promise).rejects.toThrow(BadRequestException);
     await expect(promise).rejects.toThrow(message);
   };
@@ -52,25 +46,25 @@ describe('AppointmentsService', () => {
   };
 
   beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          AppointmentsService,
-          {
-            provide: getRepositoryToken(Office),
-            useValue: mockOfficeRepository,
-          },
-          {
-            provide: getRepositoryToken(Appointment),
-            useValue: mockAppointmentRepository,
-          },
-        ],
-      }).compile();
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AppointmentsService,
+        {
+          provide: getRepositoryToken(Office),
+          useValue: mockOfficeRepository,
+        },
+        {
+          provide: getRepositoryToken(Appointment),
+          useValue: mockAppointmentRepository,
+        },
+      ],
+    }).compile();
 
-      service = module.get<AppointmentsService>(AppointmentsService);
-      appointmentRepository = module.get(getRepositoryToken(Appointment));
-      officeRepository = module.get(getRepositoryToken(Office));
-      jest.clearAllMocks();
-    });
+    service = module.get<AppointmentsService>(AppointmentsService);
+    appointmentRepository = module.get(getRepositoryToken(Appointment));
+    officeRepository = module.get(getRepositoryToken(Office));
+    jest.clearAllMocks();
+  });
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -218,10 +212,7 @@ describe('AppointmentsService', () => {
 
       officeRepository.findOne.mockResolvedValue(null);
 
-      await expectNotFound(
-        service.create(dto),
-        'Office with id 999 was not found',
-      );
+      await expectNotFound(service.create(dto), 'Office with id 999 was not found');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -237,10 +228,7 @@ describe('AppointmentsService', () => {
 
       officeRepository.findOne.mockResolvedValue(createOffice());
 
-      await expectBadRequest(
-        service.create(dto),
-        'Start time must be before end time',
-      );
+      await expectBadRequest(service.create(dto), 'Start time must be before end time');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -256,10 +244,7 @@ describe('AppointmentsService', () => {
 
       officeRepository.findOne.mockResolvedValue(createOffice());
 
-      await expectBadRequest(
-        service.create(dto),
-        'Appointment must be exactly 60 minutes long',
-      );
+      await expectBadRequest(service.create(dto), 'Appointment must be exactly 60 minutes long');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -277,10 +262,7 @@ describe('AppointmentsService', () => {
       officeRepository.findOne.mockResolvedValue(office);
       mockQueryBuilder(createAppointment());
 
-      await expectBadRequest(
-        service.create(dto),
-        'Office is already booked for the requested time range',
-      );
+      await expectBadRequest(service.create(dto), 'Office is already booked for the requested time range');
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
@@ -342,7 +324,9 @@ describe('AppointmentsService', () => {
     it('should update appointment and change office if officeId differs', async () => {
       const oldOffice = createOffice({ id: 1, name: 'Nuremberg Office' });
       const newOffice = createOffice({ id: 2, name: 'Munich Office' });
-      const existingAppointment = createAppointment({ office: oldOffice });
+      const existingAppointment = createAppointment({
+        office: oldOffice,
+      });
 
       const dto: UpdateAppointmentDto = {
         officeId: 2,
@@ -379,30 +363,28 @@ describe('AppointmentsService', () => {
     it('should throw NotFoundException when appointment to update does not exist', async () => {
       appointmentRepository.findOne.mockResolvedValue(null);
 
-      await expectNotFound(
-        service.update(999, { title: 'X' }),
-        'Appointment 999 not found',
-      );
+      await expectNotFound(service.update(999, { title: 'X' }), 'Appointment 999 not found');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when new office does not exist', async () => {
-      const existingAppointment = createAppointment({ office: createOffice({ id: 1 }) });
+      const existingAppointment = createAppointment({
+        office: createOffice({ id: 1 }),
+      });
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
       officeRepository.findOne.mockResolvedValue(null);
 
-      await expectNotFound(
-        service.update(1, { officeId: 999 }),
-        'Office with id 999 was not found',
-      );
+      await expectNotFound(service.update(1, { officeId: 999 }), 'Office with id 999 was not found');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when updated dates are invalid', async () => {
-      const existingAppointment = createAppointment({ office: createOffice({ id: 1 }) });
+      const existingAppointment = createAppointment({
+        office: createOffice({ id: 1 }),
+      });
 
       const dto: UpdateAppointmentDto = {
         startsAt: '2026-06-22T12:00:00.000Z',
@@ -411,16 +393,15 @@ describe('AppointmentsService', () => {
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
 
-      await expectBadRequest(
-        service.update(1, dto),
-        'Start time must be before end time',
-      );
+      await expectBadRequest(service.update(1, dto), 'Start time must be before end time');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException when updated duration is not exactly 60 minutes', async () => {
-      const existingAppointment = createAppointment({ office: createOffice({ id: 1 }) });
+      const existingAppointment = createAppointment({
+        office: createOffice({ id: 1 }),
+      });
 
       const dto: UpdateAppointmentDto = {
         startsAt: '2026-06-22T09:00:00.000Z',
@@ -429,10 +410,7 @@ describe('AppointmentsService', () => {
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
 
-      await expectBadRequest(
-        service.update(1, dto),
-        'Appointment must be exactly 60 minutes long',
-      );
+      await expectBadRequest(service.update(1, dto), 'Appointment must be exactly 60 minutes long');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
@@ -450,10 +428,7 @@ describe('AppointmentsService', () => {
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
       mockQueryBuilder(conflictingAppointment);
 
-      await expectBadRequest(
-        service.update(1, dto),
-        'Office is already booked for the requested time range',
-      );
+      await expectBadRequest(service.update(1, dto), 'Office is already booked for the requested time range');
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
@@ -481,10 +456,9 @@ describe('AppointmentsService', () => {
 
       const result = await service.update(1, dto);
 
-      expect(qb.andWhere).toHaveBeenCalledWith(
-        'appointment.id != :ignoredAppointmentId',
-        { ignoredAppointmentId: 1 },
-      );
+      expect(qb.andWhere).toHaveBeenCalledWith('appointment.id != :ignoredAppointmentId', {
+        ignoredAppointmentId: 1,
+      });
       expect(result).toBeDefined();
     });
 
