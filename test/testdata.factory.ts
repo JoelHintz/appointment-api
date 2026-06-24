@@ -41,8 +41,9 @@ export const createAppointmentResponseDto = (
     endsAt: DEFAULT_END,
     status: AppointmentStatus.SCHEDULED,
     officeId: 1,
+    officeName: 'Nuremberg Office',
     ...overrides,
-  }) as AppointmentResponseDto;
+  });
 
 export const createCreateAppointmentDto = (
   overrides: Partial<CreateAppointmentDto> = {},

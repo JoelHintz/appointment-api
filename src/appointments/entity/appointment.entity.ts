@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Office } from "../../offices/entity/office.entity";
 
 export enum AppointmentStatus {
@@ -28,6 +28,8 @@ export class Appointment {
     })
     status!: AppointmentStatus;
 
+    
+    @JoinColumn({ name: 'officeId' })
     @ManyToOne(() => Office, { nullable: false })
     office!: Office;
 }

@@ -44,6 +44,7 @@ describe('AppointmentsService', () => {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    createQueryBuilder: jest.fn(),
   };
 
   const mockOfficeRepository = {
@@ -64,16 +65,28 @@ describe('AppointmentsService', () => {
           },
         ],
       }).compile();
-  
+
       service = module.get<AppointmentsService>(AppointmentsService);
       appointmentRepository = module.get(getRepositoryToken(Appointment));
-      officeRepository = module.get(getRepositoryToken(Office))
+      officeRepository = module.get(getRepositoryToken(Office));
+      jest.clearAllMocks();
     });
 
   afterEach(() => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
   });
+
+  // --- createQueryBuilder mock helper ---
+  const mockQueryBuilder = (result: Appointment | null) => {
+    const qb = {
+      where: jest.fn().mockReturnThis(),
+      andWhere: jest.fn().mockReturnThis(),
+      getOne: jest.fn().mockResolvedValue(result),
+    };
+    appointmentRepository.createQueryBuilder.mockReturnValue(qb as any);
+    return qb;
+  };
 
   describe('findAll', () => {
     it('should return mapped appointments with default limit 10', async () => {
@@ -138,6 +151,10 @@ describe('AppointmentsService', () => {
   });
 
   describe('create', () => {
+    beforeEach(() => {
+      mockQueryBuilder(null);
+    });
+
     it('should create and return a new appointment', async () => {
       const office = createOffice();
       const dto: CreateAppointmentDto = {
@@ -222,7 +239,47 @@ describe('AppointmentsService', () => {
 
       await expectBadRequest(
         service.create(dto),
-        'startsAt must be before endsAt',
+        'Start time must be before end time',
+      );
+
+      expect(appointmentRepository.create).not.toHaveBeenCalled();
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when duration is not exactly 60 minutes', async () => {
+      const dto: CreateAppointmentDto = {
+        title: 'Invalid appointment',
+        startsAt: '2026-06-21T09:00:00.000Z',
+        endsAt: '2026-06-21T09:30:00.000Z',
+        officeId: 1,
+      };
+
+      officeRepository.findOne.mockResolvedValue(createOffice());
+
+      await expectBadRequest(
+        service.create(dto),
+        'Appointment must be exactly 60 minutes long',
+      );
+
+      expect(appointmentRepository.create).not.toHaveBeenCalled();
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when office is already booked', async () => {
+      const office = createOffice();
+      const dto: CreateAppointmentDto = {
+        title: 'New appointment',
+        startsAt: '2026-06-21T09:00:00.000Z',
+        endsAt: '2026-06-21T10:00:00.000Z',
+        officeId: office.id,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      mockQueryBuilder(createAppointment());
+
+      await expectBadRequest(
+        service.create(dto),
+        'Office is already booked for the requested time range',
       );
 
       expect(appointmentRepository.create).not.toHaveBeenCalled();
@@ -260,6 +317,7 @@ describe('AppointmentsService', () => {
 
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
       appointmentRepository.save.mockResolvedValue(savedEntity);
+      mockQueryBuilder(null);
       mockMappedDto(expected);
 
       const result = await service.update(1, dto);
@@ -302,6 +360,7 @@ describe('AppointmentsService', () => {
       appointmentRepository.findOne.mockResolvedValue(existingAppointment);
       officeRepository.findOne.mockResolvedValue(newOffice);
       appointmentRepository.save.mockResolvedValue(savedEntity);
+      mockQueryBuilder(null);
       mockMappedDto(expected);
 
       const result = await service.update(1, dto);
@@ -354,10 +413,106 @@ describe('AppointmentsService', () => {
 
       await expectBadRequest(
         service.update(1, dto),
-        'startsAt must be before endsAt',
+        'Start time must be before end time',
       );
 
       expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when updated duration is not exactly 60 minutes', async () => {
+      const existingAppointment = createAppointment({ office: createOffice({ id: 1 }) });
+
+      const dto: UpdateAppointmentDto = {
+        startsAt: '2026-06-22T09:00:00.000Z',
+        endsAt: '2026-06-22T09:30:00.000Z',
+      };
+
+      appointmentRepository.findOne.mockResolvedValue(existingAppointment);
+
+      await expectBadRequest(
+        service.update(1, dto),
+        'Appointment must be exactly 60 minutes long',
+      );
+
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when office is already booked for the new time', async () => {
+      const office = createOffice({ id: 1 });
+      const existingAppointment = createAppointment({ id: 1, office });
+      const conflictingAppointment = createAppointment({ id: 2 });
+
+      const dto: UpdateAppointmentDto = {
+        startsAt: '2026-06-22T09:00:00.000Z',
+        endsAt: '2026-06-22T10:00:00.000Z',
+      };
+
+      appointmentRepository.findOne.mockResolvedValue(existingAppointment);
+      mockQueryBuilder(conflictingAppointment);
+
+      await expectBadRequest(
+        service.update(1, dto),
+        'Office is already booked for the requested time range',
+      );
+
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should allow adjacent appointments in the same office', async () => {
+      const office = createOffice({ id: 1 });
+      const existingAppointment = createAppointment({ id: 1, office });
+
+      const dto: UpdateAppointmentDto = {
+        startsAt: '2026-06-20T10:00:00.000Z',
+        endsAt: '2026-06-20T11:00:00.000Z',
+      };
+
+      const savedEntity = createAppointment({
+        ...existingAppointment,
+        startsAt: dto.startsAt,
+        endsAt: dto.endsAt,
+      });
+
+      appointmentRepository.findOne.mockResolvedValue(existingAppointment);
+      appointmentRepository.save.mockResolvedValue(savedEntity);
+      mockMappedDto();
+
+      const qb = mockQueryBuilder(null);
+
+      const result = await service.update(1, dto);
+
+      expect(qb.andWhere).toHaveBeenCalledWith(
+        'appointment.id != :ignoredAppointmentId',
+        { ignoredAppointmentId: 1 },
+      );
+      expect(result).toBeDefined();
+    });
+
+    it('should allow same appointment times in different offices', async () => {
+      const office = createOffice({ id: 1 });
+      const otherOffice = createOffice({ id: 2 });
+      const existingAppointment = createAppointment({ id: 1, office });
+
+      const dto: UpdateAppointmentDto = {
+        officeId: 2,
+        startsAt: existingAppointment.startsAt,
+        endsAt: existingAppointment.endsAt,
+      };
+
+      const savedEntity = createAppointment({
+        ...existingAppointment,
+        office: otherOffice,
+      });
+
+      appointmentRepository.findOne.mockResolvedValue(existingAppointment);
+      officeRepository.findOne.mockResolvedValue(otherOffice);
+      appointmentRepository.save.mockResolvedValue(savedEntity);
+      mockMappedDto();
+      mockQueryBuilder(null);
+
+      const result = await service.update(1, dto);
+
+      expect(result).toBeDefined();
     });
   });
 });

@@ -12,6 +12,8 @@ import { Office } from '../offices/entity/office.entity';
 @Injectable()
 export class AppointmentsService {
 
+    private readonly appointmentDurationMinutes = 60;
+
     constructor(
         @InjectRepository(Appointment)
         private readonly appointmentRepository: Repository<Appointment>,
@@ -59,6 +61,11 @@ export class AppointmentsService {
         };
 
         this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
+        await this.validateOfficeIsAvailable({
+            officeId: office.id,
+            startTime: dto.startsAt,
+            endTime: dto.endsAt,
+        });
 
         const entity = this.appointmentRepository.create(toSave);
         const saved = await this.appointmentRepository.save(entity);
@@ -79,6 +86,12 @@ export class AppointmentsService {
         const toSave = await this.mergeDtoIntoEntity(appointment, dto);
 
         this.validateStartAndEnd(toSave.startsAt, toSave.endsAt);
+        await this.validateOfficeIsAvailable({
+            officeId: toSave.office.id,
+            startTime: toSave.startsAt,
+            endTime: toSave.endsAt,
+            ignoredAppointmentId: id
+        });
 
         const saved = await this.appointmentRepository.save(toSave);
         return AppointmentMapper.toResponseDto(saved);
@@ -113,8 +126,43 @@ export class AppointmentsService {
     }
 
     private validateStartAndEnd(startsAt: string, endsAt: string): void {
-        if (new Date(startsAt) >= new Date(endsAt)) {
-            throw new BadRequestException('startsAt must be before endsAt');
+        const start = new Date(startsAt);
+        const end = new Date(endsAt);
+
+        if (start >= end) {
+            throw new BadRequestException('Start time must be before end time');
+        }
+
+        const durationInMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+
+        if (durationInMinutes !== this.appointmentDurationMinutes) {
+            throw new BadRequestException(`Appointment must be exactly ${this.appointmentDurationMinutes} minutes long`);
+        }
+    }
+
+    
+    private async validateOfficeIsAvailable(params: {
+        officeId: number;
+        startTime: string;
+        endTime: string;
+        ignoredAppointmentId?: number;
+    }): Promise<void> {
+        const { officeId, startTime, endTime, ignoredAppointmentId } = params;
+
+        const query = this.appointmentRepository
+            .createQueryBuilder('appointment')
+            .where('appointment.officeId = :officeId', { officeId })
+            .andWhere('appointment.startsAt < :endTime', { endTime })
+            .andWhere('appointment.endsAt > :startTime', { startTime });
+
+        if (ignoredAppointmentId !== undefined) {
+            query.andWhere('appointment.id != :ignoredAppointmentId', { ignoredAppointmentId });
+        }
+
+        const conflictingAppointment = await query.getOne();
+
+        if (conflictingAppointment) {
+            throw new BadRequestException('Office is already booked for the requested time range',);
         }
     }
 }
