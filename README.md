@@ -1,6 +1,6 @@
 # Appointment API
 
-This repository contains a small **NestJS + TypeScript** backend project for a hands-on workshop on AI-assisted software engineering with Claude Code.
+This repository contains a small **NestJS + TypeScript** backend project for a hands-on session on AI-assisted software engineering with Claude Code.
 
 The application models a simplified appointment booking service for public administration. Citizens can book appointments at preconfigured public offices, such as a citizens office office.
 

@@ -1,5 +1,3 @@
-# SETUP.md
-
 # Hands-on Session Setup
 
 This guide describes the complete setup for the hands-on session with Claude Code and Privatemode AI. Claude Code is an agentic AI coding tool that understands a codebase and autonomously plans and executes multi-step tasks like editing files, running tests, and implementing features from natural language instructions. Privatemode AI serves as a model provider that ensures data security and privacy by encrypting the data before they leave the device.

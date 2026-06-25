@@ -1,4 +1,4 @@
-# CLAUDE.md
+# CLAUDE.md: appointment-api
 
 ## Project
 
@@ -11,8 +11,6 @@ Domain rules:
 - An appointment belongs to exactly one office.
 - An appointment must start at a full hour and is always exactly one hour long.
 - An office must not have overlapping appointments.
-
-The project is optimized for teaching clean backend development with NestJS, REST, Swagger, DTO validation, SQLite/TypeORM, and tests.
 
 ## Stack
 
@@ -120,11 +118,6 @@ Rules:
 ## Date and Time
 
 Use ISO-8601 strings in the API contract.
-
-Preferred field names:
-
-- `startsAt`
-- `endsAt`
 
 Rules:
 
