@@ -67,13 +67,3 @@ If a command is not available, check `package.json` first.
 This project is intentionally small and backend-focused. It does not include authentication, a frontend, production infrastructure, queues, caching, or complex deployment setup.
 
 The goal is to practice how Claude Code can help implement a clearly scoped backend feature while still requiring students to review, understand, test, and validate the generated code.
-
-## Suggested Claude Code Task
-
-A prepared prompt is available at:
-
-```txt
-prompts/availability-endpoint.prompt.md
-```
-
-Use it in Claude Code to implement the availability endpoint.

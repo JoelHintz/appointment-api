@@ -9,8 +9,8 @@ export class AppointmentMapper {
       startsAt: entity.startsAt,
       endsAt: entity.endsAt,
       status: entity.status ?? AppointmentStatus.SCHEDULED,
-      officeName: entity.office.name,
-      officeId: entity.office.id,
+      officeName: entity.office?.name,
+      officeId: entity.office?.id,
     };
   }
 

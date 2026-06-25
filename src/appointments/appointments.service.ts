@@ -31,6 +31,7 @@ export class AppointmentsService {
       where,
       take: query.limit ?? 10,
       order: { id: 'ASC' },
+      relations: { office: true },
     });
 
     return AppointmentMapper.toResponseDtoList(appointments);

@@ -97,6 +97,7 @@ describe('AppointmentsService', () => {
         where: {},
         take: 10,
         order: { id: 'ASC' },
+        relations: { office: true },
       });
       expect(result).toEqual(expected);
     });
@@ -116,6 +117,7 @@ describe('AppointmentsService', () => {
         where: { status: AppointmentStatus.CANCELED },
         take: 5,
         order: { id: 'ASC' },
+        relations: { office: true },
       });
     });
   });

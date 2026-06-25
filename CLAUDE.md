@@ -9,7 +9,7 @@ The API manages appointments for preconfigured public offices.
 Domain rules:
 
 - An appointment belongs to exactly one office.
-- An appointment must start at a full hour and is always exactly one hour long.
+- Appointments are booked for fixed one-hour slots.
 - An office must not have overlapping appointments.
 
 ## Stack
@@ -44,50 +44,24 @@ Avoid:
 ## Language and Naming
 
 - Use **English** for code, comments, routes, Swagger docs, DTOs, and tests.
-- Use clear, explicit names.
+- Follow the naming style already used in the project.
+- Use clear and explicit names.
 - Use plural names for feature folders and routes, e.g. `appointments`, `offices`.
 - Use singular names for entities and DTO classes, e.g. `Appointment`, `Office`, `CreateAppointmentDto`.
-- Use standard NestJS file names, e.g. `appointments.controller.ts`, `appointments.service.ts`, `appointment.entity.ts`.
-- Use conventional method names: `create`, `findAll`, `findOne`, `update`, `remove`.
-- Use `Id` suffix for references in DTOs, e.g. `officeId`.
 
 ## File Structure
 
-Use a feature-first structure.
+Use the existing feature-first structure.
 
-```txt
-src/
-├── app.module.ts
-├── main.ts
-├── appointments/
-│   ├── dto/
-│   ├── entities/
-│   ├── appointments.controller.ts
-│   ├── appointments.service.ts
-│   ├── appointments.module.ts
-│   ├── appointments.controller.spec.ts
-│   └── appointments.service.spec.ts
-├── offices/
-│   ├── dto/
-│   ├── entities/
-│   ├── offices.controller.ts
-│   ├── offices.service.ts
-│   ├── offices.seed.ts
-│   ├── offices.module.ts
-│   ├── offices.controller.spec.ts
-│   ├── offices.service.spec.ts
-│   └── offices.seed.spec.ts
-└── common/
-    ├── config/
-    ├── validation/
-    └── utils/
-```
+Before creating new files, inspect the existing `appointments` and `offices` modules and follow their conventions.
+
+Do not introduce a new architectural style for the workshop task.
 
 ## API Routes
 
 Use REST-style, resource-oriented routes.
 
-Examples:
+Existing route examples:
 
 - `GET /appointments`
 - `GET /appointments/:id`
@@ -96,7 +70,6 @@ Examples:
 - `DELETE /appointments/:id`
 - `GET /offices`
 - `GET /offices/:id`
-- `GET /offices/:id/availability`
 
 Rules:
 
@@ -107,13 +80,13 @@ Rules:
 - Avoid action-style routes like `/searchAppointments` or `/getAvailableSlots`.
 - Return DTOs, not TypeORM entities.
 
+When implementing a new endpoint, choose a route that fits the existing REST style and the requested use case.
+
 ## DTOs and Mapping
 
-- Request DTOs define API input.
-- Response DTOs define API output.
-- Keep DTOs small and explicit.
-- Prefer manual mapping between entities and response DTOs.
+- Use DTOs intentionally for public API input and output.
 - Do not expose TypeORM entities directly from controllers.
+- Keep response shapes simple and easy to understand in Swagger.
 
 ## Date and Time
 
@@ -121,20 +94,15 @@ Use ISO-8601 strings in the API contract.
 
 Rules:
 
-- Validate date-time input.
-- Show ISO examples in Swagger.
+- Validate date and date-time input where relevant.
+- Show useful examples in Swagger.
 - Keep time zone handling simple unless explicitly required.
 
 ## Validation
 
 Use DTO validation for request shapes and service-level validation for business rules.
 
-Business rules belong in services:
-
-- appointment duration must be exactly one hour
-- appointment end must be after start
-- office must exist
-- office must not be double-booked
+Business rules belong in services.
 
 Avoid `any` and raw payload handling unless explicitly requested.
 
@@ -152,17 +120,7 @@ Rules:
 Entity relationship:
 
 - `Appointment` has a `ManyToOne` relation to `Office`.
-- `Office` does not need a reverse `appointments` relation unless explicitly required.
-
-## Seed Data
-
-Office seed data is inserted automatically on application startup if no offices exist.
-
-Rules:
-
-- Keep seed data simple.
-- Seed only master data such as offices.
-- Do not introduce a production seed framework.
+- `Office` does not need a reverse appointments relation unless explicitly required.
 
 ## Controllers and Services
 
@@ -186,36 +144,15 @@ Do not place business logic in controllers.
 
 Swagger is the primary manual testing surface.
 
-Rules:
-
-- Configure Swagger in `main.ts`.
-- Document all public endpoints.
-- Add concise summaries and useful examples.
-- Keep Swagger docs aligned with DTOs and behavior.
+Document new public endpoints sufficiently so they can be tested in Swagger.
 
 Use the title: `Appointment API`.
 
 ## Testing
 
-The project should include unit tests.
+Keep tests small, focused, and readable. They should cover the most important behavior, not every possible edge case. Prefer a few meaningful tests over many repetitive tests.
 
-Priorities:
-
-1. service tests for core business rules
-2. controller tests for delegation and response behavior
-
-Important cases:
-
-- valid appointment creation
-- invalid start time
-- overlapping appointments
-- adjacent appointments
-- missing office
-- invalid DTO input
-
-Keep tests readable and educational.
-
-## Code Style
+### Code Style
 
 - Prefer straightforward TypeScript.
 - Keep functions short and purposeful.
@@ -224,7 +161,7 @@ Keep tests readable and educational.
 - Keep comments sparse and useful.
 - Prefer readability over clever abstractions.
 
-## Dependency Policy
+### Dependency Policy
 
 Before adding a dependency:
 
@@ -239,18 +176,16 @@ Avoid unless explicitly requested:
 - advanced pagination packages
 - additional infrastructure libraries
 
-## Definition of Done
+### Definition of Done
 
 A change is complete when:
 
 - the code builds
 - the endpoint works in Swagger
-- validation is active where relevant
-- response DTOs are used intentionally
-- tests cover the main behavior
+- the main behavior is covered by focused unit tests
 - the implementation remains understandable for workshop participants
 
-## Useful Commands
+### Useful Commands
 
 Use existing package scripts only.
 

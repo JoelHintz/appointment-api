@@ -1,56 +1,128 @@
-# Hands-on Session Setup
+# Setup Claude Code with Privatemode AI
 
-This guide describes the complete setup for the hands-on session with Claude Code and Privatemode AI. Claude Code is an agentic AI coding tool that understands a codebase and autonomously plans and executes multi-step tasks like editing files, running tests, and implementing features from natural language instructions. Privatemode AI serves as a model provider that ensures data security and privacy by encrypting the data before they leave the device.
+This guide describes the setup for the hands-on part of the lecture.
 
-This project is a NestJS Appointment API that serves as a simple entry point to AI based software engeneering. The goal is to run the backend locally, open Swagger, and use Claude Code inside VS Code to implement a small backend feature.
+In the session, you will work with a small NestJS Appointment API. The backend runs locally, exposes its endpoints through Swagger, and serves as a compact example for AI-assisted software engineering. The goal is to use Claude Code inside VS Code to understand the existing project and implement a small backend feature with support from an agentic coding assistant.
 
-## 1. Assumptions
+Claude Code is used through the VS Code extension. Privatemode AI is used as the model provider through a local proxy running on your machine.
 
-The following tools should already be installed before starting this setup:
+## 1. Required Software
 
-- Visual Studio Code with Claude Code extension
-- Docker or Rancher Desktop
-- Node.js
-- Git
+Install the following tools before the session:
 
-If Node.js and npm are not installed the installation is explained in section 6.
+| Tool                              | Why it is needed                                                                           | Installation guide                                                                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Visual Studio Code                | Editor used for the hands-on session and Claude Code extension.                            | [Install VS Code](https://code.visualstudio.com/docs/getstarted/overview)                                                                             |
+| Claude Code VS Code extension     | Provides Claude Code directly inside VS Code.                                              | [Claude Code for VS Code](https://code.claude.com/docs/en/vs-code)                                                                                    |
+| Git                               | Required to clone the Appointment API repository.                                          | [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)                                                                          |
+| Node.js LTS and npm               | Required to install dependencies and run the NestJS backend. npm is included with Node.js. | [Download Node.js](https://nodejs.org/en/download)                                                                                                    |
+| Docker Desktop or Rancher Desktop | Required to run the local Privatemode proxy container.                                     | [Install Docker Desktop](https://docs.docker.com/desktop/) or [install Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/) |
 
-## 2. Start the Privatemode Proxy
+You will also need a Privatemode API key. The key will be provided during the session.
 
-Claude Code will connect to Privatemode through a local proxy running on port `8080`.
+## 2. Install Git
 
-Start the proxy with Docker or Rancher Desktop:
+Git is used to clone the prepared Appointment API repository and work with the code locally.
+
+Install Git from the official guide:
+
+- [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+
+### Verify Installation
+
+Open a terminal and run:
 
 ```bash
-docker run -p 8080:8080 ghcr.io/edgelesssys/privatemode/privatemode-proxy:latest --apiKey <your-api-key> --sharedPromptCache
+git --version
 ```
 
-Replace `<your-api-key>` with your Privatemode API key.
+If a version number is shown, Git is installed correctly.
 
-Keep this terminal running while using Claude Code.
+### Common Pitfall
 
-## 4. Configure Claude Code in VS Code
+On Windows, make sure Git is available in your `PATH`; otherwise, the `git` command may not work in VS Code or in your terminal.
 
-This is the primary setup path for the workshop.
+## 3. Install Docker Desktop or Rancher Desktop
 
-The configuration is added to the VS Code user `settings.json` so that the Claude Code extension uses the local Privatemode proxy.
+Docker Desktop and Rancher Desktop allow you to run containers locally. For this workshop, this is only needed to start the Privatemode proxy.
 
-### 4.1 Open VS Code User Settings JSON
+The project was primarily tested with Rancher Desktop, but Docker Desktop should work as well.
+
+### 3.1 Installation
+
+Choose one of the following tools:
+
+- [Install Docker Desktop](https://docs.docker.com/desktop/)
+- [Install Rancher Desktop](https://docs.rancherdesktop.io/getting-started/installation/)
+
+After installation:
+
+1. Start Docker Desktop or Rancher Desktop.
+2. Wait until the application reports that it is running.
+3. Verify the Docker command:
+
+```bash
+docker --version
+```
+
+### 3.2 Important Requirements
+
+On Windows, Docker Desktop and Rancher Desktop usually require WSL 2 for Linux containers. Hardware virtualization must also be enabled in BIOS/UEFI.
+
+You do not need deeper Docker knowledge for this workshop. Docker is only used to run one local proxy container.
+
+## 4. Install Node.js and npm
+
+Node.js is required to run the NestJS backend. npm is used to install the project dependencies and is included with Node.js.
+
+Install the current Node.js LTS version:
+
+- [Download Node.js](https://nodejs.org/en/download)
+
+For this workshop, the official installer is sufficient on Windows and macOS. If you already use a Node version manager such as `nvm`, you can use it instead.
+
+### Verify Installation
+
+Open a terminal and run:
+
+```bash
+node -v
+npm -v
+```
+
+Both commands should print a version number.
+
+## 5. Install and Configure Claude Code in VS Code
+
+The primary way to use Claude Code in this workshop is through the Claude Code extension in VS Code. This keeps the setup simple because you can work directly inside the editor.
+
+### 5.1 Install the Claude Code Extension
+
+1. Open VS Code.
+2. Open the Extensions view:
+   - Windows/Linux: `Ctrl+Shift+X`
+   - macOS: `Cmd+Shift+X`
+3. Search for `Claude Code`.
+4. Install the official extension by Anthropic.
+5. Restart VS Code if the Claude Code panel does not appear.
+
+Installation guide:
+
+- [Claude Code for VS Code](https://code.claude.com/docs/en/vs-code)
+
+### 5.2 Open VS Code User Settings JSON
+
+The Claude Code extension must be configured to use the local Privatemode proxy.
 
 In VS Code:
 
 1. Open the Command Palette:
    - Windows/Linux: `Ctrl+Shift+P`
    - macOS: `Cmd+Shift+P`
-2. Search for:
-
-```txt
-Preferences: Open User Settings (JSON)
-```
-
+2. Search for `Preferences: Open User Settings (JSON)`.
 3. Open the file.
 
-### 4.2 Add Claude Code configuration
+### 5.3 Add Claude Code Configuration
 
 Add the following block to your VS Code user `settings.json`:
 
@@ -66,39 +138,15 @@ Add the following block to your VS Code user `settings.json`:
 }
 ```
 
-If your `settings.json` already contains other settings, do not paste a second top-level `{ ... }` object. Merge the keys into the existing JSON object.
+If your `settings.json` already contains other settings, merge the `claudeCode.environmentVariables` entry into the existing JSON object. Do not create a second top-level JSON object.
 
-Example with existing settings:
+Restart VS Code after changing the settings.
 
-```json
-{
-  "editor.formatOnSave": true,
-  "claudeCode.environmentVariables": [
-    { "name": "ANTHROPIC_BASE_URL", "value": "http://localhost:8080" },
-    { "name": "ANTHROPIC_API_KEY", "value": "sk-privatemode" },
-    { "name": "ANTHROPIC_MODEL", "value": "kimi-latest" },
-    { "name": "CLAUDE_CODE_ATTRIBUTION_HEADER", "value": "0" },
-    { "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "value": "1" }
-  ]
-}
-```
+At this point, the extension is configured, but it will only work after the Privatemode proxy has been started.
 
-### 4.3 Restart VS Code
+## 6. Set Up the Project
 
-After saving the settings:
-
-1. Close VS Code completely.
-2. Open VS Code again.
-3. Open the Claude Code panel.
-4. Send a small test prompt:
-
-```txt
-Reply with OK only.
-```
-
-If Claude responds, the VS Code extension is connected.
-
-## 5. Set Up the Project
+The project is a small NestJS Appointment API with Swagger documentation for testing the endpoints in the browser.
 
 Clone the repository:
 
@@ -127,186 +175,69 @@ npm run start:dev
 
 Open Swagger:
 
-```txt
-http://localhost:3000/api
-```
+- [Swagger UI](http://localhost:3000/api)
 
-The API should now be running locally.
+The API should now be running locally. You can test endpoints by expanding an endpoint in Swagger and clicking **Try it out**.
 
-## 6. Use Claude Code for the Hands-On Task
+## 7. Start the Privatemode Proxy
 
-The repository contains a prepared prompt for the student task:
+This step requires a Privatemode API key. The key will be provided during the session.
 
-```txt
-prompts/availability-endpoint.prompt.md
-```
-
-In VS Code Claude Code panel, use:
-
-```txt
-Use @prompts/availability-endpoint.prompt.md and implement the task.
-```
-
-Recommended workflow:
-
-1. Ask Claude to inspect the project first.
-2. Let Claude propose a short plan.
-3. Review the plan.
-4. Let Claude implement the change.
-5. Run tests.
-6. Verify the endpoint in Swagger.
-
-Useful commands:
+Claude Code connects to Privatemode through a local proxy running on port `8080`. Start Docker Desktop or Rancher Desktop first, then run:
 
 ```bash
-npm run test
-npm run test:e2e
-npm run lint
+docker run -p 8080:8080 ghcr.io/edgelesssys/privatemode/privatemode-proxy:latest --apiKey <your-api-key> --sharedPromptCache
 ```
 
-If a command does not exist, check `package.json` first.
+Replace `<your-api-key>` with the API key provided in the session.
 
-## 6. Optional Node.js and npm installation guide
+The proxy listens on http://localhost:8080.
 
-Node.js includes npm. You do not need to install npm separately.
+After the proxy is running, test Claude Code in the VS Code panel with a short prompt:
 
-Recommended version for this workshop:
-
-```txt
-Node.js LTS
-npm bundled with Node.js
+```text
+Hello Claude!
 ```
 
-After installation, always verify:
+If Claude responds, the AI setup is working.
 
-```bash
-node -v
-npm -v
-```
+## 8. Final Setup Checklist
 
-Both commands must print a version number.
+Use this checklist to prepare at home before the session. The API and local tools can be prepared in advance, but the full Claude Code connection requires the Privatemode API key, which will be provided during the session.
 
----
+### Can be checked before the session
 
-## 6.1 Windows
+1. VS Code starts correctly.
+2. The Claude Code extension is installed.
+3. `git --version` prints a version number.
+4. `node -v` and `npm -v` print version numbers.
+5. Docker Desktop or Rancher Desktop starts correctly.
+6. `docker --version` prints a version number.
+7. The Appointment API can be installed with `npm ci` or `npm install`.
+8. The Appointment API starts with `npm run start:dev`
+9. Swagger opens at [Swagger UI](http://localhost:3000/api).
 
-### Recommended simple setup
+### Will be completed during the session
 
-1. Open the official Node.js download page.
-2. Download the **LTS** Windows installer.
-3. Run the installer.
-4. Keep the default options.
-5. Make sure Node.js is added to `PATH`.
-6. Open a new PowerShell window.
-7. Verify the installation:
+10. You receive the Privatemode API key.
+11. You start the Privatemode proxy with the provided API key.
+12. Claude Code responds inside VS Code.
 
-```powershell
-node -v
-npm -v
-```
+If the first section works at home, your local development setup is ready. It is expected that the Privatemode proxy and Claude Code connection cannot be fully tested before you receive the API key.
 
-### Alternative with winget
+## 9. Optional Backup: Claude Code CLI
 
-If winget is available:
+Use this only if the VS Code extension setup does not work or if you explicitly want to run Claude Code from the terminal. For this workshop, the VS Code extension setup is recommended.
 
-```powershell
-winget install OpenJS.NodeJS.LTS
-```
+Install Claude Code according to the official quickstart guide:
 
-Then open a new PowerShell window and verify:
+- [Claude Code Quickstart](https://code.claude.com/docs/en/quickstart)
 
-```powershell
-node -v
-npm -v
-```
+Then configure Claude Code to use Privatemode as described in the official Privatemode guide:
 
----
+- [Privatemode Claude Code Guide](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
 
-## 6.2 macOS
-
-### Option A: Official installer
-
-1. Open the official Node.js download page.
-2. Download the **LTS** macOS installer.
-3. Run the installer.
-4. Open a new terminal.
-5. Verify:
-
-```bash
-node -v
-npm -v
-```
-
-### Option B: nvm
-
-If you already use `nvm`, install the latest LTS version:
-
-```bash
-nvm install --lts
-nvm use --lts
-node -v
-npm -v
-```
-
----
-
-## 6.3 Linux
-
-### Option A: nvm
-
-If you already use `nvm`, install the latest LTS version:
-
-```bash
-nvm install --lts
-nvm use --lts
-node -v
-npm -v
-```
-
-### Option B: Distribution package manager
-
-Depending on your Linux distribution, install Node.js through your package manager or a NodeSource installer.
-
-After installation, verify:
-
-```bash
-node -v
-npm -v
-```
-
-## 7. Claude Code Backup Path: Global CLI
-
-Use this path only if the VS Code extension setup does not work or if you want to run Claude Code from the terminal.
-
-### 7.1 Install Claude Code globally
-
-```bash
-npm install -g @anthropic-ai/claude-code
-```
-
-Verify:
-
-```bash
-claude --version
-```
-
-### 7.2 Configure Claude Code user settings
-
-Create or edit the Claude Code user settings file.
-
-macOS/Linux:
-
-```txt
-~/.claude/settings.json
-```
-
-Windows:
-
-```txt
-C:\Users\<your-user>\.claude\settings.json
-```
-
-Content:
+The required values are the same as in the VS Code configuration:
 
 ```json
 {
@@ -320,94 +251,28 @@ Content:
 }
 ```
 
-### 7.3 Start Claude Code from the project folder
+Start Claude Code from the project folder:
 
 ```bash
 cd appointment-api
-claude --model kimi-latest
+claude
 ```
 
-### 7.4 Sign in on Claude Code start (optional)
+## 10. References
 
-If Claude Code asks for sign-in even though the proxy configuration is correct, create or edit .claude.json:
+### Tool Installation Guides
 
-Windows:
+- Microsoft. (n.d.). _Get started with Visual Studio Code_. [https://code.visualstudio.com/docs/getstarted/overview](https://code.visualstudio.com/docs/getstarted/overview)
+- Anthropic. (n.d.). _Use Claude Code in VS Code_. [https://code.claude.com/docs/en/vs-code](https://code.claude.com/docs/en/vs-code)
+- Git. (n.d.). _Installing Git_. [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- Node.js. (n.d.). _Download Node.js_. [https://nodejs.org/en/download](https://nodejs.org/en/download)
+- Docker. (n.d.). _Docker Desktop_. [https://docs.docker.com/desktop/](https://docs.docker.com/desktop/)
+- SUSE. (n.d.). _Installation - Rancher Desktop Docs_. [https://docs.rancherdesktop.io/getting-started/installation/](https://docs.rancherdesktop.io/getting-started/installation/)
 
-```txt
-C:\Users\<your-user>\.claude.json
-```
+### Claude Code and Privatemode Configuration References
 
-macOS/Linux:
-
-```txt
-~/.claude.json
-```
-
-Add or merge:
-
-```json
-{
-  "hasCompletedOnboarding": true,
-  "primaryApiKey": "sk-privatemode"
-}
-```
-
-## 8. Troubleshooting
-
-### `node` or `npm` is not recognized
-
-- Restart the terminal.
-- Check that Node.js was added to `PATH`.
-- Reinstall Node.js LTS if needed.
-
-### `npm ci` fails
-
-Use the fallback:
-
-```bash
-npm install
-```
-
-### Claude Code does not use Privatemode
-
-Check:
-
-- The Privatemode proxy is running.
-- The proxy uses port `8080`.
-- `ANTHROPIC_BASE_URL` is exactly `http://localhost:8080`.
-- VS Code was restarted after editing `settings.json`.
-- There are no leading or trailing spaces in the URL or values.
-
-### Docker cannot reach port 8080 on Windows
-
-If Docker networking causes problems on Windows, try running the proxy through WSL or check the Rancher/Docker networking settings.
-
-### Swagger does not open
-
-Check that the NestJS app is running:
-
-```bash
-npm run start:dev
-```
-
-Then open:
-
-```txt
-http://localhost:3000/api
-```
-
-## References
-
-Node.js. (n.d.). _Download Node.js®_. Node.js. Retrieved June 25, 2026, from [https://nodejs.org/en/download](https://nodejs.org/en/download)
-
-npm, Inc. (n.d.). _Downloading and installing Node.js and npm_. npm Docs. Retrieved June 25, 2026, from [https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/)
-
-Edgeless Systems. (n.d.). _API quickstart_. Privatemode Documentation. Retrieved June 25, 2026, from [https://docs.privatemode.ai/getting-started/proxy-api/](https://docs.privatemode.ai/getting-started/proxy-api/)
-
-Edgeless Systems. (n.d.). _Claude Code_. Privatemode Documentation. Retrieved June 25, 2026, from [https://docs.privatemode.ai/guides/coding-assistants-claude-code/](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
-
-Anthropic. (n.d.). _Environment variables_. Claude Code Docs. Retrieved June 25, 2026, from [https://code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars)
-
-Anthropic. (n.d.). _Claude Code settings_. Claude Code Docs. Retrieved June 25, 2026, from [https://code.claude.com/docs/en/settings](https://code.claude.com/docs/en/settings)
-
-Lumecoder. (n.d.). _How to Use Claude Code in VS Code: Extension Setup and Configuration Guide_. Lumecoder Guides. Retrieved June 25, 2026, from [https://lumecoder.com/guides/vscode-claude-code](https://lumecoder.com/guides/vscode-claude-code)
+- Anthropic. (n.d.). _Claude Code Quickstart_. [https://code.claude.com/docs/en/quickstart](https://code.claude.com/docs/en/quickstart)
+- Anthropic. (n.d.). _Environment variables_. [https://code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars)
+- Anthropic. (n.d.). _Claude Code settings_. [https://code.claude.com/docs/en/settings](https://code.claude.com/docs/en/settings)
+- Edgeless Systems. (n.d.). _Claude Code - Privatemode_. [https://docs.privatemode.ai/guides/coding-assistants-claude-code/](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
+- Edgeless Systems. (n.d.). _API quickstart_. [https://docs.privatemode.ai/getting-started/proxy-api/](https://docs.privatemode.ai/getting-started/proxy-api/)
