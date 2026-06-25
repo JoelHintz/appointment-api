@@ -1,131 +1,23 @@
 # SETUP.md
 
-# Appointment API Workshop Setup
+# Hands-on Session Setup
 
-This guide describes the complete setup for the NestJS Appointment API workshop.
+This guide describes the complete setup for the hands-on session with Claude Code and Privatemode AI. Claude Code is an agentic AI coding tool that understands a codebase and autonomously plans and executes multi-step tasks like editing files, running tests, and implementing features from natural language instructions. Privatemode AI serves as a model provider that ensures data security and privacy by encrypting the data before they leave the device.
 
-The project is used in a hands-on session with Claude Code and Privatemode. The goal is to run the backend locally, open Swagger, and use Claude Code inside VS Code to implement a small backend feature.
+This project is a NestJS Appointment API that serves as a simple entry point to AI based software engeneering. The goal is to run the backend locally, open Swagger, and use Claude Code inside VS Code to implement a small backend feature.
 
 ## 1. Assumptions
 
 The following tools should already be installed before starting this setup:
 
-- Visual Studio Code
-- Claude Code extension for VS Code
-- Git
+- Visual Studio Code with Claude Code extension
 - Docker or Rancher Desktop
+- Node.js
+- Git
 
-Node.js and npm are explained below and are not treated as preinstalled prerequisites.
+If Node.js and npm are not installed the installation is explained in section 6.
 
-## 2. Install Node.js and npm
-
-Node.js includes npm. You do not need to install npm separately.
-
-Recommended version for this workshop:
-
-```txt
-Node.js LTS
-npm bundled with Node.js
-```
-
-After installation, always verify:
-
-```bash
-node -v
-npm -v
-```
-
-Both commands must print a version number.
-
----
-
-## 2.1 Windows
-
-### Recommended simple setup
-
-1. Open the official Node.js download page.
-2. Download the **LTS** Windows installer.
-3. Run the installer.
-4. Keep the default options.
-5. Make sure Node.js is added to `PATH`.
-6. Open a new PowerShell window.
-7. Verify the installation:
-
-```powershell
-node -v
-npm -v
-```
-
-### Alternative with winget
-
-If winget is available:
-
-```powershell
-winget install OpenJS.NodeJS.LTS
-```
-
-Then open a new PowerShell window and verify:
-
-```powershell
-node -v
-npm -v
-```
-
----
-
-## 2.2 macOS
-
-### Option A: Official installer
-
-1. Open the official Node.js download page.
-2. Download the **LTS** macOS installer.
-3. Run the installer.
-4. Open a new terminal.
-5. Verify:
-
-```bash
-node -v
-npm -v
-```
-
-### Option B: nvm
-
-If you already use `nvm`, install the latest LTS version:
-
-```bash
-nvm install --lts
-nvm use --lts
-node -v
-npm -v
-```
-
----
-
-## 2.3 Linux
-
-### Option A: nvm
-
-If you already use `nvm`, install the latest LTS version:
-
-```bash
-nvm install --lts
-nvm use --lts
-node -v
-npm -v
-```
-
-### Option B: Distribution package manager
-
-Depending on your Linux distribution, install Node.js through your package manager or a NodeSource installer.
-
-After installation, verify:
-
-```bash
-node -v
-npm -v
-```
-
-## 3. Start the Privatemode Proxy
+## 2. Start the Privatemode Proxy
 
 Claude Code will connect to Privatemode through a local proxy running on port `8080`.
 
@@ -138,23 +30,6 @@ docker run -p 8080:8080 ghcr.io/edgelesssys/privatemode/privatemode-proxy:latest
 Replace `<your-api-key>` with your Privatemode API key.
 
 Keep this terminal running while using Claude Code.
-
-### Optional proxy test
-
-You can test whether the proxy responds:
-
-```bash
-curl localhost:8080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "kimi-latest",
-    "messages": [
-      { "role": "user", "content": "Hello Privatemode!" }
-    ]
-  }'
-```
-
-If you receive a model response, the proxy is reachable.
 
 ## 4. Configure Claude Code in VS Code
 
@@ -183,28 +58,12 @@ Add the following block to your VS Code user `settings.json`:
 
 ```json
 {
-  "claudeCode.preferredLocation": "panel",
   "claudeCode.environmentVariables": [
-    {
-      "name": "ANTHROPIC_BASE_URL",
-      "value": "http://localhost:8080"
-    },
-    {
-      "name": "ANTHROPIC_API_KEY",
-      "value": "sk-privatemode"
-    },
-    {
-      "name": "ANTHROPIC_MODEL",
-      "value": "kimi-latest"
-    },
-    {
-      "name": "CLAUDE_CODE_ATTRIBUTION_HEADER",
-      "value": "0"
-    },
-    {
-      "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
-      "value": "1"
-    }
+    { "name": "ANTHROPIC_BASE_URL", "value": "http://localhost:8080" },
+    { "name": "ANTHROPIC_API_KEY", "value": "sk-privatemode" },
+    { "name": "ANTHROPIC_MODEL", "value": "kimi-latest" },
+    { "name": "CLAUDE_CODE_ATTRIBUTION_HEADER", "value": "0" },
+    { "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "value": "1" }
   ]
 }
 ```
@@ -216,28 +75,12 @@ Example with existing settings:
 ```json
 {
   "editor.formatOnSave": true,
-  "claudeCode.preferredLocation": "panel",
   "claudeCode.environmentVariables": [
-    {
-      "name": "ANTHROPIC_BASE_URL",
-      "value": "http://localhost:8080"
-    },
-    {
-      "name": "ANTHROPIC_API_KEY",
-      "value": "sk-privatemode"
-    },
-    {
-      "name": "ANTHROPIC_MODEL",
-      "value": "kimi-latest"
-    },
-    {
-      "name": "CLAUDE_CODE_ATTRIBUTION_HEADER",
-      "value": "0"
-    },
-    {
-      "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
-      "value": "1"
-    }
+    { "name": "ANTHROPIC_BASE_URL", "value": "http://localhost:8080" },
+    { "name": "ANTHROPIC_API_KEY", "value": "sk-privatemode" },
+    { "name": "ANTHROPIC_MODEL", "value": "kimi-latest" },
+    { "name": "CLAUDE_CODE_ATTRIBUTION_HEADER", "value": "0" },
+    { "name": "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "value": "1" }
   ]
 }
 ```
@@ -262,8 +105,8 @@ If Claude responds, the VS Code extension is connected.
 Clone the repository:
 
 ```bash
-git clone <repo-url>
-cd <repo-folder>
+git clone https://github.com/JoelHintz/appointment-api.git
+cd appointment-api
 ```
 
 Install project dependencies:
@@ -325,7 +168,115 @@ npm run lint
 
 If a command does not exist, check `package.json` first.
 
-## 7. Backup Path: Global Claude Code CLI
+## 6. Optional Node.js and npm installation guide
+
+Node.js includes npm. You do not need to install npm separately.
+
+Recommended version for this workshop:
+
+```txt
+Node.js LTS
+npm bundled with Node.js
+```
+
+After installation, always verify:
+
+```bash
+node -v
+npm -v
+```
+
+Both commands must print a version number.
+
+---
+
+## 6.1 Windows
+
+### Recommended simple setup
+
+1. Open the official Node.js download page.
+2. Download the **LTS** Windows installer.
+3. Run the installer.
+4. Keep the default options.
+5. Make sure Node.js is added to `PATH`.
+6. Open a new PowerShell window.
+7. Verify the installation:
+
+```powershell
+node -v
+npm -v
+```
+
+### Alternative with winget
+
+If winget is available:
+
+```powershell
+winget install OpenJS.NodeJS.LTS
+```
+
+Then open a new PowerShell window and verify:
+
+```powershell
+node -v
+npm -v
+```
+
+---
+
+## 6.2 macOS
+
+### Option A: Official installer
+
+1. Open the official Node.js download page.
+2. Download the **LTS** macOS installer.
+3. Run the installer.
+4. Open a new terminal.
+5. Verify:
+
+```bash
+node -v
+npm -v
+```
+
+### Option B: nvm
+
+If you already use `nvm`, install the latest LTS version:
+
+```bash
+nvm install --lts
+nvm use --lts
+node -v
+npm -v
+```
+
+---
+
+## 6.3 Linux
+
+### Option A: nvm
+
+If you already use `nvm`, install the latest LTS version:
+
+```bash
+nvm install --lts
+nvm use --lts
+node -v
+npm -v
+```
+
+### Option B: Distribution package manager
+
+Depending on your Linux distribution, install Node.js through your package manager or a NodeSource installer.
+
+After installation, verify:
+
+```bash
+node -v
+npm -v
+```
+
+## 7. Claude Code Backup Path: Global CLI
 
 Use this path only if the VS Code extension setup does not work or if you want to run Claude Code from the terminal.
 
@@ -371,20 +322,27 @@ Content:
 }
 ```
 
-### 7.3 Optional onboarding fallback
+### 7.3 Start Claude Code from the project folder
 
-If Claude Code asks for sign-in even though the proxy configuration is correct, create or edit:
-
-macOS/Linux:
-
-```txt
-~/.claude.json
+```bash
+cd appointment-api
+claude --model kimi-latest
 ```
+
+### 7.4 Sign in on Claude Code start (optional)
+
+If Claude Code asks for sign-in even though the proxy configuration is correct, create or edit .claude.json:
 
 Windows:
 
 ```txt
 C:\Users\<your-user>\.claude.json
+```
+
+macOS/Linux:
+
+```txt
+~/.claude.json
 ```
 
 Add or merge:
@@ -394,13 +352,6 @@ Add or merge:
   "hasCompletedOnboarding": true,
   "primaryApiKey": "sk-privatemode"
 }
-```
-
-### 7.4 Start Claude Code from the project folder
-
-```bash
-cd <repo-folder>
-claude --model kimi-latest
 ```
 
 ## 8. Troubleshooting
@@ -447,32 +398,18 @@ Then open:
 http://localhost:3000/api
 ```
 
-## 9. Minimal Workshop Checklist
+## References
 
-Before the hands-on starts, verify:
+Node.js. (n.d.). _Download Node.js®_. Node.js. Retrieved June 25, 2026, from [https://nodejs.org/en/download](https://nodejs.org/en/download)
 
-```bash
-node -v
-npm -v
-git --version
-docker --version
-```
+npm, Inc. (n.d.). _Downloading and installing Node.js and npm_. npm Docs. Retrieved June 25, 2026, from [https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/)
 
-Then:
+Edgeless Systems. (n.d.). _API quickstart_. Privatemode Documentation. Retrieved June 25, 2026, from [https://docs.privatemode.ai/getting-started/proxy-api/](https://docs.privatemode.ai/getting-started/proxy-api/)
 
-```bash
-npm ci
-npm run start:dev
-```
+Edgeless Systems. (n.d.). _Claude Code_. Privatemode Documentation. Retrieved June 25, 2026, from [https://docs.privatemode.ai/guides/coding-assistants-claude-code/](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
 
-Open:
+Anthropic. (n.d.). _Environment variables_. Claude Code Docs. Retrieved June 25, 2026, from [https://code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars)
 
-```txt
-http://localhost:3000/api
-```
+Anthropic. (n.d.). _Claude Code settings_. Claude Code Docs. Retrieved June 25, 2026, from [https://code.claude.com/docs/en/settings](https://code.claude.com/docs/en/settings)
 
-Start the Privatemode proxy and verify Claude Code in VS Code with:
-
-```txt
-Reply with OK only.
-```
+Lumecoder. (n.d.). _How to Use Claude Code in VS Code: Extension Setup and Configuration Guide_. Lumecoder Guides. Retrieved June 25, 2026, from [https://lumecoder.com/guides/vscode-claude-code](https://lumecoder.com/guides/vscode-claude-code)
