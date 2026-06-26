@@ -67,7 +67,7 @@ docker --version
 
 ### 3.2 Important Requirements
 
-On Windows, Docker Desktop and Rancher Desktop usually require WSL 2 for Linux containers. Hardware virtualization must also be enabled in BIOS/UEFI.
+On Windows, Docker Desktop and Rancher Desktop usually require WSL 2 for Linux containers. You can install WSL in powershell using the command `wsl --install`. Hardware virtualization must also be enabled in BIOS/UEFI.
 
 You do not need deeper Docker knowledge for this workshop. Docker is only used to run one local proxy container.
 
@@ -181,7 +181,7 @@ The API should now be running locally. You can test endpoints by expanding an en
 
 ## 7. Start the Privatemode Proxy
 
-This step requires a Privatemode API key. The key will be provided during the session.
+This step requires a Privatemode API key, which will be provided during the session. As a result, you will not be able to test the proxy connection at home. The setup will be completed at the start of the session.
 
 Claude Code connects to Privatemode through a local proxy running on port `8080`. Start Docker Desktop or Rancher Desktop first, then run:
 
@@ -203,7 +203,7 @@ If Claude responds, the AI setup is working.
 
 ## 8. Final Setup Checklist
 
-Use this checklist to prepare at home before the session. The API and local tools can be prepared in advance, but the full Claude Code connection requires the Privatemode API key, which will be provided during the session.
+Use this checklist to prepare at home before the session. The project and local tools can be prepared in advance, but the full Claude Code connection requires the Privatemode API key, which will be provided during the session.
 
 ### Can be checked before the session
 
@@ -223,7 +223,7 @@ Use this checklist to prepare at home before the session. The API and local tool
 11. You start the Privatemode proxy with the provided API key.
 12. Claude Code responds inside VS Code.
 
-If the first section works at home, your local development setup is ready. It is expected that the Privatemode proxy and Claude Code connection cannot be fully tested before you receive the API key.
+If the first section works at home, your local development setup is ready. The Privatemode proxy and Claude Code connection cannot be fully tested before you receive the API key.
 
 ## 9. Optional Backup: Claude Code CLI
 
@@ -262,17 +262,18 @@ claude
 
 ### Tool Installation Guides
 
-- Microsoft. (n.d.). _Get started with Visual Studio Code_. [https://code.visualstudio.com/docs/getstarted/overview](https://code.visualstudio.com/docs/getstarted/overview)
-- Anthropic. (n.d.). _Use Claude Code in VS Code_. [https://code.claude.com/docs/en/vs-code](https://code.claude.com/docs/en/vs-code)
-- Git. (n.d.). _Installing Git_. [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- Node.js. (n.d.). _Download Node.js_. [https://nodejs.org/en/download](https://nodejs.org/en/download)
-- Docker. (n.d.). _Docker Desktop_. [https://docs.docker.com/desktop/](https://docs.docker.com/desktop/)
-- SUSE. (n.d.). _Installation - Rancher Desktop Docs_. [https://docs.rancherdesktop.io/getting-started/installation/](https://docs.rancherdesktop.io/getting-started/installation/)
+- Anthropic. (n.d.). _Use Claude Code in VS Code_. Retrieved June 26, 2026, from [https://code.claude.com/docs/en/vs-code](https://code.claude.com/docs/en/vs-code)
+- Docker. (n.d.). _Docker Desktop_. Retrieved June 26, 2026, from [https://docs.docker.com/desktop/](https://docs.docker.com/desktop/)
+- Git. (n.d.). _Installing Git_. Retrieved June 26, 2026, from [https://git-scm.com/book/en/v2/Getting-Started-Installing-Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- Microsoft. (2026, June 24). _Get started with Visual Studio Code_. Retrieved June 26, 2026, from [https://code.visualstudio.com/docs/getstarted/overview](https://code.visualstudio.com/docs/getstarted/overview)
+- Microsoft. (2025, August 6). _How to install Linux on Windows with WSL_. Retrieved June 26, 2026, from [https://learn.microsoft.com/en-us/windows/wsl/install](https://learn.microsoft.com/en-us/windows/wsl/install)
+- Node.js. (n.d.). _Download Node.js_. Retrieved June 26, 2026, from [https://nodejs.org/en/download](https://nodejs.org/en/download)
+- SUSE. (n.d.). _Installation - Rancher Desktop Docs_. Retrieved June 26, 2026, from [https://docs.rancherdesktop.io/getting-started/installation/](https://docs.rancherdesktop.io/getting-started/installation/)
 
 ### Claude Code and Privatemode Configuration References
 
-- Anthropic. (n.d.). _Claude Code Quickstart_. [https://code.claude.com/docs/en/quickstart](https://code.claude.com/docs/en/quickstart)
-- Anthropic. (n.d.). _Environment variables_. [https://code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars)
-- Anthropic. (n.d.). _Claude Code settings_. [https://code.claude.com/docs/en/settings](https://code.claude.com/docs/en/settings)
-- Edgeless Systems. (n.d.). _Claude Code - Privatemode_. [https://docs.privatemode.ai/guides/coding-assistants-claude-code/](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
-- Edgeless Systems. (n.d.). _API quickstart_. [https://docs.privatemode.ai/getting-started/proxy-api/](https://docs.privatemode.ai/getting-started/proxy-api/)
+- Anthropic. (n.d.). _Claude Code Quickstart_. Retrieved June 26, 2026, from [https://code.claude.com/docs/en/quickstart](https://code.claude.com/docs/en/quickstart)
+- Anthropic. (n.d.). _Environment variables_. Retrieved June 26, 2026, from [https://code.claude.com/docs/en/env-vars](https://code.claude.com/docs/en/env-vars)
+- Anthropic. (n.d.). _Claude Code settings_. Retrieved June 26, 2026, from [https://code.claude.com/docs/en/settings](https://code.claude.com/docs/en/settings)
+- Edgeless Systems. (2026, June 24). _Claude Code - Privatemode_. Retrieved June 26, 2026, from [https://docs.privatemode.ai/guides/coding-assistants-claude-code/](https://docs.privatemode.ai/guides/coding-assistants-claude-code/)
+- Edgeless Systems. (2026, June 24). _API quickstart_. Retrieved June 26, 2026, from [https://docs.privatemode.ai/getting-started/proxy-api/](https://docs.privatemode.ai/getting-started/proxy-api/)
