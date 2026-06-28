@@ -2,56 +2,64 @@
 
 ## Context
 
-This project contains a small **NestJS** Appointment API in a public administration context. The application already manages offices and appointments.
+This project contains a small **NestJS** Appointment API in a public administration context. The application already manages **offices** and **appointments**.
 
-Your task is to extend the existing API with a feature for appointment availability.
+Appointments always start on the hour and have a fixed duration of one hour. They need to have a office assigned.
 
 ## Task
 
-Add an API endpoint that allows a client to find available appointment slots for one office on one selected day.
+Implement an endpoint that returns **available appointment slots** for a selected office on a given date.
 
-The feature should fit into the existing API style and project structure. Some details are intentionally left open, so inspect the codebase before deciding how to implement it.
+The feature should integrate into the existing API style and project structure.  
+Some implementation details are intentionally left open. Inspect the codebase before making design decisions.
+
+## Working Mode
+
+- Work in groups of **2–3 students**
+- One working setup per group is sufficient
+- If you are not familiar with NestJS or TypeORM, ask Claude to walk you through an existing endpoint first
 
 ## Requirements
 
-Your solution should include:
-
-- a suitable REST endpoint
-- clear input and output handling
-- Swagger/OpenAPI documentation for manual testing
-- validation where it is relevant
-- unit tests for the most important behavior
-- simple and readable business logic
+- Provide a suitable **REST endpoint**
+- Handle input and output properly
+- Add Swagger/OpenAPI documentation (sufficient for manual testing)
+- Implement **validation** where appropriate (e.g. date format, allowed values, completeness)
+- Add **focused unit tests** for the most important behavior
+- Keep business logic simple and readable
 
 ## Acceptance Criteria
 
-Your work is complete when:
+- The endpoint can be called via Swagger
+- The endpoint returns **available appointment slots** for one office and one day
+- Only valid hourly slots are returned (based on the existing appointment rules)
+- Already booked times are **excluded**
+- Invalid or incomplete input is handled appropriately
+- Meaningful unit tests are added
+- The implementation follows the existing project style
+- You can explain the main parts of your solution
 
-- the endpoint can be called from Swagger
-- the endpoint returns available slots for one office and one day
-- already booked times are not returned as available
-- invalid or incomplete input is handled reasonably
-- meaningful unit tests were added or updated
-- the implementation follows the existing project style
-- you can explain the main parts of the solution
+## Tips for Working with Claude Code
 
-## Working with Claude Code in VS Code
+- Reference files or folders using `@` (e.g. `@src/appointments`)
+- Ask Claude to inspect existing code **before** proposing new code
+- Request a **short plan**, review it, then proceed step by step
+- Write your own short prompts - do not paste this entire task file into Claude
 
-Claude Code is available inside VS Code through the Claude Code panel. You can use it to ask questions about the project, inspect files, plan changes, edit code, and run commands.
+## Before You Finish
 
-Useful hints:
+As a group, verify the following:
 
-- Ask Claude to inspect relevant files before changing code.
-- Reference files or folders with `@` when useful.
-- Ask for a short plan before implementation.
-- Review the plan and the generated changes before accepting them.
-- If the solution becomes too large, ask Claude to simplify it.
-- Do not paste this entire task file as your prompt. Write your own prompt based on your understanding.
+- **Explain it**
+  Can everyone explain the chosen endpoint and where the business logic is implemented?
 
-## Reflection
+- **Run the tests**
+  Run `npm run test`. Do all tests pass?
 
-After completing the task, briefly consider:
+- **Test in Swagger**  
+  Try your endpoint with both valid and invalid input
 
-- Where did Claude Code help?
-- What did you need to review or correct?
-- Would you trust the result without running or reading it?
+- **Review the diff**  
+  Run `git diff` together. Is anything unexpected?
+
+You may push your solution to a new branch if you want to keep it.
