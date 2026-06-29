@@ -53,7 +53,7 @@ As a group, verify the following:
 - **Explain it**  
   Can everyone explain the chosen endpoint and where the business logic is implemented?
 
-- **Run the tests**
+- **Run the tests**  
   Run `npm run test`. Do all tests pass?
 
 - **Test in Swagger**  
