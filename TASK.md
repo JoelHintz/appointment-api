@@ -50,7 +50,7 @@ Some implementation details are intentionally left open. Inspect the codebase be
 
 As a group, verify the following:
 
-- **Explain it**
+- **Explain it**  
   Can everyone explain the chosen endpoint and where the business logic is implemented?
 
 - **Run the tests**
