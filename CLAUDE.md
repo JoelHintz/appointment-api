@@ -1,0 +1,241 @@
+# CLAUDE.md: appointment-api
+
+## Project
+
+This repository contains a small **NestJS + TypeScript** Appointment API for a public administration context.
+
+The API manages appointments for preconfigured public offices.
+
+Domain rules:
+
+- An appointment belongs to exactly one office.
+- Appointments are booked for fixed one-hour slots that start on a full hour (UTC).
+- An office must not have overlapping appointments.
+
+The workshop exercises live in `TASK.md`; ready-to-use prompts are in `prompts/`.
+This branch also carries the reference implementation of the "available slots"
+task (`GET /offices/:id/availability`).
+
+## Stack
+
+- NestJS
+- TypeScript
+- REST
+- Swagger / OpenAPI via `@nestjs/swagger`
+- SQLite + TypeORM
+- `class-validator` + `class-transformer`
+- Jest
+
+Default DB driver: `better-sqlite3`.
+
+## Architecture
+
+Two feature modules under `src/`, wired together by `src/app.module.ts`, which also
+configures the single TypeORM connection (`better-sqlite3`, `synchronize: true`,
+`autoLoadEntities: true`). `src/main.ts` — not the modules — installs the global
+`ValidationPipe` (`whitelist`, `transform`, `forbidNonWhitelisted`) and mounts
+Swagger at `/api`.
+
+- **offices/** — `GET /offices` (list) and `GET /offices/:id/availability`.
+  `OfficesSeedService` implements `OnApplicationBootstrap` and inserts
+  `INITIAL_OFFICE_DATA` once, only when the table is empty, so restarts do not
+  duplicate offices. `Office` stores `opensAt` / `closesAt` as `"HH:MM"` strings.
+- **appointments/** — CRUD without delete (`POST`, `GET`, `GET /:id`, `PATCH /:id`).
+  `AppointmentsModule` also imports the `Office` repository so it can load and
+  attach the related office.
+
+All domain invariants live in the services, not in DTOs or the database:
+
+- Start time must parse and land exactly on a full hour (UTC minutes, seconds and
+  milliseconds all zero); `endsAt` is always derived as `startsAt + 60 minutes`.
+- Overlap prevention is an exact `startsAt` equality check — sufficient because
+  every slot is one hour and starts on the hour. On update the edited appointment
+  is excluded via `ignoredAppointmentId`.
+- Availability builds hourly slots between the office's opening and closing hour
+  and drops the ones already booked. It treats `opensAt` / `closesAt` as **UTC**
+  hours — a deliberate simplification, not correct time-zone handling.
+
+Entities are never returned directly: `AppointmentMapper` (static methods) maps to
+`AppointmentResponseDto`; `OfficesService` maps inline. Timestamps are stored as
+ISO strings in plain string columns.
+
+## General Guidelines
+
+Optimize for:
+
+- clarity over cleverness
+- teaching value over abstraction
+- simple, reviewable changes
+- explicit code over magic
+- standard NestJS patterns
+
+Avoid:
+
+- unnecessary abstractions
+- production-only complexity
+- new dependencies unless clearly justified
+- frontend, auth, queues, caching, microservices, or background jobs unless explicitly requested
+
+## Language and Naming
+
+- Use **English** for code, comments, routes, Swagger docs, DTOs, and tests.
+- Follow the naming style already used in the project.
+- Use clear and explicit names.
+- Use plural names for feature folders and routes, e.g. `appointments`, `offices`.
+- Use singular names for entities and DTO classes, e.g. `Appointment`, `Office`, `CreateAppointmentDto`.
+
+## File Structure
+
+Use the existing feature-first structure.
+
+Before creating new files, inspect the existing `appointments` and `offices` modules and follow their conventions.
+
+Do not introduce a new architectural style for the workshop task.
+
+## API Routes
+
+Use REST-style, resource-oriented routes.
+
+Existing routes:
+
+- `GET /appointments`
+- `GET /appointments/:id`
+- `POST /appointments`
+- `PATCH /appointments/:id`
+- `GET /offices`
+- `GET /offices/:id/availability`
+
+There is deliberately no `DELETE` and no bare `GET /offices/:id`.
+
+Rules:
+
+- Use nouns, not verbs.
+- Use lowercase plural route names.
+- Use path parameters for resource identity.
+- Use query parameters for filtering and optional criteria.
+- Avoid action-style routes like `/searchAppointments` or `/getAvailableSlots`.
+- Return DTOs, not TypeORM entities.
+
+When implementing a new endpoint, choose a route that fits the existing REST style and the requested use case.
+
+## DTOs and Mapping
+
+- Use DTOs intentionally for public API input and output.
+- Do not expose TypeORM entities directly from controllers.
+- Keep response shapes simple and easy to understand in Swagger.
+
+## Date and Time
+
+Use ISO-8601 strings in the API contract.
+
+Rules:
+
+- Validate date and date-time input where relevant.
+- Show useful examples in Swagger.
+- Keep time zone handling simple unless explicitly required.
+- Note that `@IsISO8601()` / `@IsDateString()` also accept full date-times, not
+  just `YYYY-MM-DD`. When you need a date-only value, constrain it explicitly
+  (e.g. `@Matches(/^\d{4}-\d{2}-\d{2}$/)`), otherwise a value like
+  `2026-06-30T12:00:00Z` passes validation and then breaks naive date parsing.
+
+## Validation
+
+Use DTO validation for request shapes and service-level validation for business rules.
+
+Business rules belong in services.
+
+Avoid `any` and raw payload handling unless explicitly requested.
+
+## Persistence
+
+Use TypeORM with SQLite.
+
+Rules:
+
+- Keep persistence simple and local-friendly.
+- Use repositories via `@InjectRepository`.
+- Register feature entities with `TypeOrmModule.forFeature`.
+- `synchronize: true` is acceptable for this workshop, but not production guidance.
+
+Entity relationship:
+
+- `Appointment` has a `ManyToOne` relation to `Office`.
+- `Office` does not need a reverse appointments relation unless explicitly required.
+
+## Controllers and Services
+
+Controllers should:
+
+- receive input
+- rely on DTO validation
+- delegate to services
+- return response DTOs
+
+Services should:
+
+- contain business logic
+- validate domain rules
+- use repositories
+- perform mapping where appropriate
+
+Do not place business logic in controllers.
+
+## Swagger
+
+Swagger is the primary manual testing surface.
+
+Document new public endpoints sufficiently so they can be tested in Swagger.
+
+Use the title: `Appointment API`.
+
+## Testing
+
+Keep tests small, focused, and readable. They should cover the most important behavior, not every possible edge case. Prefer a few meaningful tests over many repetitive tests.
+
+### Code Style
+
+- Prefer straightforward TypeScript.
+- Keep functions short and purposeful.
+- Use explicit return types where helpful.
+- Avoid unnecessary generics and helper layers.
+- Keep comments sparse and useful.
+- Prefer readability over clever abstractions.
+
+### Dependency Policy
+
+Before adding a dependency:
+
+- check whether NestJS, TypeORM, or existing libraries already solve the problem
+- justify the dependency
+- avoid packages used only for convenience
+
+Avoid unless explicitly requested:
+
+- mapper frameworks
+- CQRS/event sourcing
+- advanced pagination packages
+- additional infrastructure libraries
+
+### Definition of Done
+
+A change is complete when:
+
+- the code builds
+- the endpoint works in Swagger
+- the main behavior is covered by focused unit tests
+- the implementation remains understandable for workshop participants
+
+### Useful Commands
+
+Use existing package scripts only.
+
+- `npm run start:dev` — run with watch; Swagger UI at http://localhost:3000/api
+- `npm run build`
+- `npm test` — unit tests (Jest, `*.spec.ts` under `src/`)
+- `npm test -- offices.service` — run one file; `npm test -- -t "slot"` by test name
+- `npm run test:cov` — unit tests with coverage
+- `npm run lint` — note: this runs `eslint --fix` and rewrites files in place
+
+The SQLite file (`data/appointments.db`, gitignored) is created and migrated on
+first run via `synchronize: true`; delete it to reset local state. If a command is
+missing, inspect `package.json` before assuming it exists.
