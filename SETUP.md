@@ -1,49 +1,55 @@
-## Technische Vorbereitung
+# Technische Vorbereitung für den Workshop
 
-In diesem Workshop arbeitet ihr in kleinen Gruppen mit einer vorhandenen **NestJS-/TypeScript-Anwendung** und **Claude Code**. Bitte bereitet euren Laptop vor dem Workshop anhand dieser Anleitung vor.
+In diesem Workshop arbeitet ihr in kleinen Gruppen mit einer vorhandenen **NestJS-/TypeScript-Anwendung** und **Claude Code**. Bitte bereitet euren Laptop vor dem Workshop anhand dieser Anleitung vor. Für die Teilnahme am Workshop muss mindestens ein vollständig eingerichteter Laptop pro Gruppe verfügbar sein.
 
-> **Ziel:** Führt die Vorbereitung möglichst auf eurem eigenen Laptop durch. Für den Workshop ist mindestens ein vollständig vorbereitetes Gerät pro Gruppe erforderlich.
+## Ziel des Setups
 
-### Erfolgreiches Setup
+Das Setup ist erfolgreich, wenn:
 
-Nach Abschluss der Vorbereitung sollten folgende Punkte erfüllt sein:
+- das Workshop-Repository lokal vorhanden ist,
+- die Projektabhängigkeiten installiert sind,
+- die Anwendung startet,
+- die Swagger-Oberfläche erreichbar ist,
+- die vorhandenen Tests erfolgreich laufen und
+- `git status` keine unbeabsichtigten Änderungen zeigt.
 
-- Visual Studio Code, Git, Node.js und npm sind installiert.
-- Die offizielle Claude-Code-Erweiterung ist in Visual Studio Code installiert.
-- Das Repository ist lokal vorhanden.
-- Die Projektabhängigkeiten sind installiert.
-- Die Anwendung startet und Swagger ist erreichbar.
-- Die vorhandenen Tests laufen erfolgreich.
-
-> **Claude-Zugang:** Der Zugang wird erst im Workshop eingerichtet. Ihr benötigt vorab keinen API-Key und müsst Claude Code noch nicht starten oder testen.
+> **Claude-Zugang**
 >
-> **Sicherheit:** Speichert keine API-Keys oder personenbezogenen Daten im Repository oder in Prompts. Der im Workshop bereitgestellte API-Key darf nicht committet, veröffentlicht oder weitergegeben werden.
+> Installiert Claude Code vorab. Die Anmeldung und die Einrichtung des Workshop-Zugangs erfolgen erst im Workshop. Ihr benötigt für die Vorbereitung keinen API-Key und müsst Claude Code noch nicht starten oder testen.
 
-### 1. Voraussetzungen
+> **Wichtig: Sicherheit**
+>
+> Verwendet im Repository, in Prompts und in Screenshots keine API-Keys, personenbezogenen Daten oder andere vertrauliche Informationen.
+>
+> Workshop-Zugangsdaten dürfen nicht committet, veröffentlicht oder weitergegeben werden.
+
+## 1. Voraussetzungen
 
 Ihr benötigt:
 
-- einen eigenen Laptop mit lokalen Installationsrechten,
-- eine stabile Internetverbindung,
-- ausreichend freien Speicherplatz für die Programme und das Projekt.
+- einen Laptop mit Windows, macOS oder Linux,
+- die Berechtigung, Programme zu installieren,
+- eine stabile Internetverbindung.
 
-Verwendet für die folgenden Schritte ein Terminal eurer Wahl, zum Beispiel das integrierte Terminal in Visual Studio Code, PowerShell, die Windows-Eingabeaufforderung oder ein Terminal unter macOS beziehungsweise Linux.
+### Terminal verwenden
 
-### 2. Benötigte Software installieren
+Führt die Befehle in einem Terminal eurer Wahl aus. Empfohlen wird das integrierte Terminal in Visual Studio Code:
 
-Für den Workshop benötigt ihr einige Werkzeuge, die während der praktischen Übungen verwendet werden. Installiert diese vorab, damit wir im Workshop direkt mit den Aufgaben starten können.
+**Terminal > New Terminal**
 
-#### 2.1 Visual Studio Code
+Unter Windows und macOS könnt ihr alternativ das vorinstallierte Systemterminal verwenden.
 
-Visual Studio Code ist der Editor, in dem ihr die Anwendung betrachten, ändern und gemeinsam mit Claude Code bearbeiten werdet.
+### 2.1 Visual Studio Code
+
+Visual Studio Code wird als Entwicklungsumgebung für das Workshop-Projekt verwendet.
 
 Installiert eine aktuelle Version von Visual Studio Code und startet den Editor anschließend einmal:
 
 - [Visual Studio Code herunterladen und installieren](https://code.visualstudio.com/docs/setup/setup-overview)
 
-#### 2.2 Git
+### 2.2 Git
 
-Git ist ein Versionsverwaltungssystem. Es wird verwendet, um das Workshop-Projekt von GitHub herunterzuladen und Änderungen am Projekt nachzuverfolgen.
+Git wird benötigt, um das Workshop-Repository herunterzuladen und Änderungen nachzuverfolgen.
 
 Installiert Git:
 
@@ -57,11 +63,11 @@ git --version
 
 Der Befehl sollte eine Versionsnummer ausgeben.
 
-#### 2.3 Node.js und npm
+### 2.3 Node.js und npm
 
-Die bereitgestellte Termin-API basiert auf TypeScript und läuft mit Node.js. npm wird verwendet, um die benötigten Bibliotheken und Werkzeuge für das Projekt zu installieren.
+Die Workshop-Anwendung basiert auf TypeScript und wird mit Node.js ausgeführt. npm wird für die Installation der Projektabhängigkeiten verwendet.
 
-Installiert **Node.js 24 LTS** in einer aktuellen Version der Reihe 24.x. npm wird zusammen mit Node.js installiert:
+Installiert die aktuelle Version von **Node.js 24 LTS**. npm wird zusammen mit Node.js installiert:
 
 - [Node.js herunterladen](https://nodejs.org/en/download)
 
@@ -72,115 +78,126 @@ node --version
 npm --version
 ```
 
-Die Node.js-Version sollte mit `v24.` beginnen. npm sollte ebenfalls eine Versionsnummer ausgeben.
+Erwartetes Ergebnis:
 
-#### 2.4 Claude Code für Visual Studio Code
+- `node --version` beginnt mit `v24.`
+- `npm --version` gibt eine Versionsnummer aus
 
-Claude Code ist der zentrale AI-Coding-Assistent, den wir im Workshop verwenden werden. Er unterstützt unter anderem beim Verstehen von Code, bei der Fehlersuche, beim Schreiben von Tests und bei der Implementierung neuer Funktionen.
+### 2.4 Claude Code für Visual Studio Code
 
-Installiert dafür in Visual Studio Code die offizielle Erweiterung von Anthropic:
+Claude Code ist der AI-Coding-Assistent, den wir im Workshop verwenden werden. Installiert in Visual Studio Code die offizielle Erweiterung von Anthropic:
 
 1. Öffnet in Visual Studio Code die Ansicht **Extensions**.
 2. Sucht nach **Claude Code**.
-3. Installiert die Erweiterung des Herausgebers **Anthropic**.
-4. Startet Visual Studio Code neu, falls die Erweiterung nicht angezeigt wird.
+3. Prüft, dass Anthropic als Herausgeber angegeben ist.
+4. Installiert die Erweiterung.
+5. Startet Visual Studio Code neu, falls die Erweiterung nicht angezeigt wird.
 
 Weitere Informationen:
 
 - [Claude Code in Visual Studio Code einrichten](https://code.claude.com/docs/en/vs-code)
 
-Für die Vorbereitung reicht die Installation der Erweiterung. Die Anmeldung beziehungsweise Einrichtung des Workshop-Zugangs erfolgt gemeinsam im Workshop.
+Eine Anmeldung oder ein Funktionstest ist vor dem Workshop nicht erforderlich. Der Workshop-Zugang wird gemeinsam während des Workshops eingerichtet.
 
-### 3. Projekt einrichten
+## 3. Projekt einrichten
 
 Im nächsten Schritt ladet ihr das für den Workshop verwendete Projekt herunter und installiert die dafür benötigten Abhängigkeiten.
 
-#### 3.1 Repository klonen
+### 3.1 Repository klonen
 
-Öffnet das GitHub-Repository zunächst im Browser unter:
+Prüft zunächst, ob ihr das Repository im Browser öffnen könnt:
 
 - [Appointment API auf GitHub](https://github.com/JoelHintz/appointment-api)
 
-Wenn ihr die Seite aufrufen könnt, öffnet als Nächstes ein Terminal in dem Ordner, in dem das Projekt gespeichert werden soll, und klont das Repository:
+Öffnet anschließend ein Terminal in dem Ordner, in dem ihr das Projekt speichern möchtet, und klont das Repository:
 
 ```bash
 git clone https://github.com/JoelHintz/appointment-api.git
 ```
 
-Wechselt anschließend in den Projektordner und öffnet ihn in Visual Studio Code:
+Wechselt in den Projektordner:
 
 ```bash
 cd appointment-api
+```
+
+Öffnet den Projektordner in Visual Studio Code:
+
+```bash
 code .
 ```
 
-Falls `code .` nicht funktioniert, öffnet Visual Studio Code und wählt **File > Open Folder** beziehungsweise **Datei > Ordner öffnen**. Wählt dann den Ordner `appointment-api` aus.
+Falls `code .` nicht funktioniert:
 
-Im Projektordner sollten unter anderem `package.json`, `package-lock.json` und `src/` vorhanden sein.
+1. Öffnet Visual Studio Code.
+2. Wählt **File > Open Folder** beziehungsweise **Datei > Ordner öffnen**.
+3. Wählt den Ordner `appointment-api` aus.
 
-#### 3.2 Abhängigkeiten installieren
+Prüft, ob im geöffneten Ordner unter anderem folgende Inhalte sichtbar sind:
 
-Bevor die Anwendung gestartet werden kann, müssen die für das Projekt benötigten Bibliotheken und Werkzeuge installiert werden.
+- `package.json`
+- `package-lock.json`
+- `src/`
 
-Führt folgenden Befehl im Projektordner aus:
+### 3.2 Abhängigkeiten installieren
+
+Bevor die Anwendung gestartet werden kann, müssen die für das Projekt benötigten Bibliotheken und Werkzeuge installiert werden. Führt im Projektordner folgenden Befehl aus:
 
 ```bash
 npm ci
 ```
 
-`npm ci` installiert die benötigten Abhängigkeiten für das Projekt und verwendet dabei den in `package-lock.json` festgelegten Stand. Dadurch wird für alle Gruppen eine möglichst einheitliche Installation hergestellt.
+`npm ci` installiert die in `package-lock.json` festgelegten Abhängigkeiten und sorgt damit für einen einheitlichen Projektstand.
 
-Löscht oder verändert `package-lock.json` nicht.
+Löscht oder verändert package-lock.json nicht.
 
-### 4. Setup prüfen
+## 4. Setup prüfen
 
-Nun prüfen wir, ob die Anwendung auf eurem Rechner wie erwartet funktioniert. Die folgenden Schritte dienen als kurzer Funktionstest. Wenn alle erfolgreich sind, ist euer Laptop für den Workshop vorbereitet.
+Die folgenden Schritte dienen als kurzer Funktionstest, ob die Anwendung auf dem Rechner wie erwartet funktioniert.
 
-#### 4.1 Anwendung starten
+### 4.1 Anwendung starten
 
-Um zu prüfen, ob das Projekt korrekt eingerichtet wurde, startet die Anwendung im Projektverzeichnis mit folgendem Befehl:
+Startet die Anwendung im Projektordner:
 
 ```bash
 npm run start:dev
 ```
 
-Lasst das Terminal geöffnet, solange die Anwendung läuft. Mit **Ctrl+C** könnt ihr die Anwendung jederzeit beenden.
+Lasst das Terminal geöffnet, solange die Anwendung läuft. Die Anwendung kann mit `Ctrl+C` beendet werden.
 
-#### 4.2 Swagger öffnen
+### 4.2 Swagger-Oberfläche prüfen
 
-Die Anwendung stellt HTTP-Endpunkte zur Verfügung und besitzt keine eigene grafische Benutzeroberfläche. Stattdessen wird eine Swagger-Oberfläche bereitgestellt, über die die verfügbaren Endpunkte dokumentiert und getestet werden können.
+Die Anwendung besitzt keine eigene grafische Benutzeroberfläche. Die verfügbaren HTTP-Endpunkte werden über Swagger dargestellt.
 
 Öffnet bei laufender Anwendung folgende Seite im Browser:
 
-- Swagger-Oberfläche: http://localhost:3000/api
+- [Swagger-Oberfläche öffnen](http://localhost:3000/api)
 
-Die Prüfung ist erfolgreich, wenn die Swagger-Seite geladen wird. Ihr müsst noch keine Endpunkte aufrufen oder testen.
+Die Prüfung ist erfolgreich, wenn die Swagger-Oberfläche geladen wird. Ihr müsst noch keine Endpunkte aufrufen oder testen.
 
-#### 4.3 Tests ausführen
+### 4.3 Tests ausführen
 
-Zusätzlich zur manuellen Prüfung über Swagger verfügt die Anwendung über automatische Tests. Diese helfen dabei sicherzustellen, dass die Anwendung korrekt eingerichtet wurde und sich wie erwartet verhält.
-
-Öffnet ein zweites Terminal im Projektordner und führt folgenden Befehl aus:
+Zusätzlich verfügt die Anwendung über automatische Tests. Lasst die Anwendung zunächst weiterlaufen und öffnet ein zweites Terminal im Projektordner.
 
 ```bash
 npm test
 ```
 
-Die vorhandenen Tests sollten erfolgreich durchlaufen. Falls der Testprozess anschließend auf Dateiänderungen wartet, könnt ihr ihn mit **Ctrl+C** beenden.
+Die vorhandenen Tests sollten erfolgreich durchlaufen. Falls der Testprozess anschließend auf Dateiänderungen wartet, könnt ihr ihn mit `Ctrl+C` beenden.
 
-#### 4.4 Projektstatus prüfen
+### 4.4 Git-Status prüfen
 
-Zum Abschluss könnt ihr überprüfen, ob durch Installation, Starten der Anwendung und Testausführung unbeabsichtigte Änderungen am Repository entstanden sind:
+Zum Abschluss prüft, ob durch Installation, Starten der Anwendung und Testausführung unbeabsichtigte Änderungen am Repository entstanden sind:
 
 ```bash
 git status
 ```
 
-Der Befehl sollte keine unerwarteten Änderungen an Projektdateien anzeigen.
+Der Befehl sollte keine unbeabsichtigten Änderungen anzeigen. Verwerft keine Änderungen, wenn ihr nicht sicher seid, ob sie noch benötigt werden.
 
-#### 4.5 Optional: Projekt kennenlernen
+## 5. Optional: Projekt kennenlernen
 
-Wenn ihr euch bereits vor dem Workshop einen ersten Eindruck verschaffen möchtet, könnt ihr euch einige wichtige Dateien und Ordner ansehen.
+Wenn ihr euch vor dem Workshop einen ersten Überblick verschaffen möchtet, könnt ihr euch folgende Bereiche ansehen:
 
 Besonders hilfreich sind:
 
@@ -189,132 +206,195 @@ Besonders hilfreich sind:
 - `src/` für den Anwendungscode
 - `test/` beziehungsweise Dateien mit der Endung `.spec.ts` für die automatisierten Tests
 
-Es ist nicht erforderlich, vor dem Workshop Änderungen am Code vorzunehmen oder NestJS im Detail zu lernen.
+Es ist nicht erforderlich, vor dem Workshop Änderungen am Code vorzunehmen oder NestJS zu lernen.
 
-### 5. Abschließende Checkliste
+## 6. Abschließende Checkliste
 
-- [ ] Visual Studio Code startet.
-- [ ] `git --version` funktioniert.
-- [ ] `node --version` zeigt eine Version `v24.x.x`.
-- [ ] `npm --version` funktioniert.
+- [ ] Visual Studio Code ist installiert und startet.
+- [ ] `git --version` gibt eine Versionsnummer aus.
+- [ ] `node --version` beginnt mit `v24.`
+- [ ] `npm --version` gibt eine Versionsnummer aus.
 - [ ] Die Claude-Code-Erweiterung von Anthropic ist installiert.
-- [ ] Das Repository wurde geklont und als Projektordner geöffnet.
+- [ ] Das Repository ist lokal in Visual Studio Code verfügbar.
 - [ ] `npm ci` wurde erfolgreich ausgeführt.
 - [ ] `npm run start:dev` startet die Anwendung.
 - [ ] Die Swagger-Oberfläche ist unter `http://localhost:3000/api` erreichbar.
 - [ ] `npm test` läuft erfolgreich.
 - [ ] `git status` zeigt keine unbeabsichtigten Änderungen.
 
-### 6. Troubleshooting
+## 7. Troubleshooting
 
 In diesem Abschnitt findet ihr eine Auswahl typischer Probleme, die während der Einrichtung auftreten können, sowie passende Lösungsvorschläge.
 
 Solltet ihr beim Setup auf Schwierigkeiten stoßen, sucht nach dem Fehlerbild, das am besten zu eurem Problem passt. Führt dabei nur die Schritte aus, die für euer konkretes Problem vorgesehen sind.
 
-#### Git, Node.js oder npm wird nicht gefunden
+### Git, Node.js oder npm wird nicht gefunden
 
-- Schließt alle Terminals und Visual Studio Code.
-- Öffnet ein neues Terminal und probiert den Befehl erneut.
-- Startet den Rechner neu, falls der Befehl weiterhin nicht gefunden wird.
-- Installiert oder repariert nur das betroffene Programm und öffnet danach erneut ein Terminal.
+1. Schließt alle geöffneten Terminals und Visual Studio Code vollständig.
+2. Öffnet Visual Studio Code und das Terminal erneut.
+3. Führt den betroffenen Befehl noch einmal aus:
 
-Wenn ein Befehl in einem separaten Terminal funktioniert, aber nicht in Visual Studio Code, startet Visual Studio Code vollständig neu oder verwendet das funktionierende Terminal.
+```bash
+git --version
+node --version
+npm --version
+```
 
-Falls `node --version` nicht mit `v24.` beginnt, installiert Node.js 24 LTS. Eine manuelle Änderung der PATH-Variable ist normalerweise nicht nötig. Prüft sie nur, wenn eine Neuinstallation das Problem nicht behebt und ihr mit PATH-Einstellungen vertraut seid.
+Falls der Befehl weiterhin nicht gefunden wird:
 
-#### Das Repository kann nicht geklont werden
+1. Startet den Rechner neu.
+2. Prüft, ob das betroffene Programm installiert ist.
+3. Installiert oder repariert nur das betroffene Programm.
+4. Öffnet anschließend ein neues Terminal.
 
-- Prüft, ob das Repository im Browser erreichbar ist.
-- Prüft eure Internetverbindung sowie mögliche Einschränkungen durch VPN oder Firewall.
-- Prüft, ob bereits ein Ordner namens `appointment-api` vorhanden ist.
+Wenn ein Befehl im Systemterminal funktioniert, aber nicht im Terminal von Visual Studio Code, startet Visual Studio Code vollständig neu oder verwendet vorübergehend das funktionierende Terminal.
 
-Wenn der vorhandene Ordner bereits das Repository enthält:
+Falls `node --version` nicht mit `v24.` beginnt, installiert Node.js 24 LTS.
+
+Eine manuelle Änderung der `PATH`-Variable ist normalerweise nicht erforderlich. Prüft die `PATH`-Einstellungen nur, wenn eine Neuinstallation das Problem nicht behebt und ihr mit Systemeinstellungen vertraut seid.
+
+### Das Repository kann nicht geklont werden
+
+Prüft zunächst:
+
+- Ist das [Appointment-API-Repository](https://github.com/JoelHintz/appointment-api) im Browser erreichbar?
+- Besteht eine Internetverbindung?
+- Blockieren VPN oder Firewall möglicherweise den Zugriff?
+- Existiert bereits ein Ordner mit dem Namen `appointment-api`?
+
+Falls bereits ein Ordner mit dem Namen existiert:
+
+1. Benennt ihn beispielsweise in `appointment-api-backup` um.
+2. Klont das Repository erneut:
+
+```bash
+git clone https://github.com/JoelHintz/appointment-api.git
+```
+
+### `package.json` wird nicht gefunden
+
+Ihr befindet euch wahrscheinlich nicht im Projektordner.
 
 ```bash
 cd appointment-api
-git status
 ```
 
-Wenn der Ordner kein Git-Repository enthält, benennt ihn beispielsweise in `appointment-api-backup` um und klont das Repository erneut.
+Prüft anschließend in Visual Studio Code, ob `package.json` im geöffneten Ordner sichtbar ist. Falls ihr den Projektordner nicht findet, öffnet ihn erneut über **File > Open Folder** beziehungsweise **Datei > Ordner öffnen**.
 
-#### npm findet package.json nicht
+### `npm ci` schlägt fehl
 
-Ihr befindet euch wahrscheinlich im falschen Ordner. Wechselt in den Projektordner:
+Prüft die Version von Node.js:
 
 ```bash
-cd appointment-api
+node --version
 ```
 
-Prüft anschließend in Visual Studio Code, ob `package.json` im geöffneten Ordner sichtbar ist.
+Die Ausgabe muss mit `v24.` beginnen.
 
-#### npm ci schlägt fehl
+Wenn die Version von Node.js nicht das Problem ist, installiert die Abhängigkeiten erneut:
 
-- Prüft, ob `node --version` eine Version `v24.x.x` zeigt.
-- Schließt Visual Studio Code und laufende Node-Prozesse.
-- Löscht den Ordner `node_modules` über den Datei-Explorer beziehungsweise Finder. Löscht **nicht** `package-lock.json`.
-
-Führt anschließend erneut aus:
+1. Beendet laufende Node.js-Prozesse und die gestartete Anwendung.
+2. Schließt Visual Studio Code.
+3. Löscht den Ordner `node_modules` über den Datei-Explorer oder Finder.
+4. Löscht nicht `package-lock.json`.
+5. Öffnet den Projektordner erneut.
+6. Führt die Installation erneut aus:
 
 ```bash
 npm ci
 ```
 
-Zusätzlich gilt:
+Hilft auch das nicht, könnt ihr das Projekt noch auf folgende Fehlerbilder prüfen:
 
-- Bei Netzwerkfehlern: Prüft die Internetverbindung und testet nach Möglichkeit ein anderes Netzwerk. Prüft auch, ob VPN oder Firewall den Download blockieren.
-- Bei Berechtigungsfehlern: Legt das Projekt in einem persönlichen Ordner ab, beispielsweise unter **Dokumente**, und klont es dort erneut.
-- Wenn `package.json` und `package-lock.json` laut Fehlermeldung nicht zusammenpassen: Führt nicht automatisch `npm install` aus. Notiert die Fehlermeldung für den Workshop.
+- **Netzwerkfehler:** Prüft Internetverbindung, VPN und Firewall. Testet nach Möglichkeit ein anderes Netzwerk.
+- **Berechtigungsfehler:** Klont das Projekt in einen persönlichen Ordner, beispielsweise unter `Dokumente`, und führt dort `npm ci` aus.
+- **`package.json` und `package-lock.json` passen nicht zusammen:** Führt nicht automatisch `npm install` aus und verändert `package-lock.json` nicht. Haltet die erste Fehlermeldung für den Workshop fest.
 
-#### Anwendung startet nicht oder Swagger ist nicht erreichbar
+### Die Anwendung startet nicht
 
-- Prüft, ob der Ordner `appointment-api` geöffnet ist.
-- Prüft, ob `npm ci` erfolgreich war.
+Prüft, ob der richtige Projektordner geöffnet ist, `package.json` sichtbar ist, `npm ci` erfolgreich war und Node.js 24 verwendet wird.
 
-Startet die Anwendung erneut:
+```bash
+node --version
+npm run start:dev
+```
+
+Achtet besonders auf die erste Fehlermeldung im Terminal.
+
+### Port 3000 wird bereits verwendet
+
+1. Prüft alle geöffneten Terminals.
+2. Beendet eine bereits laufende Anwendung mit `Ctrl+C`.
+3. Startet die Anwendung erneut:
 
 ```bash
 npm run start:dev
 ```
 
-Wenn Port 3000 bereits verwendet wird, beendet eine bereits laufende Anwendung in einem anderen Terminal mit **Ctrl+C**. Ändert den Port nicht eigenständig.
+Ändert den verwendeten Port nicht selbstständig.
 
-Wenn die Anwendung ohne Fehlermeldung läuft, öffnet die Swagger-Oberfläche erneut. Testet bei Bedarf ein privates Browserfenster oder einen anderen Browser.
+### Swagger ist nicht erreichbar
 
-#### Tests schlagen fehl
+Prüft, ob die Anwendung ohne Fehlermeldung läuft, und öffnet die [Swagger-Oberfläche](http://localhost:3000/api) erneut.
 
-- Prüft mit `git status`, ob Dateien verändert wurden.
-- Löscht bei Verdacht auf eine unvollständige Installation `node_modules` und führt erneut `npm ci` aus.
+Falls die Seite nicht geladen wird:
 
-Startet anschließend die Tests erneut:
+- prüft die eingegebene Adresse,
+- aktualisiert die Seite,
+- testet ein privates Browserfenster,
+- testet einen anderen Browser,
+- prüft das Terminal auf Fehlermeldungen.
+
+### Tests schlagen fehl
+
+Prüft zunächst, ob ihr bereits Änderungen am Projekt vorgenommen habt:
 
 ```bash
+git status
+```
+
+Verwerft keine eigenen Änderungen, wenn ihr nicht sicher seid, ob sie noch benötigt werden.
+
+Falls die Installation möglicherweise unvollständig ist:
+
+1. Beendet laufende Node.js-Prozesse.
+2. Löscht den Ordner `node_modules`.
+3. Löscht nicht `package-lock.json`.
+4. Installiert die Abhängigkeiten erneut und startet die Tests:
+
+```bash
+npm ci
 npm test
 ```
 
-Wenn die Tests auch in einem unveränderten, frisch geklonten Projekt fehlschlagen, notiert die erste Fehlermeldung und die Testzusammenfassung.
+Wenn die Tests auch in einem unveränderten, frisch geklonten Projekt fehlschlagen, haltet den Namen des fehlgeschlagenen Tests, die erste Fehlermeldung und die Testzusammenfassung fest.
 
-#### Das Problem besteht weiterhin
+### Das Problem besteht weiterhin
 
-Kommt auch mit einem unvollständigen Setup zum Workshop. Wir reservieren zu Beginn des Workshops Zeit, um offene Setup-Probleme gemeinsam zu lösen.
+Kommt auch mit einem unvollständigen Setup zum Workshop. Wir haben zu Beginn des Workshops Zeit, um offene Setup-Probleme gemeinsam zu lösen.
 
-Haltet folgende Informationen fest:
+Haltet möglichst folgende Informationen fest:
 
 ```text
 Betriebssystem:
 Node.js-Version:
 Betroffener Schritt:
+Ausgeführter Befehl:
 Erste Fehlermeldung:
 Bereits ausprobierte Lösung:
 ```
 
 Achtet bei Screenshots darauf, dass keine Passwörter, API-Keys oder anderen vertraulichen Informationen sichtbar sind.
 
-### 7. Kurzreferenz
+## 8. Kurzreferenz
 
 ```bash
 # Repository klonen
 git clone https://github.com/JoelHintz/appointment-api.git
 cd appointment-api
+
+# Projekt in Visual Studio Code öffnen
+code .
 
 # Abhängigkeiten installieren
 npm ci
@@ -329,9 +409,11 @@ npm test
 git status
 ```
 
-### 8. Quellen und weiterführende Dokumentation
+Swagger ist bei laufender Anwendung über die [Swagger-Oberfläche](http://localhost:3000/api) erreichbar.
 
-#### Installation
+## 9. Quellen und weiterführende Dokumentation
+
+### Installation und Setup
 
 - Anthropic: [Claude Code in Visual Studio Code](https://code.claude.com/docs/en/vs-code)
 - Git: [Git installieren](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -339,7 +421,7 @@ git status
 - Node.js: [Node.js herunterladen](https://nodejs.org/en/download)
 - npm: [Dokumentation zu npm ci](https://docs.npmjs.com/cli/commands/npm-ci)
 
-#### Verwendete Technologien
+### Verwendete Technologien
 
 - Jest: [Getting Started](https://jestjs.io/docs/getting-started)
 - NestJS: [First steps](https://docs.nestjs.com/first-steps)
