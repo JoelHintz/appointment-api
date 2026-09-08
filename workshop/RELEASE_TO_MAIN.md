@@ -272,7 +272,17 @@ git grep -c 'validateStartsAt' main -- src/appointments/appointments.service.ts
 git cat-file -e main:src/offices/dto/office-availability-query.dto.ts
 git cat-file -e main:src/offices/dto/office-availability-slot.dto.ts
 git cat-file -e main:src/appointments/dto/create-appointment.dto.spec.ts
+
+# 4. Kein Rückstand aus einem Testlauf. Erwartet: exakt 3 Agenten, exakt 1 Skill.
+git ls-tree --name-only main .claude/agents/ | wc -l    # muss 3 sein
+git ls-tree --name-only main .claude/skills/ | wc -l    # muss 1 sein
 ```
+
+Schritt 4 fängt den Fall ab, dass ein Testlauf (Trainer-Guide §3.3) Spuren
+hinterlässt: `.claude/` wird vom Rezept **komplett** kopiert, also würden ein
+vergessener `architect-ref` oder ein installiertes `nest-feature-module` an die
+Teilnehmenden ausgeliefert. Beim Skill wäre das keine Kleinigkeit — es beschreibt
+genau die Konventionen, die der Architekt in Aufgabe 3 selbst herleiten soll.
 
 Schritt 2 ist der wichtigere von beiden: Ein leeres Ergebnis in Schritt 1 könnte
 auch bedeuten, dass jemand am Muster vorbei umbenannt hat. Erst die Gegenprobe

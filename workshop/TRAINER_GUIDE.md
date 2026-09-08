@@ -128,22 +128,62 @@ gitignored, damit er nicht im `git diff` auftaucht, den die Gruppen prüfen.
 
 Rettungsanker sparsam einsetzen — das Schreiben ist die Übung.
 
-> **Testlauf vor dem Workshop.** Die Gerüste sind nicht lauffähig, also
-> vorübergehend überschreiben — **im normalen Terminal**, `git checkout` ist über
-> Claude gesperrt:
->
-> ```bash
-> cp workshop/reference/agent-architect.md  .claude/agents/architect.md
-> cp workshop/reference/agent-developer.md  .claude/agents/developer.md
->
-> # Kette mit workshop/prompts/task-3-contact-requests.prompt.md durchlaufen
->
-> git checkout .claude/agents/     # Gerüste wiederherstellen — nicht vergessen
-> ```
->
-> Prüfe: Findet Claude die Agenten? Läuft Plan → Umsetzung → Review sauber durch?
-> Bleibt `npm test` grün? Und vor allem: **wie lange dauert Teil b?** Das
-> 70-Minuten-Budget ist geschätzt, nicht gemessen.
+### Testlauf vor dem Workshop
+
+Die Gerüste sind nicht lauffähig, und das Demo-Skill liegt außerhalb von
+`.claude/` — beides muss für einen Test erst installiert werden.
+
+**Installieren.** Die Referenzfassungen kommen unter **eigenen Namen** dazu, statt
+die Gerüste zu überschreiben. Damit gibt es keinen Rückbau, den man vergessen
+kann, und die Gerüste sind nie in Gefahr:
+
+```bash
+sed 's/^name: architect$/name: architect-ref/' workshop/reference/agent-architect.md > .claude/agents/architect-ref.md
+sed 's/^name: developer$/name: developer-ref/' workshop/reference/agent-developer.md > .claude/agents/developer-ref.md
+mkdir -p .claude/skills/nest-feature-module
+cp workshop/reference/skill-nest-feature-module.md .claude/skills/nest-feature-module/SKILL.md
+```
+
+**Wieder entfernen.** Restlos, ohne git:
+
+```bash
+rm -f .claude/agents/architect-ref.md .claude/agents/developer-ref.md
+rm -rf .claude/skills/nest-feature-module
+```
+
+#### T1 — Rauchtest (1 Min)
+
+`/agents` muss `reviewer`, `architect`, `developer`, `architect-ref` und
+`developer-ref` listen. Die Skills `module-review` und `nest-feature-module`
+müssen auftauchen. Findet Claude etwas davon nicht, stimmt das Frontmatter nicht.
+
+Prüfe dabei gleich, dass die **Gerüste** als unbrauchbar erkennbar sind: Ihre
+`description` beginnt mit „UNVOLLSTÄNDIG".
+
+#### T2 — Reviewer allein (5 Min)
+
+Der Reviewer braucht einen Diff. Bau dir absichtlich einen schlechten: Ergänze in
+`src/offices/offices.controller.ts` eine `@Delete(':id')`-Route, die das
+Entity-Objekt direkt zurückgibt, und einen Test, der nur `toBeDefined()` prüft.
+
+Dann: *„Nutze den reviewer-Agenten für die aktuellen Änderungen."*
+
+Er muss drei Dinge treffen: den unerbetenen `DELETE`, die zurückgegebene Entity
+statt eines DTO und den substanzlosen Test. Und er darf **nichts** ändern —
+`git status` muss danach unverändert aussehen. Verwirf den Testdiff anschließend.
+
+Das ist der wichtigste Einzeltest: Der Reviewer ist das einzige Werkzeug, das die
+Gruppen fertig bekommen, und das Vorbild, an dem sie ihre eigenen Agenten bauen.
+
+#### T3 — Volle Kette (~70 Min, misst das Zeitbudget)
+
+Mit `workshop/prompts/task-3-contact-requests.prompt.md` an `architect-ref`,
+Plan freigeben, `developer-ref` umsetzen lassen, `reviewer` drüberlaufen lassen.
+
+Prüfe: Hält der Architekt sich daran, keinen Code zu schreiben? Folgt der
+Developer dem Plan und meldet Abweichungen? Bleibt `npm test` grün? Und vor
+allem: **wie lange dauert es?** Das 70-Minuten-Budget für Teil b ist geschätzt,
+nicht gemessen. Das Ergebnis ist zugleich deine Referenzlösung für Aufgabe 3.
 
 ### 3.4 Warum es kein Orchestrierungs-Skill gibt
 
