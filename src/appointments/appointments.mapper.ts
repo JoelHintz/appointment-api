@@ -1,5 +1,5 @@
 import { Appointment, AppointmentStatus } from './entity/appointment.entity';
-import { AppointmentResponseDto } from './dto/appointment-reponse.dto';
+import { AppointmentResponseDto } from './dto/appointment-response.dto';
 
 export class AppointmentMapper {
   static toResponseDto(entity: Appointment): AppointmentResponseDto {

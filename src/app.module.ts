@@ -7,7 +7,7 @@ import { OfficesModule } from './offices/offices.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: 'data/appointements.db',
+      database: 'data/appointments.db',
       synchronize: true,
       autoLoadEntities: true,
     }),

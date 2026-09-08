@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Appointment } from './entity/appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { AppointmentResponseDto } from './dto/appointment-reponse.dto';
+import { AppointmentResponseDto } from './dto/appointment-response.dto';
 import { AppointmentMapper } from './appointments.mapper';
 import { FindAppointmentsDto } from './dto/find-appointments.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AppointmentResponseDto } from './dto/appointment-reponse.dto';
+import { AppointmentResponseDto } from './dto/appointment-response.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { FindAppointmentsDto } from './dto/find-appointments.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';

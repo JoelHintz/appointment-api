@@ -1,4 +1,4 @@
-import { AppointmentResponseDto } from '../src/appointments/dto/appointment-reponse.dto';
+import { AppointmentResponseDto } from '../src/appointments/dto/appointment-response.dto';
 import { CreateAppointmentDto } from '../src/appointments/dto/create-appointment.dto';
 import { FindAppointmentsDto } from '../src/appointments/dto/find-appointments.dto';
 import { UpdateAppointmentDto } from '../src/appointments/dto/update-appointment.dto';
@@ -8,14 +8,13 @@ import { Office } from '../src/offices/entity/office.entity';
 const DEFAULT_START = '2026-06-20T09:00:00.000Z';
 const DEFAULT_END = '2026-06-20T10:00:00.000Z';
 
-export const createOffice = (overrides: Partial<Office> = {}): Office =>
-  ({
-    id: 1,
-    name: 'Nuremberg Office',
-    openingTime: '08:00',
-    closingTime: '18:00',
-    ...overrides,
-  }) as Office;
+export const createOffice = (overrides: Partial<Office> = {}): Office => ({
+  id: 1,
+  name: 'Nuremberg Office',
+  opensAt: '08:00',
+  closesAt: '18:00',
+  ...overrides,
+});
 
 export const createAppointment = (overrides: Partial<Appointment> = {}): Appointment => ({
   id: 1,
