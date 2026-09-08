@@ -12,9 +12,34 @@ Domain rules:
 - Appointments are booked for fixed one-hour slots that start on a full hour (UTC).
 - An office must not have overlapping appointments.
 
-The workshop exercises live in `TASK.md`; ready-to-use prompts are in `prompts/`.
-This branch also carries the reference implementation of the "available slots"
-task (`GET /offices/:id/availability`).
+`TASK.md` is the participant-facing index; the exercises are one file per task
+under `tasks/`. Trainer material lives in `workshop/`.
+
+The workshop is held in German, so everything a participant reads is written in
+German: `TASK.md`, `tasks/`, `SETUP.md` and `workshop/`. Everything an agent
+reads stays English: the code and the agent definitions and skills under
+`.claude/`.
+
+**Participants build the agentic tooling themselves.** `.claude/` therefore holds
+exactly one worked example — the `reviewer` agent with its `module-review` skill
+— plus deliberately empty scaffolds for `architect` and `developer` that the
+groups fill in during task 3. Do not complete those scaffolds and do not add
+ready-made prompt files to the participant material; producing them is the
+exercise. The finished versions are kept trainer-side under `workshop/reference/`
+and `workshop/prompts/`.
+
+There is deliberately **no skill that orchestrates architect → developer →
+reviewer**, and adding one would be a regression. A skill cannot enforce the two
+human checkpoints that are the point of task 3, its body would be a call sequence
+rather than knowledge, and auto-triggering it would fire during ordinary work.
+The rule the workshop teaches is: agent = role, skill = knowledge, sequence =
+command or done by hand. `workshop/TRAINER_GUIDE.md` §3.4 has the full reasoning.
+
+This branch is the **development branch**: it carries the task material **and**
+the reference solutions (currently task 1 and task 2) and `workshop/`. `main` is
+the participant state and must never receive `src/` or `test/` from here —
+`workshop/RELEASE_TO_MAIN.md` has the branch map, the inventory and the recipes.
+Keep that inventory current whenever you add a task or a solution.
 
 ## Stack
 

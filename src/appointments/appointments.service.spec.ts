@@ -250,6 +250,47 @@ describe('AppointmentsService', () => {
       expect(appointmentRepository.create).not.toHaveBeenCalled();
       expect(appointmentRepository.save).not.toHaveBeenCalled();
     });
+
+    it('should store a start time with an offset as canonical UTC', async () => {
+      const office = createOffice();
+      const dto: CreateAppointmentDto = {
+        title: 'New appointment',
+        startsAt: '2026-06-21T09:00:00+02:00',
+        officeId: office.id,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      appointmentRepository.create.mockImplementation((entity: any) => entity);
+      appointmentRepository.save.mockImplementation(async (entity: any) => entity);
+      mockMappedDto();
+
+      await service.create(dto);
+
+      expect(appointmentRepository.create).toHaveBeenCalledWith({
+        title: dto.title,
+        startsAt: '2026-06-21T07:00:00.000Z',
+        endsAt: '2026-06-21T08:00:00.000Z',
+        office,
+      });
+    });
+
+    it('should detect a conflict when the same instant is sent with a different offset', async () => {
+      const office = createOffice();
+      const dto: CreateAppointmentDto = {
+        title: 'Double booking attempt',
+        startsAt: '2026-06-21T09:00:00+02:00',
+        officeId: office.id,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      const qb = mockQueryBuilder(createAppointment());
+
+      await expectBadRequest(service.create(dto), 'Office is already booked for the requested time');
+
+      expect(qb.andWhere).toHaveBeenCalledWith('appointment.startsAt = :startsAt', {
+        startsAt: '2026-06-21T07:00:00.000Z',
+      });
+    });
   });
 
   describe('update', () => {

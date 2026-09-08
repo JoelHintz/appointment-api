@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsISO8601, IsNotEmpty } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsISO8601, IsNotEmpty, Min } from 'class-validator';
 
 export class CreateAppointmentDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'Title of the booked appointment', example: 'Applying for a passport' })
   title!: string;
 
-  @IsNotEmpty()
-  @ApiProperty({ description: 'ID of the office the appointment is booked for', example: '1' })
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  @ApiProperty({ description: 'ID of the office the appointment is booked for', example: 1 })
   officeId!: number;
 
   @IsISO8601()

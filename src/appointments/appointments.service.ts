@@ -51,19 +51,19 @@ export class AppointmentsService {
   }
 
   async create(dto: CreateAppointmentDto): Promise<AppointmentResponseDto> {
-    this.validateStartsAt(dto.startsAt);
+    const startsAt = this.normalizeStartsAt(dto.startsAt);
 
     const office = await this.loadOffice(dto.officeId);
 
     await this.validateOfficeIsAvailable({
       officeId: office.id,
-      startsAt: dto.startsAt,
+      startsAt,
     });
 
     const toSave = {
       title: dto.title,
-      startsAt: dto.startsAt,
-      endsAt: this.calculateEndTime(dto.startsAt),
+      startsAt,
+      endsAt: this.calculateEndTime(startsAt),
       office,
     };
 
@@ -85,7 +85,9 @@ export class AppointmentsService {
 
     const toSave = await this.mergeDtoIntoEntity(appointment, dto);
 
-    this.validateStartsAt(toSave.startsAt);
+    toSave.startsAt = this.normalizeStartsAt(toSave.startsAt);
+    toSave.endsAt = this.calculateEndTime(toSave.startsAt);
+
     await this.validateOfficeIsAvailable({
       officeId: toSave.office.id,
       startsAt: toSave.startsAt,
@@ -102,7 +104,6 @@ export class AppointmentsService {
     }
     if (dto.startsAt !== undefined) {
       appointment.startsAt = dto.startsAt;
-      appointment.endsAt = this.calculateEndTime(dto.startsAt);
     }
     if (dto.officeId !== undefined && appointment.office.id !== dto.officeId) {
       appointment.office = await this.loadOffice(dto.officeId);
@@ -129,7 +130,13 @@ export class AppointmentsService {
     return end.toISOString();
   }
 
-  private validateStartsAt(startsAt: string): void {
+  /**
+   * Validates the start time and returns it as a canonical UTC ISO string.
+   * Normalising here is what makes the overlap check trustworthy: the check
+   * compares stored `startsAt` strings, so two spellings of the same instant
+   * (`09:00:00+02:00` and `07:00:00.000Z`) would otherwise never collide.
+   */
+  private normalizeStartsAt(startsAt: string): string {
     const start = new Date(startsAt);
 
     if (Number.isNaN(start.getTime())) {
@@ -139,6 +146,8 @@ export class AppointmentsService {
     if (start.getUTCMinutes() !== 0 || start.getUTCSeconds() !== 0 || start.getUTCMilliseconds() !== 0) {
       throw new BadRequestException('Appointment must start at a full hour');
     }
+
+    return start.toISOString();
   }
 
   private async validateOfficeIsAvailable(params: {

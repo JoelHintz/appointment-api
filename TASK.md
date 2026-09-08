@@ -1,65 +1,54 @@
-# Extend the Appointment API
+# Workshop-Aufgaben: Appointment API
 
-## Context
+## Worum es geht
 
-This project contains a small **NestJS** Appointment API in a public administration context. The application already manages **offices** and **appointments**.
+Dieses Projekt ist eine kleine **NestJS**-Termin-API im Behördenkontext. Sie
+verwaltet bereits **Ämter** (`offices`) und **Termine** (`appointments`).
 
-Appointments always start on the hour and have a fixed duration of one hour. They need to have a office assigned.
+Fachliche Grundregeln:
 
-## Task
+- Ein Termin gehört zu genau einem Amt.
+- Ein Termin beginnt zur vollen Stunde und dauert genau eine Stunde.
+- Ein Amt darf keine zwei Termine zur selben Startzeit haben.
 
-Implement an endpoint that returns **available appointment slots** for a selected office on a given date.
+## Die Aufgaben
 
-The feature should integrate into the existing API style and project structure.  
-Some implementation details are intentionally left open. Inspect the codebase before making design decisions.
+| | Aufgabe | Zeit | Inhalt |
+|---|---|---|---|
+| 1 | [Codebasis erschließen, `CLAUDE.md`, erster Bugfix](tasks/task-1-explore-and-bugfix.md) | ~85 Min | App verstehen, Projektkontext festhalten, einen echten Bug finden |
+| 2 | [Feature: freie Termin-Slots](tasks/task-2-office-availability.md) | ~60 Min | Neuer Endpunkt im bestehenden Stil |
+| 3 | [Eigene Agenten bauen und ein neues Modul erzeugen](tasks/task-3-contact-requests.md) | ~95 Min | Erst das Werkzeug schreiben, dann damit ein Modul bauen |
 
-## Working Mode
+Die Aufgaben 1 und 2 sind unabhängig voneinander.
 
-- Work in groups of **2–3 students**
-- One working setup per group is sufficient
-- If you are not familiar with NestJS or TypeORM, ask Claude to walk you through an existing endpoint first
+In Aufgabe 3 schreibt ihr **eure eigenen Agenten**. Unter `.claude/` liegt dafür
+ein vollständiges Beispiel — der Agent `reviewer` mit seinem Skill
+`module-review` — und daneben zwei leere Gerüste, die ihr ausfüllt.
 
-## Requirements
+## Arbeitsweise
 
-- Provide a suitable **REST endpoint**
-- Handle input and output properly
-- Add Swagger/OpenAPI documentation (sufficient for manual testing)
-- Implement **validation** where appropriate (e.g. date format, allowed values, completeness)
-- Add **focused unit tests** for the most important behavior
-- Keep business logic simple and readable
+- Arbeitet in Gruppen von **2–3 Personen**. Ein eingerichteter Rechner pro Gruppe
+  genügt.
+- Wenn ihr NestJS oder TypeORM nicht kennt: lasst euch von Claude zuerst **einen**
+  bestehenden Endpunkt erklären, zum Beispiel `@src/offices`.
+- Für jede Aufgabe: erst einen **kurzen Plan** anfordern, ihn lesen, dann
+  schrittweise umsetzen lassen. **Prüft jeden Diff.**
+- Schreibt eure eigenen kurzen Prompts. Kopiert nicht ganze Aufgabendateien in
+  Claude. Ihr bekommt bewusst keine fertigen Prompts — das Formulieren ist Teil
+  der Übung.
 
-## Acceptance Criteria
+## Nützliche Befehle
 
-- The endpoint can be called via Swagger
-- The endpoint returns **available appointment slots** for one office and one day
-- Only valid hourly slots are returned (based on the existing appointment rules)
-- Already booked times are **excluded**
-- Invalid or incomplete input is handled appropriately
-- Meaningful unit tests are added
-- The implementation follows the existing project style
-- You can explain the main parts of your solution
+```bash
+npm run start:dev   # Anwendung starten, Swagger unter http://localhost:3000/api
+npm test            # Unit-Tests
+npm run build       # Kompilieren
+git diff            # Änderungen prüfen
+```
 
-## Tips for Working with Claude Code
+`npm run lint` führt `eslint --fix` aus und schreibt Dateien um — nicht beiläufig
+ausführen. Wenn die Datenbank klemmt: `data/appointments.db` löschen, sie wird
+beim nächsten Start neu angelegt.
 
-- Reference files or folders using `@` (e.g. `@src/appointments`)
-- Ask Claude to inspect existing code **before** proposing new code
-- Request a **short plan**, review it, then proceed step by step
-- Write your own short prompts - do not paste this entire task file into Claude
-
-## Before You Finish
-
-As a group, verify the following:
-
-- **Explain it**  
-  Can everyone explain the chosen endpoint and where the business logic is implemented?
-
-- **Run the tests**  
-  Run `npm run test`. Do all tests pass?
-
-- **Test in Swagger**  
-  Try your endpoint with both valid and invalid input
-
-- **Review the diff**  
-  Run `git diff` together. Is anything unexpected?
-
-You may push your solution to a new branch if you want to keep it.
+Ihr könnt eure Lösung am Ende auf einen eigenen Branch pushen, wenn ihr sie
+behalten möchtet.
