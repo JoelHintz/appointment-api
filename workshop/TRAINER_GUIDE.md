@@ -117,6 +117,8 @@ nach einem Testlauf) **laufen im normalen Terminal, nicht über Claude.**
 
 Der Architekten-Plan landet in `plan.md` im Wurzelverzeichnis. Der Pfad ist
 gitignored, damit er nicht im `git diff` auftaucht, den die Gruppen prüfen.
+**Schreiben muss ihn die Hauptsitzung** — der Architekt hat bewusst kein
+Schreibwerkzeug und kann die Datei nicht selbst anlegen.
 
 ### 3.3 `workshop/reference/`
 
@@ -177,8 +179,49 @@ Gruppen fertig bekommen, und das Vorbild, an dem sie ihre eigenen Agenten bauen.
 
 #### T3 — Volle Kette (~70 Min, misst das Zeitbudget)
 
-Mit `workshop/prompts/task-3-contact-requests.prompt.md` an `architect-ref`,
-Plan freigeben, `developer-ref` umsetzen lassen, `reviewer` drüberlaufen lassen.
+**Voraussetzung: möglichst sauberer Arbeitsbaum.** Der Reviewer prüft `git diff` —
+liegt dort noch anderes herum, bewertet er das mit. Committe Offenes vorher.
+
+Ganz sauber wird der Baum hier allerdings nicht: Die oben installierten
+`-ref`-Agenten und das Demo-Skill liegen zwangsläufig als untracked herum, und
+committen willst du sie nicht. **Grenze den Reviewer in Schritt 4 deshalb
+ausdrücklich auf `src/` und `test/` ein.**
+
+Die vier Schritte, direkt einfügbar. Der Fachtext ist der aus
+`workshop/prompts/task-3-contact-requests.prompt.md`, ohne dessen Trainer-Vorspann:
+
+**1 — Architekt**
+
+> Nutze den `architect-ref`-Agenten. Plane ein neues Feature-Modul
+> `contact-requests/` für diese Appointment API. Eine Kontaktanfrage ist eine
+> Nachricht, die eine Bürgerin oder ein Bürger an die Verwaltung schickt und die
+> dort einen Bearbeitungsstatus durchläuft. Das Modul steht für sich — keine
+> Beziehung zu `Office` oder `Appointment`.
+>
+> Entität `ContactRequest`: `id`, `name`, `email`, `subject`, `message`, `status`
+> (Enum `new` / `in_progress` / `answered`), `submittedAt`. Endpunkte:
+> `POST /contact-requests`, `GET /contact-requests` mit optionalem `?status=`,
+> `GET /contact-requests/:id`, `PATCH /contact-requests/:id`, kein `DELETE`.
+>
+> Fachliche Regeln, die in den Service gehören: `submittedAt` setzt der Server;
+> neue Anfragen starten auf `new`; erlaubt sind nur `new → in_progress` und
+> `in_progress → answered`, sonst `400`; unbekannte `id` → `404`.
+>
+> Kein Seeding. Erweiterungen (`rejected`, `answeredAt`, Suche) nur als offene
+> Punkte notieren, nicht planen.
+
+**2 — Checkpoint.** Plan lesen. Offene Fragen beantworten, Überflüssiges streichen.
+
+**3 — Developer**
+
+> Schreib den freigegebenen Plan nach `plan.md` und lass ihn dann vom
+> `developer-ref`-Agenten umsetzen.
+
+**4 — Reviewer**
+
+> Nutze den `reviewer`-Agenten für die aktuellen Änderungen in `src/` und
+> `test/`. Die installierten `-ref`-Agenten und das Demo-Skill gehören nicht
+> zum Review.
 
 Prüfe: Hält der Architekt sich daran, keinen Code zu schreiben? Folgt der
 Developer dem Plan und meldet Abweichungen? Bleibt `npm test` grün? Und vor
@@ -461,6 +504,14 @@ stünde darin?
   Controller zurückgeben; `status` und `submittedAt` im Create-DTO zulassen;
   Übergangsprüfung im DTO statt im Service; `?status=`-Filter ohne `@IsEnum`;
   Tests, die nur `toBeDefined()` prüfen.
+- **`plan.md` schreibt der Architekt nicht selbst.** Er hat nur `Read`, `Grep`,
+  `Glob`; Schreiben würde seine Grenze aufheben. Den freigegebenen Plan speichert
+  die Hauptsitzung. Wer das „repariert", indem er dem Architekten `Write` gibt,
+  hat die Entscheidung aus Teil a zurückgenommen — frag nach, was der Architekt
+  damit jetzt sonst noch darf.
+- **Reviewer auf `src/` und `test/` eingrenzen.** Im Arbeitsbaum liegen auch die
+  Agent-Dateien aus Teil a. Ohne Eingrenzung reviewt er die eigenen Prompts der
+  Gruppe mit, und die Findings verwässern.
 - **`npm run lint` nicht laufen lassen** — schreibt Dateien um, zerlegt den Diff.
   Steht in `settings.json` auf `deny`; erinnere die Gruppen trotzdem.
 - DB zurücksetzen bei Schema-Ärger: `data/appointments.db` löschen (gitignored,

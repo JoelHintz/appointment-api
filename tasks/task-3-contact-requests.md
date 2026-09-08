@@ -56,10 +56,21 @@ Das Modul steht für sich — es braucht keine Beziehung zu `Office` oder
 2. **Architekt** liefert einen kurzen Plan. Er schreibt **keinen Code**.
 3. **Checkpoint Mensch** — Plan lesen, offene Fragen klären, Überflüssiges
    streichen. Freigegebenen Plan in `plan.md` ablegen.
+
+   > Euer Architekt kann `plan.md` **nicht selbst schreiben** — er hat kein
+   > Schreibwerkzeug, und das ist Absicht. Lasst die Hauptsitzung den
+   > freigegebenen Plan speichern. Gebt dem Architekten dafür kein `Write`:
+   > Damit wäre die Grenze, die ihr in Teil a gezogen habt, wieder weg.
+
 4. **Developer** setzt um. Die Übergabe ist ein Satz: „Setze den freigegebenen
    Plan aus `@plan.md` um." Mehr braucht es nicht — seine Rolle steht in seiner
    Agent-Datei, die Aufgabe im Plan.
 5. **Reviewer** prüft den Diff und liefert Findings nach Schweregrad.
+
+   > Sagt ihm dazu, dass er **nur `src/` und `test/`** prüfen soll. Im
+   > Arbeitsbaum liegen auch die Agent-Dateien aus Teil a — sonst reviewt er
+   > eure eigenen Prompts mit.
+
 6. **Checkpoint Mensch** — Findings sichten, entscheiden, was behoben wird,
    zurück an den Developer, danach erneut reviewen.
 

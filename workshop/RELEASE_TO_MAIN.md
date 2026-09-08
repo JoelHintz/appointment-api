@@ -179,8 +179,20 @@ Mock-Registrierung des `Appointment`-Repositories.
 
 #### Aufgabe 3 — `contact-requests/`
 
-Noch nicht gebaut. Wird ein **eigenes Modulverzeichnis**, also ausschließlich neue
-Dateien — die unkritische Sorte.
+Gebaut. Der Kern ist `src/contact-requests/` — ein **eigenes Modulverzeichnis**,
+also ausschließlich neue Dateien, die unkritische Sorte.
+
+Das Modul hängt aber an **drei geteilten Dateien**, die es auf `main` ebenfalls
+gibt. Ohne sie ist es nicht verdrahtet, mit ihnen verrät der Diff die Lösung:
+
+| Datei | Hunk |
+|---|---|
+| `src/app.module.ts` | Import und `imports`-Eintrag von `ContactRequestsModule` |
+| `src/main.ts` | `.addTag('contact-requests')` im `DocumentBuilder` |
+| `test/testdata.factory.ts` | die vier `createContactRequest…`-Factories |
+
+Damit fällt auch Aufgabe 3 vollständig unter die `src/`-und-`test/`-Regel — die
+frühere Annahme, hier kämen nur neue Dateien dazu, war zu optimistisch.
 
 ---
 
@@ -258,12 +270,13 @@ weil `git grep <muster> main` direkt in der Historie sucht — und ist damit auc
 nicht von der Deny-Liste betroffen.
 
 ```bash
-# 1. Kein Lösungsmarker auf main. Alle fünf Befehle müssen OHNE Ausgabe bleiben.
+# 1. Kein Lösungsmarker auf main. Alle sechs Befehle müssen OHNE Ausgabe bleiben.
 git grep -n 'normalizeStartsAt'  main -- src/
 git grep -n 'findAvailability'   main -- src/
 git grep -n 'parseHour'          main -- src/
 git grep -n 'OfficeAvailability' main -- src/
 git grep -n '@IsInt\|@Type'      main -- src/appointments/dto/create-appointment.dto.ts
+git grep -n 'ContactRequest'     main -- src/ test/
 
 # 2. Gegenprobe: die unreparierte Fassung ist noch da. Erwartet: 3 Treffer.
 git grep -c 'validateStartsAt' main -- src/appointments/appointments.service.ts
@@ -272,6 +285,7 @@ git grep -c 'validateStartsAt' main -- src/appointments/appointments.service.ts
 git cat-file -e main:src/offices/dto/office-availability-query.dto.ts
 git cat-file -e main:src/offices/dto/office-availability-slot.dto.ts
 git cat-file -e main:src/appointments/dto/create-appointment.dto.spec.ts
+git cat-file -e main:src/contact-requests/contact-requests.service.ts
 
 # 4. Kein Rückstand aus einem Testlauf. Erwartet: exakt 3 Agenten, exakt 1 Skill.
 git ls-tree --name-only main .claude/agents/ | wc -l    # muss 3 sein
