@@ -19,6 +19,7 @@ async function bootstrap() {
     .setDescription('The appointment API description')
     .setVersion('1.0')
     .addTag('appointments')
+    .addTag('contact-requests')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
