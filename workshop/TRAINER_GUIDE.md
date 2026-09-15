@@ -37,7 +37,8 @@ Teil.**
 | 09:00–09:20 | Ankommen & Setup-**Rettung** | Zugänge einrichten, `npm test` stichprobenartig prüfen, Ersatzgeräte verteilen | Jede Gruppe lauffähig |
 | 09:20–10:20 | **Vortrag**: Prinzipien agentischen Codings | siehe Abschnitt 4; `/init` einmal live vorführen | Mentales Modell |
 | 10:20–10:35 | Pause | | |
-| 10:35–12:00 | **Block 1**: App + `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Endpunkt erklären lassen, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** Zeitzonen-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
+| 10:35–11:35 | **Block 1**: App + `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** `startHour`-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
+| 11:35–12:00 | **Puffer** | Siehe Notiz unter der Tabelle | |
 | 12:00–13:00 | Mittagspause | | |
 | 13:00–13:15 | Mini-Input | Referenz-`CLAUDE.md` zeigen & vergleichen; Lösung zu Aufgabe 1 auflösen | „Was ist ein gutes `CLAUDE.md`" |
 | 13:15–14:20 | **Block 2**: Aufgabe 2 (Feature) | Availability-Endpunkt: Plan anfordern, reviewen, schrittweise umsetzen, testen | Feature im Projektstil |
@@ -49,6 +50,14 @@ Teil.**
 
 Netto an Aufgaben: ~4 h. Block 3 bleibt der engste Timebox — plane die
 Minimalvariante fest ein (Abschnitt 7).
+
+**Zum Puffer um 11:35.** Aufgabe 1 wurde von 85 auf 60 Minuten gekürzt; die
+25 Minuten sind bewusst **nicht** weiterverplant. Drei sinnvolle Verwendungen, in
+dieser Reihenfolge: (1) Gruppen aufholen lassen, die in Teil a hängen — das ist
+der Lernkern und der häufigste Grund für Verzug; (2) den Mini-Input von 13:00
+vorziehen und nach der Pause direkt mit Aufgabe 2 starten; (3) die Pause
+verlängern. Was du nicht tun solltest: den Puffer fest in Block 1 einrechnen —
+die 60 Minuten sind so geschnitten, dass sie ohne ihn tragen.
 
 **Setup ist Hausaufgabe.** `SETUP.md` geht mit ausreichend Vorlauf raus und
 verlangt ausdrücklich, dass die Gruppen `npm ci`, `npm run start:dev` und
@@ -288,29 +297,43 @@ schwache Stelle im Ergebnis nachdenken.
 
 ---
 
-## 5. Block 1 — App, `CLAUDE.md` und Aufgabe 1 (85 Min.)
+## 5. Block 1 — App, `CLAUDE.md` und Aufgabe 1 (60 Min.)
 
 Aufgabe: `tasks/task-1-explore-and-bugfix.md`. Sie deckt den ganzen Block ab und
 hat drei aufeinander aufbauende Teile:
 
 | Teil | ~Zeit | Inhalt |
 |---|---|---|
-| a | 25 Min | App in Swagger erkunden, Claude einen Endpunkt erklären lassen, die drei Termin-Regeln selbst benennen |
-| b | 30 Min | `/init`, Ergebnis kritisch nachbessern gegen eine Prüfliste |
-| c | 30 Min | Den Zeitzonen-Bug finden und beheben |
+| a | 15 Min | App in Swagger erkunden, die drei Termin-Regeln selbst benennen |
+| b | 25 Min | `/init`, Ergebnis kritisch nachbessern gegen eine Prüfliste |
+| c | 20 Min | Den `startHour`-Bug finden und beheben |
 
 **Die drei Teile sind absichtlich verzahnt.** In Teil a arbeiten die Gruppen die
-Regel „ein Amt darf keine zwei Termine zur selben Startzeit haben" heraus, in
-Teil b schreiben sie sie in ihr `CLAUDE.md` — und in Teil c stellen sie fest, dass
-der Code sie nicht einhält. Genau diese Pointe trägt den Block; wenn du beim
-Herumgehen merkst, dass eine Gruppe Teil a überspringt, hol sie zurück.
+Regel „ein Termin beginnt zur vollen Stunde" heraus, in Teil b schreiben sie sie
+in ihr `CLAUDE.md` — und in Teil c stellen sie fest, dass der Code sie nur halb
+durchsetzt. Genau diese Pointe trägt den Block; wenn du beim Herumgehen merkst,
+dass eine Gruppe Teil a überspringt, hol sie zurück.
 
 ### Trainer-Notizen
 
 - Erstsemester brauchen in Teil a länger — das ist in Ordnung, das ist der
-  Lernkern. Teil c hat eine dokumentierte kleinere Ausweichoption.
-- Die drei Fragen am Ende von Teil a sollen sie **ohne** Claude beantworten. Wer
-  sie nicht beantworten kann, hat gelesen statt verstanden.
+  Lernkern. Teil c ist mit 20 Minuten großzügig bemessen und hat zwei
+  dokumentierte Zusatzaufgaben für schnelle Gruppen.
+- Die Fragen am Ende von Teil a sollen sie **ohne** Claude beantworten. Wer sie
+  nicht beantworten kann, hat gelesen statt verstanden.
+- Die vierte Frage („etwas, das die API verspricht und nie einlösen kann")
+  zielt auf `?status=canceled`: Der Filter existiert, aber **keine Route kann
+  `status` setzen** — `UpdateAppointmentDto` erbt nur `title`, `officeId`,
+  `date` und `startHour`. Das Ergebnis ist also immer `[]`. Wer das findet, hat
+  Controller, DTO und Entity zusammen gelesen.
+- **Unit-Tests sind in Aufgabe 1 und 2 bewusst optional.** Der Pflichtnachweis
+  ist eine konkrete Swagger-Prüfung plus ein grünes `npm test`. Begründung: Der
+  Test kostete in der 85-Minuten-Fassung ein Drittel der Zeit für Teil c, und
+  unsichere Gruppen übernehmen unter Zeitdruck ungelesen, was Claude schreibt —
+  das ist schlechter als kein Test. Die Referenzlösungen im Repository bleiben
+  vollständig getestet.
+- **Folge für Aufgabe 3:** Der Reviewer-Agent wird fehlende Tests als Finding
+  melden. Das ist erwünscht und zeigt ihn bei der Arbeit — kein Materialfehler.
 - **Nach der Mittagspause** (13:00–13:15): ein Referenz-`CLAUDE.md` zeigen und
   gemeinsam gegen ein Gruppen-Ergebnis halten. Frage: Was fehlt? Was ist zu vage?
   Was ist zu viel?
@@ -326,74 +349,80 @@ Herumgehen merkst, dass eine Gruppe Teil a überspringt, hol sie zurück.
 
 - **Kommandos stimmen und sind vollständig** (`npm test`, ein einzelner Test,
   `build`, `start:dev`, Hinweis dass `lint` Dateien umschreibt).
-- **Domänenregeln explizit**: 1-Stunden-Slots auf voller Stunde (UTC),
-  keine Überschneidung pro Amt, `endsAt = startsAt + 60min` abgeleitet.
+- **Domänenregeln explizit**: ein Slot ist `date` + volle `startHour` in Ortszeit
+  des Amts, keine zwei Termine pro Amt im selben Slot, `endHour = startHour + 1`
+  abgeleitet.
 - **Architektur in 3–5 Sätzen**: zwei Feature-Module, `ValidationPipe` global in
   `main.ts`, Swagger unter `/api`, DTOs statt Entities, Mapping-Stelle.
 - **Konventionen**: Feature-first, plural Ordner/Routen, singular Entity/DTO,
   kein `DELETE`.
 - **Fallen benannt**, v. a. dass `@IsISO8601()`/`@IsDateString()` auch Datetimes
-  akzeptieren.
+  akzeptieren und ein Datumsfeld deshalb `@Matches` braucht.
 - **Kein Roman.** Eine Bildschirmseite reicht. Alles, was nicht das Verhalten des
   Agenten ändert, ist Ballast.
 
-### Teil c — der Zeitzonen-Bug, zum Auflösen um 13:00
+### Teil c — der `startHour`-Bug, zum Auflösen um 13:00
 
-Referenzlösung auf dem Trainer-Branch: `normalizeStartsAt` in
-`src/appointments/appointments.service.ts` plus zwei Tests in
-`appointments.service.spec.ts`.
+Referenzlösung auf dem Trainer-Branch: `@Min(0)` und `@Max(23)` an `startHour` in
+`src/appointments/dto/create-appointment.dto.ts` plus zwei Tests in
+`create-appointment.dto.spec.ts`.
 
-**Was passiert.** Verifiziert mit zwei `POST` aufs selbe Amt:
+**Was passiert.** Verifiziert gegen die laufende App:
 
 ```
-gespeicherte startsAt: ["2026-06-20T09:00:00+02:00", "2026-06-20T07:00:00.000Z"]
-gespeicherte endsAt  : ["2026-06-20T08:00:00.000Z", "2026-06-20T08:00:00.000Z"]
-gleicher Zeitpunkt? true   |   gleicher String? false
+POST {"title":"Stunde 25","officeId":1,"date":"2026-06-20","startHour":25}
+→ 201  {"id":3, …, "startHour":25, "endHour":26, …}
+
+POST {…,"startHour":9.5}   → 400  "startHour must be an integer number"
+GET  /offices/1/availability?date=2026-06-20  → Stunde 25 kommt nicht vor
 ```
 
-`@IsISO8601()` akzeptiert den Offset. Die Prüfung auf die volle Stunde rechnet in
-UTC und geht durch. Gespeichert wird dann aber der **rohe String**, während
-`endsAt` über `new Date(...).toISOString()` berechnet wird — daher die zwei
-identischen `endsAt` bei verschiedenen `startsAt`. Die Überschneidungsprüfung
-vergleicht per SQL-Stringgleichheit (`appointment.startsAt = :startsAt`) und
-findet folglich keinen Konflikt.
+`startHour` ist als `@IsInt()` deklariert, aber ohne Bereich. Die Stunde 25 ist
+eine gültige ganze Zahl, also kommt sie durch; der Service leitet stumpf
+`endHour: 26` ab. Der Termin belegt damit einen Slot, den keine Liste je anzeigt
+— er ist gebucht und unsichtbar zugleich.
 
-**Der Fix:** `startsAt` an der Systemgrenze normalisieren, also
-`new Date(startsAt).toISOString()` zurückgeben und diesen Wert sowohl speichern
-als auch vergleichen. Danach kollidieren beide Schreibweisen korrekt.
+**Der Fix:** `@Min(0) @Max(23)` an `startHour`. Zwei Dekoratoren, eine Datei.
 
 **Drei Punkte fürs Auflösen:**
 
-1. **String-Gleichheit ist nicht Zeitpunkt-Gleichheit.** Der Kern in einem Satz.
-2. **Normalisieren gehört an den Rand**, nicht an jede Vergleichsstelle. Frag:
-   „Wie viele Stellen müsstet ihr anfassen, wenn ihr stattdessen jeden Vergleich
-   reparieren würdet?"
+1. **Eine halbe Prüfung ist gefährlicher als gar keine.** Dass `9.5` abgelehnt
+   wird, erzeugt den Eindruck, `startHour` sei validiert. Frag die Gruppe, wann
+   ihnen das aufgefallen ist.
+2. **Formregeln gehören ins DTO, Fachregeln in den Service.** Der Fix gehört ins
+   DTO, weil „eine Stunde hat einen Wertebereich" nichts über Ämter oder Termine
+   weiß. Die Zusatzaufgabe mit den Öffnungszeiten ist die Gegenprobe: Die gehört
+   in den Service, weil sie das Amt kennen muss.
 3. **Die Verzahnung sichtbar machen.** Lass eine Gruppe ihre Regel aus dem
-   `CLAUDE.md` vorlesen und daneben das Ergebnis der zwei `POST` zeigen. Eine
-   dokumentierte Invariante, die der Code nicht hält — das ist der Moment, für den
-   der Block gebaut ist.
+   `CLAUDE.md` vorlesen und daneben die Antwort mit `endHour: 26` zeigen. Eine
+   dokumentierte Invariante, die der Code nur halb hält — das ist der Moment, für
+   den der Block gebaut ist.
 
-Der Fix macht nebenbei zwei weitere Dinge heil, die du erwähnen kannst: In
-`update()` wurde `endsAt` bisher **vor** der Validierung berechnet, und Aufgabe 2
-vergleicht später gebuchte Slots ebenfalls über Strings — mit normalisierten
-Werten wird das erst verlässlich.
+Erwähnenswert beim Auflösen: Der ganze Vertrag ist bewusst eng geschnitten.
+Weil ein Termin `date` + `startHour` trägt statt eines Zeitstempels, gibt es
+halbe Stunden, Sekunden und Zeitzonen-Offsets gar nicht erst — der einzige
+ungültige Zustand, der übrig blieb, war der Wertebereich. Das ist die
+allgemeine Lehre: **Verträge eng schneiden, statt Fallen zu dokumentieren.**
 
-### Ausweichoption und Zusatzfunde
+### Zusatzaufgaben und weitere Funde
 
-Die Aufgabe nennt für langsame Gruppen die **`officeId`-Validierung**: nur
-`@IsNotEmpty()`, deshalb überlebt `"abc"` die Validierung und kommt als
-**404 „Office with id abc was not found"** zurück statt als 400. Referenzlösung
-liegt ebenfalls auf dem Trainer-Branch (`create-appointment.dto.ts` + `…dto.spec.ts`).
-Zwei Beobachtungen dazu, beide verifiziert: Das Swagger-Beispiel zeigt den String
-`'1'`, der nur wegen SQLite-Typkonvertierung funktioniert und die Lücke damit
-verdeckt; und weil `UpdateAppointmentDto` über `PartialType` die Validatoren erbt,
-repariert der Fix automatisch auch `PATCH`.
+Die Aufgabe nennt zwei Zusatzaufgaben. Die **zweite** ist die interessantere:
+Termine außerhalb der Öffnungszeiten ablehnen. Sie gehört in den Service (die
+Prüfung muss das Amt laden), und weil `UpdateAppointmentDto` über `PartialType`
+die Validatoren erbt, während eine Service-Prüfung explizit in `update()` stehen
+muss, fällt dabei ganz nebenbei die Frage an: „Gilt eure neue Regel auch für
+`PATCH`?" Gute Stelle, um den Unterschied DTO/Service festzuklopfen.
 
-Für sehr schnelle Gruppen als dritter Fund: `GET /appointments?status=irgendwas`
-wird **nicht** geprüft — `@IsEnum` fehlt in `find-appointments.dto.ts`,
-`@IsOptional()` allein reicht, um die `whitelist` zu überleben. Der Müllwert geht
-bis in die Abfrage und liefert stillschweigend `[]`, also eine falsche Antwort
-statt eines Fehlers. Verifiziert.
+Zwei weitere Funde für sehr schnelle Gruppen, beide verifiziert:
+
+- `GET /appointments?status=irgendwas` wird **nicht** geprüft — `@IsEnum` fehlt
+  in `find-appointments.dto.ts`, `@IsOptional()` allein reicht, um die
+  `whitelist` zu überleben. Der Müllwert geht bis in die Abfrage und liefert
+  stillschweigend `[]`, also eine falsche Antwort statt eines Fehlers.
+- `title` hat nur `@IsNotEmpty()` und keinen `@IsString()`. `"title": 123` wird
+  mit `201` angenommen und steht als **Zahl** in der Antwort; `{"a":1}` erzeugt
+  ein `500` aus dem SQLite-Treiber. Der Lehrsatz dazu ist stark: `title!: string`
+  ist eine Compile-Zeit-Behauptung, zur Laufzeit ist davon nichts übrig.
 
 ---
 
@@ -408,20 +437,27 @@ Aufgabe: `tasks/task-2-office-availability.md`, Start-Prompt:
   `OfficeAvailabilityQueryDto`, `OfficeAvailabilitySlotDto`,
   `OfficesService.findAvailability`, Tests in `offices.service.spec.ts`). Nur zum
   Abgleich, nicht ausgeben.
-- **Häufigster Fehler:** `@IsDateString()` auf `date` belassen. Dann bringt
-  `?date=2026-06-30T12:00:00Z` den Endpunkt mit **500** zum Absturz. Verifiziert:
-  das DTO lässt den Wert durch, danach wirft der Service
-  `RangeError: Invalid time value` (`date.split('-')` → `NaN` → `Invalid Date` →
-  `toISOString()`). Die beste Stelle des Tages für „valide DTO ≠ verwendbarer
-  Wert". Fix: `@Matches(/^\d{4}-\d{2}-\d{2}$/)`.
-- **Zweiter Klassiker:** Zeitzonen. `opensAt`/`closesAt` sind `"HH:MM"`-Strings
-  und werden hier bewusst als **UTC**-Stunden behandelt. Wer „richtige"
-  Zeitzonen-Behandlung anfängt, verliert sich — auf die Vereinfachung hinweisen.
-- Slot-Ende `hour < closeHour` (nicht `<=`): der Slot, der um `closesAt` beginnen
-  würde, entfällt.
-- Tests, auf die du achten solltest: keine Buchungen → alle Slots; belegter Slot
-  ausgeschlossen; angrenzende Slots erlaubt; leeres Ergebnis; ungültiges Datum
-  → 400.
+- **Häufigster Fehler:** `@IsDateString()` statt `@Matches` auf `date`. Dann
+  kommt `?date=2026-06-30T12:00:00Z` durch die Validierung, die Abfrage findet
+  keinen einzigen Termin, und der unsinnige Wert wird in jedem Slot
+  zurückgespiegelt. Die Antwort sieht **korrekt aus** und ist trotzdem falsch —
+  kein Absturz, der die Gruppe warnt. Die beste Stelle des Tages für „valide DTO
+  ≠ verwendbarer Wert". Fix: `@Matches(/^\d{4}-\d{2}-\d{2}$/)`.
+- **Zweiter Klassiker:** Zeitzonen. Es gibt hier keine. `date` und `startHour`
+  sind Ortszeit des Amts, `opensAtHour`/`closesAtHour` ebenfalls, und die API
+  rechnet nichts um. Wer anfängt, `Date`-Objekte zu bauen, hat den Vertrag nicht
+  gelesen — zurückholen.
+- Slot-Ende `hour < closesAtHour` (nicht `<=`): der Slot, der um `closesAtHour`
+  beginnen würde, entfällt.
+- **Tests sind hier optional**, die Nachweis-Tabelle in der Aufgabe ist der
+  Pflichtteil. Wenn eine Gruppe doch testet, achte auf: keine Buchungen → alle
+  Slots; belegter Slot ausgeschlossen; angrenzende Slots erlaubt; leeres
+  Ergebnis; ungültiges Datum → 400.
+- **`@ApiProperty()` bleibt Pflicht**, an Query- und Response-DTO. In
+  `nest-cli.json` ist kein Swagger-CLI-Plugin konfiguriert — ohne die Dekoratoren
+  zeigt Swagger einen leeren Body, und die Gruppe kann ihre eigene Lösung nicht
+  ausprobieren. Wenn jemand meldet „der Endpunkt geht nicht", schau zuerst dort
+  hin.
 
 ### Stretch für starke Gruppen
 
@@ -572,7 +608,9 @@ Reflexionssatz ist der wertvollste Teil und darf als letzter fallen.
 | Gruppe kommt ohne fertiges Setup | **grösstes Zeitrisiko**, weil nur 20 Min. eingeplant sind: `SETUP.md` mit Vorlauf verschicken, Erledigung ankündigen, Ersatzgeräte bereithalten |
 | `npm ci` / nativer `better-sqlite3`-Build scheitert | Ersatzgeräte, Cloud-Editor; `SETUP.md` §7 |
 | Schwaches `CLAUDE.md`, niemand merkt es | Referenz-Vergleich nach Mittag, Rubrik in §5 |
-| Aufgabe 2: 500 statt 400 bei Datetime | bekannt, gutes Lehrbeispiel — nicht „wegdebuggen", sondern zeigen |
+| Aufgabe 2: Datetime kommt durch und liefert still eine falsche Liste | bekannt, gutes Lehrbeispiel — nicht „wegdebuggen", sondern zeigen |
+| Aufgabe 2: Endpunkt in Swagger nicht bedienbar | `@ApiProperty()` an den DTOs fehlt; kein Swagger-CLI-Plugin im Projekt |
+| Gruppe liefert ohne jede Prüfung ab („Claude sagt, es geht") | Nachweis-Tabelle der Aufgabe einfordern — sie ersetzt den Test, nicht das Prüfen |
 | **Teil a von Aufgabe 3 frisst Teil b auf** | hart auf 25 Min. deckeln; bei Überziehung Referenzfassung aus `workshop/reference/` geben |
 | Aufgabe 3 läuft aus der Zeit | Kern-Umfang ohne Erweiterungen, Ansage bei 30 Min. Rest |
 | Gruppe winkt Plan/Findings durch | aktiv nachfragen, was sie geändert/abgelehnt haben |

@@ -24,7 +24,7 @@ Zwischen beiden gilt genau eine Regel:
 
 Der Grund ist wichtig: Die Lösungen zu Aufgabe 1 und 2 sind **keine eigenen
 Dateien**, sondern Änderungen mitten in Dateien, die es auf `main` ohnehin gibt —
-`normalizeStartsAt` sitzt in `appointments.service.ts`, die Availability-Logik in
+zwei Dekoratoren in `create-appointment.dto.ts`, die Availability-Logik in
 `offices.service.ts`. Sie lassen sich also nicht durch Löschen von Dateien
 entfernen, sondern nur, indem man sie gar nicht erst hinüberlässt. Solange `main`
 seinen eigenen `src/`-Stand behält, kann keine Lösung durchrutschen — egal wie
@@ -80,7 +80,7 @@ man sie sofort im `git status`.
 
 | Datei | Aufgabe |
 |---|---|
-| `src/appointments/dto/create-appointment.dto.spec.ts` | 1 — Ausweichoption |
+| `src/appointments/dto/create-appointment.dto.spec.ts` | 1 |
 | `src/offices/dto/office-availability-query.dto.ts` | 2 |
 | `src/offices/dto/office-availability-slot.dto.ts` | 2 |
 
@@ -90,74 +90,39 @@ verrät die Lösung trotzdem. Deshalb sind sie unten vollständig festgehalten.
 
 ---
 
-#### `src/appointments/appointments.service.ts` — Aufgabe 1
+#### `src/appointments/dto/create-appointment.dto.ts` — Aufgabe 1
 
-`main` hat `validateStartsAt`, das nur prüft. Die Lösung macht daraus
-`normalizeStartsAt`, das zusätzlich zurückgibt:
-
-```ts
--  private validateStartsAt(startsAt: string): void {
-+  private normalizeStartsAt(startsAt: string): string {
-     // ... unveränderte Prüfungen auf gültiges Datum und volle Stunde ...
-+
-+    return start.toISOString();
-   }
-```
-
-Dazu vier Aufrufstellen. In `create()` wird der normalisierte Wert gespeichert
-**und** verglichen:
+Das ist die **einzige** Code-Datei mit einer Aufgabe-1-Lösung. `main` hat
+`startHour` als `@IsInt()` ohne Bereich:
 
 ```ts
--    this.validateStartsAt(dto.startsAt);
-+    const startsAt = this.normalizeStartsAt(dto.startsAt);
-```
-…danach `startsAt` statt `dto.startsAt` in `validateOfficeIsAvailable` und in
-`toSave` (auch für `calculateEndTime`).
+-import { IsInt, IsNotEmpty, Matches, Min } from 'class-validator';
++import { IsInt, IsNotEmpty, Matches, Max, Min } from 'class-validator';
 
-In `update()` wandert die Ableitung von `endsAt` aus `mergeDtoIntoEntity` heraus
-und hinter die Normalisierung — das behebt nebenbei, dass `endsAt` bisher **vor**
-der Validierung berechnet wurde:
-
-```ts
--    this.validateStartsAt(toSave.startsAt);
-+    toSave.startsAt = this.normalizeStartsAt(toSave.startsAt);
-+    toSave.endsAt = this.calculateEndTime(toSave.startsAt);
+   @IsInt()
++  @Min(0)
++  @Max(23)
+   @Type(() => Number)
+-  @ApiProperty({ description: '…', example: 9 })
++  @ApiProperty({ description: '…', example: 9, minimum: 0, maximum: 23 })
+   startHour!: number;
 ```
 
-```ts
-     if (dto.startsAt !== undefined) {
-       appointment.startsAt = dto.startsAt;
--      appointment.endsAt = this.calculateEndTime(dto.startsAt);
-     }
-```
+`appointments.service.ts`, die Entities, der Mapper und
+`appointments.service.spec.ts` sind seit dem Datum-plus-Stunde-Umbau auf beiden
+Branches **identisch** — es gibt dort nichts mehr zurückzubauen.
 
-#### `src/appointments/appointments.service.spec.ts` — Aufgabe 1
+#### `src/appointments/dto/create-appointment.dto.spec.ts` — Aufgabe 1
 
-Zwei Tests am Ende von `describe('create')`:
-`should store a start time with an offset as canonical UTC` und
-`should detect a conflict when the same instant is sent with a different offset`.
-
-#### `src/appointments/dto/create-appointment.dto.ts` — Aufgabe 1, Ausweichoption
-
-```ts
--import { IsISO8601, IsNotEmpty } from 'class-validator';
-+import { Type } from 'class-transformer';
-+import { IsInt, IsISO8601, IsNotEmpty, Min } from 'class-validator';
-
--  @IsNotEmpty()
--  @ApiProperty({ description: '…', example: '1' })
-+  @IsInt()
-+  @Min(1)
-+  @Type(() => Number)
-+  @ApiProperty({ description: '…', example: 1 })
-   officeId!: number;
-```
+Die beiden Tests `rejects a start hour outside a day` und
+`accepts the first and last hour of a day`. Die Datei selbst existiert auf `main`
+nicht (siehe Tabelle oben).
 
 #### `src/offices/offices.service.ts` — Aufgabe 2
 
-Neu: Import von `NotFoundException` und `Between`, das injizierte
-`appointmentRepository` im Konstruktor sowie die beiden Methoden
-`findAvailability` und `parseHour`.
+Neu: Import von `NotFoundException`, das injizierte `appointmentRepository` im
+Konstruktor sowie die Methode `findAvailability`. `findAll` gibt es auf `main`
+ebenfalls — beim Portieren des Basis-Umbaus nur diesen Hunk übernehmen.
 
 #### `src/offices/offices.controller.ts` — Aufgabe 2
 
@@ -235,6 +200,52 @@ git diff --cached --stat
 In der Ausgabe dürfen **`src/`, `test/`, `CLAUDE.md` und `workshop/` nicht
 auftauchen**. Wenn doch, wurde zu viel geholt — zurücknehmen, nicht committen.
 
+## Einmalig: den Datum-plus-Stunde-Umbau nach `main` bringen
+
+> Gilt nur so lange, bis `main` den Umbau hat. Danach ersatzlos löschen.
+
+Der Umbau (`date` + `startHour` + `endHour` statt Zeitstempel, `opensAtHour` /
+`closesAtHour` statt `"HH:MM"`) ist **Basis-Code, keine Lösung** — er gehört also
+nach `main`. Ein `cherry-pick` des Commits `Model appointments as date plus full
+hour` funktioniert trotzdem nicht: Derselbe Commit fasst `offices.service.ts` an,
+und diese Datei trägt auf dem Entwicklungsbranch die Aufgabe-2-Lösung.
+
+Deshalb dateiweise, im normalen Terminal auf einem Arbeitsbaum mit `main`:
+
+```bash
+git switch main && git pull
+
+# 1. Vollständig übernehmen — diese Dateien sind lösungsfrei.
+git checkout workshop-solution-dev -- \
+  src/appointments/entity/appointment.entity.ts \
+  src/appointments/appointments.service.ts \
+  src/appointments/appointments.service.spec.ts \
+  src/appointments/appointments.mapper.ts \
+  src/appointments/appointments.controller.spec.ts \
+  src/appointments/dto/appointment-response.dto.ts \
+  src/appointments/dto/create-appointment.dto.ts \
+  src/offices/entity/office.entity.ts \
+  src/offices/offices.seed.ts \
+  src/offices/dto/office-response.dto.ts
+
+# 2. Die Aufgabe-1-Lösung wieder herausnehmen: @Min(0) und @Max(23) an
+#    startHour löschen, Max aus dem Import entfernen, minimum/maximum aus
+#    @ApiProperty streichen.
+$EDITOR src/appointments/dto/create-appointment.dto.ts
+
+# 3. Von Hand nachziehen, weil diese Dateien Lösungen tragen:
+#    - offices.service.ts        → nur der findAll-Hunk (opensAtHour/closesAtHour)
+#    - offices.service.spec.ts   → nur der findAll-Block
+#    - offices.controller.spec.ts→ die Office-Objekte im findAll-Test
+#    - test/testdata.factory.ts  → die vier Appointment-/Office-Factories
+
+rm -f data/appointments.db     # synchronize: true migriert die Spalten nicht
+npm ci && npm test && npm run build
+```
+
+Danach die inhaltliche Checkliste unten durchgehen — insbesondere, dass
+`startHour: 25` auf `main` wieder **`201`** liefert.
+
 ## Rezept: Lösungsbranch für eine Durchführung
 
 ```bash
@@ -270,16 +281,15 @@ weil `git grep <muster> main` direkt in der Historie sucht — und ist damit auc
 nicht von der Deny-Liste betroffen.
 
 ```bash
-# 1. Kein Lösungsmarker auf main. Alle sechs Befehle müssen OHNE Ausgabe bleiben.
-git grep -n 'normalizeStartsAt'  main -- src/
+# 1. Kein Lösungsmarker auf main. Alle vier Befehle müssen OHNE Ausgabe bleiben.
+git grep -n '@Max(23)'           main -- src/appointments/dto/
 git grep -n 'findAvailability'   main -- src/
-git grep -n 'parseHour'          main -- src/
 git grep -n 'OfficeAvailability' main -- src/
-git grep -n '@IsInt\|@Type'      main -- src/appointments/dto/create-appointment.dto.ts
 git grep -n 'ContactRequest'     main -- src/ test/
 
-# 2. Gegenprobe: die unreparierte Fassung ist noch da. Erwartet: 3 Treffer.
-git grep -c 'validateStartsAt' main -- src/appointments/appointments.service.ts
+# 2. Gegenprobe: der Basis-Umbau ist da und die Lücke sitzt an der richtigen
+#    Stelle. Erwartet: mindestens 1 Treffer.
+git grep -c 'startHour' main -- src/appointments/dto/create-appointment.dto.ts
 
 # 3. Lösungs-only-Dateien gibt es auf main nicht. Jede Zeile muss fehlschlagen.
 git cat-file -e main:src/offices/dto/office-availability-query.dto.ts
@@ -299,9 +309,9 @@ Teilnehmenden ausgeliefert. Beim Skill wäre das keine Kleinigkeit — es beschr
 genau die Konventionen, die der Architekt in Aufgabe 3 selbst herleiten soll.
 
 Schritt 2 ist der wichtigere von beiden: Ein leeres Ergebnis in Schritt 1 könnte
-auch bedeuten, dass jemand am Muster vorbei umbenannt hat. Erst die Gegenprobe
-zeigt, dass die kaputte Fassung wirklich noch dort steht, wo die Gruppen sie
-finden sollen.
+auch bedeuten, dass jemand am Muster vorbei umbenannt hat — oder dass der
+Basis-Umbau auf `main` noch gar nicht angekommen ist. Erst die Gegenprobe zeigt,
+dass die kaputte Fassung wirklich dort steht, wo die Gruppen sie finden sollen.
 
 > Kommt eine Lösung dazu, gehört **ein Marker dafür in diese Liste** — sonst
 > wächst das Register, aber die Prüfung nicht mit.
@@ -315,10 +325,12 @@ Auf einem Arbeitsbaum mit `main` prüfen:
 - [ ] **Kein** `CLAUDE.md` im Wurzelverzeichnis.
 - [ ] **Kein** Ordner `workshop/`.
 - [ ] `GET /offices/{id}/availability` existiert **nicht** (Aufgabe 2 ist offen).
-- [ ] Zwei `POST /appointments` aufs selbe Amt mit `2026-06-20T09:00:00+02:00` und
-      `2026-06-20T07:00:00.000Z` werden **beide angelegt** (Aufgabe 1 ist offen).
-- [ ] `POST /appointments` mit `officeId: "abc"` liefert **404**, nicht 400
-      (Ausweichoption von Aufgabe 1 ist offen).
+- [ ] `POST /appointments` mit `"date": "2026-06-20", "startHour": 25` liefert
+      **`201`** mit `endHour: 26` (Aufgabe 1 ist offen).
+- [ ] `POST /appointments` mit `"startHour": 9.5` liefert **`400`** — die
+      unvollständige Prüfung ist da, nur ohne Bereich.
+- [ ] `GET /offices` liefert `opensAtHour` / `closesAtHour` als **Zahlen**
+      (der Basis-Umbau ist angekommen).
 - [ ] `TASK.md` ist vorhanden, und zu **jeder** Zeile seiner Aufgabentabelle
       existiert die verlinkte Datei in `tasks/`.
 - [ ] `.claude/agents/reviewer.md` und `.claude/skills/module-review/` sind
@@ -340,9 +352,9 @@ Auf einem Arbeitsbaum mit `main` prüfen:
    Änderungen an Dateien, die es auf `main` schon gibt, als eigenen Abschnitt mit
    dem konkreten Hunk.
 4. **Einen Marker in die mechanische Prüfung aufnehmen** — idealerweise einen
-   Bezeichner, den es ohne die Lösung nirgends gibt (`normalizeStartsAt` und
-   `findAvailability` sind solche). Ein Register ohne passenden Marker ist
-   Dokumentation, die niemand einhält.
+   Bezeichner, den es ohne die Lösung nirgends gibt (`findAvailability` und
+   `@Max(23)` sind solche). Ein Register ohne passenden Marker ist Dokumentation,
+   die niemand einhält.
 
 Punkt 2 ist die eigentliche Disziplin: Solange Lösungen nur in `src/` und `test/`
 stehen, bleibt das Rezept unverändert. Sobald eine Lösung in eine Material-Datei

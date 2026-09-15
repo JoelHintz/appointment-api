@@ -21,9 +21,9 @@ an, bevor ihr Design-Entscheidungen trefft.
 ## Fachliche Regeln
 
 - Ein Termin dauert genau eine Stunde und beginnt zur vollen Stunde.
-- Slots entstehen zwischen der Öffnungs- und der Schließzeit des Amts. Behandelt
-  `opensAt` / `closesAt` als **UTC**-Stunden — eine bewusste Vereinfachung für
-  den Workshop, keine korrekte Zeitzonenbehandlung.
+- Ein Slot wird durch `date` und `startHour` bezeichnet — beides Ortszeit des
+  Amts. Die API rechnet keine Zeitzonen um.
+- Slots entstehen zwischen `opensAtHour` und `closesAtHour` des Amts.
 - Bereits gebuchte Slots werden ausgeschlossen.
 - Direkt aufeinanderfolgende Termine sind erlaubt.
 
@@ -32,37 +32,45 @@ an, bevor ihr Design-Entscheidungen trefft.
 - Ein REST-Endpunkt, der zum bestehenden Stil passt.
 - Ein Query-DTO für `date`.
 - Ein Response-DTO für die Slots.
-- Swagger-Dekoratoren, ausreichend zum manuellen Testen unter `/api`.
-- Fokussierte Unit-Tests.
+- `@ApiProperty()` an beiden DTOs — ohne die Dekoratoren ist der Endpunkt in
+  Swagger nicht bedienbar, und ihr könnt eure eigene Lösung nicht ausprobieren.
 
 > **Falle bei der Datums-Validierung**
 >
 > `@IsISO8601()` und `@IsDateString()` akzeptieren auch vollständige
 > Zeitstempel wie `2026-06-30T12:00:00Z`, nicht nur `2026-06-30`. Ein solcher
-> Wert kommt durch die Validierung und lässt danach eine naive Datums-Zerlegung
-> auflaufen. Wenn ihr ein reines Datum braucht, schränkt es explizit ein, z. B.
-> mit `@Matches(/^\d{4}-\d{2}-\d{2}$/)`.
+> Wert kommt durch die Validierung, findet dann in der Datenbank keinen einzigen
+> Termin — und wird in der Antwort unverändert zurückgespiegelt. Die Liste sieht
+> also korrekt aus und ist trotzdem falsch. Wenn ihr ein reines Datum braucht,
+> schränkt es explizit ein, z. B. mit `@Matches(/^\d{4}-\d{2}-\d{2}$/)`.
 
-## Empfohlene Tests
+## Nachweis
 
-- Alle Slots, wenn keine Termine existieren
-- Belegte Slots werden ausgeschlossen
-- Direkt aufeinanderfolgende Slots sind erlaubt
-- Leeres Ergebnis, wenn nichts frei ist
-- Ungültiges Datum wird abgelehnt
+Prüft in Swagger:
 
-## Erweiterungen (nach Level auswählen)
+| Request | erwartet |
+|---|---|
+| `?date=2026-06-30` ohne gebuchte Termine | alle Stunden zwischen `opensAtHour` und `closesAtHour` |
+| derselbe Aufruf, nachdem ihr eine Stunde gebucht habt | genau diese Stunde fehlt |
+| `?date=30.06.2026` | `400` |
+| unbekanntes Amt | `404` |
+| `npm test` | grün |
 
-1. Daten in der Vergangenheit ablehnen.
-2. Sinnvoll reagieren, wenn das Amt an dem Tag geschlossen ist.
-3. Nach Aufgabe 3: ein optionaler `?serviceId=`-Filter.
+## Zusatzaufgaben, wenn ihr Zeit habt
+
+1. **Tests.** Ergänzt fokussierte Unit-Tests — alle Slots frei, belegter Slot
+   ausgeschlossen, leeres Ergebnis, ungültiges Datum. Lasst Claude sie schreiben
+   und **lest sie**, bevor ihr sie übernehmt.
+2. Daten in der Vergangenheit ablehnen.
+3. Sinnvoll reagieren, wenn das Amt an dem Tag geschlossen ist.
+4. Nach Aufgabe 3: ein optionaler `?serviceId=`-Filter.
 
 ## Abnahmekriterien
 
 - [ ] Der Endpunkt lässt sich in Swagger mit gültiger und ungültiger Eingabe aufrufen.
 - [ ] Es werden nur gültige, nicht gebuchte Stunden-Slots zurückgegeben.
-- [ ] Ungültige oder unvollständige Eingaben werden sauber behandelt.
-- [ ] `npm test` läuft durch, sinnvolle Tests sind ergänzt.
+- [ ] Die Nachweis-Tabelle stimmt.
+- [ ] `npm test` läuft durch.
 - [ ] Die Umsetzung folgt dem bestehenden Projektstil.
 - [ ] Ihr könnt die wesentlichen Teile eurer Lösung erklären.
 

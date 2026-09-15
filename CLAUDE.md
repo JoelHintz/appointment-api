@@ -9,8 +9,9 @@ The API manages appointments for preconfigured public offices.
 Domain rules:
 
 - An appointment belongs to exactly one office.
-- Appointments are booked for fixed one-hour slots that start on a full hour (UTC).
-- An office must not have overlapping appointments.
+- A slot is identified by a calendar `date` and a full `startHour`; `endHour` is
+  always `startHour + 1`.
+- An office must not have two appointments in the same slot.
 
 `TASK.md` is the participant-facing index; the exercises are one file per task
 under `tasks/`. Trainer material lives in `workshop/`.
@@ -64,25 +65,25 @@ Swagger at `/api`.
 - **offices/** — `GET /offices` (list) and `GET /offices/:id/availability`.
   `OfficesSeedService` implements `OnApplicationBootstrap` and inserts
   `INITIAL_OFFICE_DATA` once, only when the table is empty, so restarts do not
-  duplicate offices. `Office` stores `opensAt` / `closesAt` as `"HH:MM"` strings.
+  duplicate offices. `Office` stores `opensAtHour` / `closesAtHour` as integers.
 - **appointments/** — CRUD without delete (`POST`, `GET`, `GET /:id`, `PATCH /:id`).
   `AppointmentsModule` also imports the `Office` repository so it can load and
   attach the related office.
 
-All domain invariants live in the services, not in DTOs or the database:
+The split is deliberate: **shape rules live in the DTOs, business rules in the
+services.**
 
-- Start time must parse and land exactly on a full hour (UTC minutes, seconds and
-  milliseconds all zero); `endsAt` is always derived as `startsAt + 60 minutes`.
-- Overlap prevention is an exact `startsAt` equality check — sufficient because
-  every slot is one hour and starts on the hour. On update the edited appointment
-  is excluded via `ignoredAppointmentId`.
-- Availability builds hourly slots between the office's opening and closing hour
-  and drops the ones already booked. It treats `opensAt` / `closesAt` as **UTC**
-  hours — a deliberate simplification, not correct time-zone handling.
+- `date` and `startHour` are constrained in `CreateAppointmentDto` — a calendar
+  date via `@Matches`, an hour via `@IsInt() @Min(0) @Max(23)`. Nothing else can
+  even be expressed, so the services never re-check the shape.
+- `endHour` is derived as `startHour + 1` in the service, behind the validation.
+- Overlap prevention is an equality check on office, `date` and `startHour`. On
+  update the edited appointment is excluded via `ignoredAppointmentId`.
+- Availability builds hourly slots between `opensAtHour` and `closesAtHour` and
+  drops the ones already booked.
 
 Entities are never returned directly: `AppointmentMapper` (static methods) maps to
-`AppointmentResponseDto`; `OfficesService` maps inline. Timestamps are stored as
-ISO strings in plain string columns.
+`AppointmentResponseDto`; `OfficesService` maps inline.
 
 ## General Guidelines
 
@@ -151,17 +152,21 @@ When implementing a new endpoint, choose a route that fits the existing REST sty
 
 ## Date and Time
 
-Use ISO-8601 strings in the API contract.
+**There is deliberately no timestamp in the API contract.** A slot is a calendar
+day plus a full hour in local time of the office, so the contract carries `date`
+(`"2026-06-20"`) and `startHour` (`9`) as separate fields, and the API never
+converts between time zones. This is unusual for a REST API and is a modelling
+decision, not an oversight: an instant can express values the domain does not
+have — half hours, seconds, offsets — and every one of them would need to be
+rejected or normalised somewhere.
 
 Rules:
 
-- Validate date and date-time input where relevant.
+- Constrain a date explicitly with `@Matches(/^\d{4}-\d{2}-\d{2}$/)`. Do **not**
+  use `@IsISO8601()` or `@IsDateString()` for a date-only field — they also
+  accept full date-times like `2026-06-30T12:00:00Z`.
+- Constrain an hour with `@IsInt() @Min(0) @Max(23)`.
 - Show useful examples in Swagger.
-- Keep time zone handling simple unless explicitly required.
-- Note that `@IsISO8601()` / `@IsDateString()` also accept full date-times, not
-  just `YYYY-MM-DD`. When you need a date-only value, constrain it explicitly
-  (e.g. `@Matches(/^\d{4}-\d{2}-\d{2}$/)`), otherwise a value like
-  `2026-06-30T12:00:00Z` passes validation and then breaks naive date parsing.
 
 ## Validation
 
@@ -249,6 +254,12 @@ A change is complete when:
 - the endpoint works in Swagger
 - the main behavior is covered by focused unit tests
 - the implementation remains understandable for workshop participants
+
+This is the standard for the **reference solutions in this repository**, not the
+acceptance criteria the participants work against. The task texts under `tasks/`
+deliberately make writing tests an optional extension, because mixed-level groups
+spend the time on Jest mock mechanics instead of on the learning goal. Keep the
+reference solutions tested anyway — they are the trainer's safety net.
 
 ### Useful Commands
 

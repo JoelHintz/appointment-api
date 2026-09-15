@@ -21,9 +21,11 @@ zurück.
 ## Fachliche Regeln
 
 - Ein Termin gehört zu genau einem Amt.
-- Ein Termin dauert genau eine Stunde.
-- Ein Termin beginnt zur vollen Stunde.
-- Ein Amt darf keine überschneidenden Termine haben.
+- Ein Slot wird durch `date` und `startHour` bezeichnet, beides Ortszeit des
+  Amts. Rechne keine Zeitzonen um.
+- Ein Termin dauert genau eine Stunde: `endHour = startHour + 1`.
+- Slots entstehen zwischen `opensAtHour` und `closesAtHour` des Amts.
+- Ein Amt darf keine zwei Termine im selben Slot haben.
 - Direkt aufeinanderfolgende Termine sind erlaubt.
 - Bereits gebuchte Slots müssen ausgeschlossen werden.
 
@@ -33,8 +35,8 @@ zurück.
 - Nutze die vorhandenen Entitäten `Office` und `Appointment`.
 - Ergänze ein Query-DTO für den Parameter `date`.
 - Ergänze ein Response-DTO für die Slots.
-- Ergänze Swagger-Dekoratoren.
-- Ergänze oder aktualisiere Unit-Tests.
+- Ergänze `@ApiProperty()` an beiden DTOs — ohne sie ist der Endpunkt in Swagger
+  nicht bedienbar.
 - Halte die Umsetzung einfach und lesbar.
 - Führe keine neuen Abhängigkeiten ein.
 - Keine Authentifizierung, kein Frontend, kein Caching, keine Queues, keine
@@ -55,8 +57,9 @@ Setz ihn erst nach meiner Freigabe um.
 [
   {
     "officeId": 1,
-    "startsAt": "2026-06-30T08:00:00.000Z",
-    "endsAt": "2026-06-30T09:00:00.000Z"
+    "date": "2026-06-30",
+    "startHour": 8,
+    "endHour": 9
   }
 ]
 ```
@@ -69,7 +72,9 @@ Der Endpunkt soll ungültige Datumsangaben ablehnen. Achtung: `@IsISO8601()` und
 
 ## Tests
 
-Deck mindestens ab:
+Tests sind hier optional. Wenn du welche schreibst, deck diese Fälle ab — und
+erklär mir jeden Test in einem Satz, damit ich ihn prüfen kann, statt ihn nur zu
+übernehmen:
 
 - Slots werden geliefert, wenn keine Termine existieren
 - belegte Ein-Stunden-Slots werden ausgeschlossen
