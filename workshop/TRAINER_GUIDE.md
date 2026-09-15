@@ -1,7 +1,8 @@
 # Trainer-Guide: Ganztags-Workshop „Agentisches Coding"
 
 Zielgruppe: Informatik-Studierende aller Level (Anfang Bachelor bis Ende Master),
-gemischte Gruppen. Dauer: ein Tag, 9:00–17:00. Werkzeug: Claude Code in VS Code.
+gemischte Gruppen. Dauer: ein Tag, 8:00–17:00. Werkzeug: Claude Code in VS Code,
+durchgehend mit dem Modell **Sonnet** (Kostenrahmen, siehe §3.5).
 Codebasis: dieses Repository (`appointment-api`), eine kleine NestJS/TypeScript-API.
 
 Dieser Guide ist **nur für Trainer:innen**. Studierende bekommen `README.md` und
@@ -30,34 +31,41 @@ Teil.**
 
 ---
 
-## 2. Zeitplan (9:00–17:00)
+## 2. Zeitplan (8:00–17:00)
 
 | Zeit | Block | Inhalt | Ergebnis |
 |---|---|---|---|
-| 09:00–09:20 | Ankommen & Setup-**Rettung** | Zugänge einrichten, `npm test` stichprobenartig prüfen, Ersatzgeräte verteilen | Jede Gruppe lauffähig |
-| 09:20–10:20 | **Vortrag**: Prinzipien agentischen Codings | siehe Abschnitt 4; `/init` einmal live vorführen | Mentales Modell |
-| 10:20–10:35 | Pause | | |
-| 10:35–11:35 | **Block 1**: App + `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** `startHour`-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
-| 11:35–12:00 | **Puffer** | Siehe Notiz unter der Tabelle | |
+| 08:00–08:20 | Ankommen & Setup-**Rettung** | Zugänge einrichten, `npm test` stichprobenartig prüfen, Ersatzgeräte verteilen, Modell auf **Sonnet** stellen | Jede Gruppe lauffähig |
+| 08:20–09:20 | **Vortrag**: Prinzipien agentischen Codings | siehe Abschnitt 4; `/init` einmal live vorführen | Mentales Modell |
+| 09:20–09:35 | Pause | | |
+| 09:35–09:50 | **App- & Swagger-Demo** | Die App einmal vorführen: `npm run start:dev`, Swagger unter `/api`, einen Termin anlegen, die Liste abrufen, einen Fehlerfall zeigen | Alle wissen, womit sie den ganzen Tag prüfen |
+| 09:50–10:50 | **Block 1**: `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** `startHour`-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
+| 10:50–11:00 | Pause | | |
+| 11:00–12:00 | **Block 2**: Aufgabe 2 (Feature) | Availability-Endpunkt: Plan anfordern, reviewen, schrittweise umsetzen | Feature im Projektstil |
 | 12:00–13:00 | Mittagspause | | |
-| 13:00–13:15 | Mini-Input | Referenz-`CLAUDE.md` zeigen & vergleichen; Lösung zu Aufgabe 1 auflösen | „Was ist ein gutes `CLAUDE.md`" |
-| 13:15–14:20 | **Block 2**: Aufgabe 2 (Feature) | Availability-Endpunkt: Plan anfordern, reviewen, schrittweise umsetzen, testen | Feature im Projektstil |
-| 14:20–14:50 | **Input**: Agenten & Skills | Wie ein Subagent aufgebaut ist; `reviewer` + `module-review` vorführen; Faustregel „Agent = Rolle, Skill = Wissen" an zwei Skill-Beispielen; die zwei Gerüste zeigen | Wissen, was in Teil a zu tun ist |
-| 14:50–16:25 | **Block 3**: Aufgabe 3 | **a)** ~25 Min: eigene `architect`- und `developer`-Agenten schreiben. **b)** ~70 Min: damit `contact-requests/` bauen. Kurze Pause nach Bedarf | Eigene Agenten + reviewtes Modul |
-| 16:25–16:30 | Umbau | | |
-| 16:30–16:55 | **Abschlusspräsentationen** | **3 Min./Gruppe, hart getaktet**: Demo + 1 Test + „was hat der Agent falsch gemacht" | Teilen & Reflexion |
-| 16:55–17:00 | Abschluss & Feedback | | |
+| 13:00–13:25 | **Mini-Input** | Referenz-`CLAUDE.md` zeigen & vergleichen; Aufgabe 1 **und** 2 auflösen | „Was ist ein gutes `CLAUDE.md`" |
+| 13:25–13:55 | **Input**: Agenten & Skills | Wie ein Subagent aufgebaut ist; `reviewer` + `module-review` vorführen; Faustregel „Agent = Rolle, Skill = Wissen" an zwei Skill-Beispielen; die zwei Gerüste zeigen | Wissen, was in Teil a zu tun ist |
+| 13:55–14:55 | **Block 3**, erste Hälfte | **a)** ~25 Min: eigene `architect`- und `developer`-Agenten schreiben. **b)** Start von `contact-requests/` | Eigene Agenten |
+| 14:55–15:10 | Pause | | |
+| 15:10–16:10 | **Block 3**, zweite Hälfte | `contact-requests/` fertig bauen und reviewen lassen | Reviewtes Modul |
+| 16:10–16:15 | Umbau | | |
+| 16:15–16:40 | **Abschlusspräsentationen** | **3 Min./Gruppe, hart getaktet**: Demo + „was hat der Agent falsch gemacht" | Teilen & Reflexion |
+| 16:40–16:50 | Abschluss & Feedback | | |
+| 16:50–17:00 | **Puffer** | nicht verplanen | |
 
-Netto an Aufgaben: ~4 h. Block 3 bleibt der engste Timebox — plane die
-Minimalvariante fest ein (Abschnitt 7).
+Netto an Aufgaben: 4 h (60 / 60 / 120). Block 3 bleibt der engste Timebox — plane
+die Minimalvariante fest ein (Abschnitt 7).
 
-**Zum Puffer um 11:35.** Aufgabe 1 wurde von 85 auf 60 Minuten gekürzt; die
-25 Minuten sind bewusst **nicht** weiterverplant. Drei sinnvolle Verwendungen, in
-dieser Reihenfolge: (1) Gruppen aufholen lassen, die in Teil a hängen — das ist
-der Lernkern und der häufigste Grund für Verzug; (2) den Mini-Input von 13:00
-vorziehen und nach der Pause direkt mit Aufgabe 2 starten; (3) die Pause
-verlängern. Was du nicht tun solltest: den Puffer fest in Block 1 einrechnen —
-die 60 Minuten sind so geschnitten, dass sie ohne ihn tragen.
+**Zwei Dinge, die an diesem Zuschnitt hängen:**
+
+- **Der Vormittag hat zwischen 09:35 und 12:00 nur eine 10-Minuten-Pause.** Das
+  ist bewusst so, damit „Ankommen & Setup-Rettung" seine vollen 20 Minuten behält
+  — das ist laut Abschnitt 10 das größte Zeitrisiko des Tages. Wenn das Setup
+  glattläuft, verschiebe den Überhang in die Pause um 10:50.
+- **Beide Aufgaben sind vor dem Mittag fertig.** Damit ist das frühere
+  Spoiler-Problem beim Mini-Input erledigt: Du kannst um 13:00 das
+  `CLAUDE.md` des Trainer-Branchs ohne Kürzung zeigen, weil es nichts mehr
+  vorwegnimmt.
 
 **Setup ist Hausaufgabe.** `SETUP.md` geht mit ausreichend Vorlauf raus und
 verlangt ausdrücklich, dass die Gruppen `npm ci`, `npm run start:dev` und
@@ -105,8 +113,8 @@ absichtlich dünn:
 |---|---|
 | `agents/reviewer.md` | **vollständig** — das eine ausgearbeitete Vorbild |
 | `skills/module-review/SKILL.md` | **vollständig** — die zugehörige Checkliste |
-| `agents/architect.md` | **Gerüst** — Frontmatter und Abschnitte leer, Leitfragen als Kommentare |
-| `agents/developer.md` | **Gerüst** |
+| `agents/architect.md` | **Gerüst** — Abschnitte leer, Leitfragen als Kommentare; `model: sonnet` bereits gesetzt |
+| `agents/developer.md` | **Gerüst**, ebenfalls mit `model: sonnet` |
 | `settings.json` | Permission-Allowlist |
 
 Ein Skill, das den Ablauf orchestriert, gibt es bewusst **nicht** — weder für die
@@ -262,7 +270,34 @@ Belege dafür: eine Prüf-Checkliste und eine Konventionssammlung — beides Wis
 beides unabhängig davon nützlich, wer es gerade aufruft. Zeig beide im
 Input-Block nebeneinander.
 
-### 3.5 Ersatzgeräte
+### 3.5 Kostenrahmen: durchgehend Sonnet
+
+Der Workshop läuft acht Stunden mit mehreren Gruppen parallel. Damit der
+Verbrauch planbar bleibt, arbeiten alle durchgehend mit **Sonnet**. Die Vorgabe
+steht an vier Stellen, damit sie nicht an einer einzelnen Erinnerung hängt:
+
+| Stelle | Was dort steht |
+|---|---|
+| `SETUP.md` §2.4 und Checkliste | `/model sonnet` direkt nach der Anmeldung |
+| `TASK.md`, Abschnitt „Arbeitsweise" | dieselbe Ansage für den ganzen Tag |
+| `.claude/agents/*.md` | `model: sonnet` im Frontmatter aller drei Agenten |
+| Zeitplan, 08:00–08:20 | du stellst es beim Einrichten der Zugänge gemeinsam ein |
+
+**Der wichtigste Hebel ist die Hauptsitzung**, nicht die Subagenten: Architekt
+und Reviewer laufen je ein- bis zweimal auf kleinen Eingaben, während die
+Hauptsitzung den ganzen Tag über läuft. Wenn du beim Herumgehen nur eine Sache
+prüfst, dann die Modellanzeige der Sitzung.
+
+In den beiden Gerüsten steht die `model:`-Zeile bereits drin, mit einem Kommentar,
+dass sie stehen bleiben soll. Der Grund: Die Gruppen füllen das Frontmatter in
+Aufgabe 3 selbst aus — eine Vorgabe, die sie selbst formulieren müssten, wäre
+keine.
+
+> **Achtung beim Portieren:** `SETUP.md` wird laut `RELEASE_TO_MAIN.md` auf `main`
+> gepflegt und **nicht** vom Entwicklungsbranch übernommen. Die Sonnet-Absätze
+> dort müssen direkt auf `main` nachgezogen werden.
+
+### 3.6 Ersatzgeräte
 
 `better-sqlite3` ist ein nativer Build und schlägt auf manchen Laptops fehl. Halte
 1–2 fertig eingerichtete Rechner oder einen Cloud-Editor bereit. Weitere
@@ -334,16 +369,11 @@ dass eine Gruppe Teil a überspringt, hol sie zurück.
   vollständig getestet.
 - **Folge für Aufgabe 3:** Der Reviewer-Agent wird fehlende Tests als Finding
   melden. Das ist erwünscht und zeigt ihn bei der Arbeit — kein Materialfehler.
-- **Nach der Mittagspause** (13:00–13:15): ein Referenz-`CLAUDE.md` zeigen und
+- **Nach der Mittagspause** (13:00–13:25): ein Referenz-`CLAUDE.md` zeigen und
   gemeinsam gegen ein Gruppen-Ergebnis halten. Frage: Was fehlt? Was ist zu vage?
-  Was ist zu viel?
-
-> **Achtung, Spoiler.** Nimm dafür **nicht** das `CLAUDE.md` des Trainer-Branchs.
-> Es beschreibt die Availability-Implementierung *und* die
-> `@IsISO8601()`-Falle — also die Lösung von Aufgabe 2, die um 13:15 startet.
-> Nötig ist eine gekürzte, spoilerfreie Fassung als Handout (steht noch aus).
-> Alternative, falls die Fassung nicht rechtzeitig fertig wird: den Vergleich
-> ans Ende von Block 2 schieben.
+  Was ist zu viel? Weil Aufgabe 2 vor dem Mittag abgeschlossen ist, kannst du
+  dafür das `CLAUDE.md` des Trainer-Branchs unverändert nehmen — es nimmt nichts
+  mehr vorweg.
 
 ### „Woran erkennt man ein gutes `CLAUDE.md`" (Rubrik)
 
@@ -426,7 +456,7 @@ Zwei weitere Funde für sehr schnelle Gruppen, beide verifiziert:
 
 ---
 
-## 6. Block 2 — Aufgabe 2: Availability-Endpunkt (65 Min.)
+## 6. Block 2 — Aufgabe 2: Availability-Endpunkt (60 Min.)
 
 Aufgabe: `tasks/task-2-office-availability.md`, Start-Prompt:
 `prompts/task-2-availability.prompt.md`.
@@ -465,7 +495,7 @@ Vergangene Daten ablehnen; „Amt an dem Wochentag geschlossen".
 
 ---
 
-## 7. Block 3 — Aufgabe 3: eigene Agenten + `contact-requests/` (95 Min.)
+## 7. Block 3 — Aufgabe 3: eigene Agenten + `contact-requests/` (120 Min.)
 
 Aufgabe in `tasks/task-3-contact-requests.md`. Zwei Teile: **erst das Werkzeug
 bauen, dann damit arbeiten.**

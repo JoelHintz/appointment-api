@@ -27,6 +27,13 @@ ein vollständiges Beispiel — der Agent `reviewer` mit seinem Skill
 
 ## Arbeitsweise
 
+> **Modell: durchgehend Sonnet.** Stellt eure Sitzung zu Beginn mit
+> `/model sonnet` um und lasst sie den ganzen Tag dort. Der Workshop läuft mit
+> mehreren Gruppen parallel über acht Stunden — Sonnet hält den Kostenrahmen und
+> reicht für alle Aufgaben hier vollständig aus. Die Agenten, die ihr in
+> Aufgabe 3 schreibt, tragen `model: sonnet` bereits im Frontmatter; **lasst
+> diese Zeile stehen.**
+
 - Arbeitet in Gruppen von **2–3 Personen**. Ein eingerichteter Rechner pro Gruppe
   genügt.
 - Wenn ihr NestJS oder TypeORM nicht kennt: lasst euch von Claude zuerst **einen**

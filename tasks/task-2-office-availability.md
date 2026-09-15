@@ -35,15 +35,6 @@ an, bevor ihr Design-Entscheidungen trefft.
 - `@ApiProperty()` an beiden DTOs — ohne die Dekoratoren ist der Endpunkt in
   Swagger nicht bedienbar, und ihr könnt eure eigene Lösung nicht ausprobieren.
 
-> **Falle bei der Datums-Validierung**
->
-> `@IsISO8601()` und `@IsDateString()` akzeptieren auch vollständige
-> Zeitstempel wie `2026-06-30T12:00:00Z`, nicht nur `2026-06-30`. Ein solcher
-> Wert kommt durch die Validierung, findet dann in der Datenbank keinen einzigen
-> Termin — und wird in der Antwort unverändert zurückgespiegelt. Die Liste sieht
-> also korrekt aus und ist trotzdem falsch. Wenn ihr ein reines Datum braucht,
-> schränkt es explizit ein, z. B. mit `@Matches(/^\d{4}-\d{2}-\d{2}$/)`.
-
 ## Nachweis
 
 Prüft in Swagger:
@@ -53,8 +44,13 @@ Prüft in Swagger:
 | `?date=2026-06-30` ohne gebuchte Termine | alle Stunden zwischen `opensAtHour` und `closesAtHour` |
 | derselbe Aufruf, nachdem ihr eine Stunde gebucht habt | genau diese Stunde fehlt |
 | `?date=30.06.2026` | `400` |
+| `?date=2026-06-30T12:00:00Z` | `400` |
 | unbekanntes Amt | `404` |
 | `npm test` | grün |
+
+> Die vierte Zeile ist die interessante. Wenn euer Endpunkt dort nicht `400`
+> liefert, schaut genau hin, **was** er stattdessen zurückgibt — und ob ihr das
+> auf Anhieb als falsch erkannt hättet.
 
 ## Zusatzaufgaben, wenn ihr Zeit habt
 

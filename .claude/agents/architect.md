@@ -4,6 +4,9 @@ description: UNVOLLSTÄNDIG — dieses Gerüst muss erst ausgefüllt werden. Ers
 # tools: ...
 # Welche Werkzeuge braucht ein Agent, der ausschließlich plant und keinen Code
 # schreibt? Tragt sie hier als kommagetrennte Liste ein und entfernt das "#".
+model: sonnet
+# Diese Zeile bleibt stehen. Im Workshop läuft alles auf Sonnet, damit der
+# Kostenrahmen hält — siehe TASK.md.
 ---
 
 <!--

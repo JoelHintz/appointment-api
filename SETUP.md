@@ -99,6 +99,12 @@ Weitere Informationen:
 
 Eine Anmeldung oder ein Funktionstest ist vor dem Workshop nicht erforderlich. Der Workshop-Zugang wird gemeinsam während des Workshops eingerichtet.
 
+> **Modell: Sonnet.** Direkt nach der Anmeldung stellt ihr eure Sitzung mit
+> `/model sonnet` um und lasst sie den ganzen Tag dort. Der Workshop läuft mit
+> mehreren Gruppen parallel über acht Stunden — Sonnet hält den Kostenrahmen und
+> reicht für alle Aufgaben vollständig aus. Wir machen das gemeinsam beim
+> Einrichten der Zugänge.
+
 ## 3. Projekt einrichten
 
 Im nächsten Schritt ladet ihr das für den Workshop verwendete Projekt herunter und installiert die dafür benötigten Abhängigkeiten.
@@ -215,6 +221,7 @@ Es ist nicht erforderlich, vor dem Workshop Änderungen am Code vorzunehmen oder
 - [ ] `node --version` beginnt mit `v24.`
 - [ ] `npm --version` gibt eine Versionsnummer aus.
 - [ ] Die Claude-Code-Erweiterung von Anthropic ist installiert.
+- [ ] Nach der Anmeldung im Workshop: `/model sonnet` ist gesetzt.
 - [ ] Das Repository ist lokal in Visual Studio Code verfügbar.
 - [ ] `npm ci` wurde erfolgreich ausgeführt.
 - [ ] `npm run start:dev` startet die Anwendung.

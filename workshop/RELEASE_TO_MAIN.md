@@ -70,6 +70,11 @@ Kopieren, nichts muss zurückgebaut werden.
 `README.md` und `SETUP.md` liegen ohnehin auf `main` und werden dort gepflegt —
 sie kommen **nicht** vom Entwicklungsbranch.
 
+> **Offener Punkt:** `SETUP.md` hat auf dem Entwicklungsbranch zwei Sonnet-Absätze
+> bekommen (§2.4 und die Abschlusscheckliste). Weil die Datei nicht portiert wird,
+> müssen sie **direkt auf `main`** nachgezogen werden. Der Kostenrahmen steht
+> sonst nur in `TASK.md` und den Agenten.
+
 ### Bleibt auf dem Entwicklungsbranch: das Lösungs-Register
 
 Lösungen zerfallen in zwei Sorten, und nur die zweite ist gefährlich.
@@ -300,6 +305,9 @@ git cat-file -e main:src/contact-requests/contact-requests.service.ts
 # 4. Kein Rückstand aus einem Testlauf. Erwartet: exakt 3 Agenten, exakt 1 Skill.
 git ls-tree --name-only main .claude/agents/ | wc -l    # muss 3 sein
 git ls-tree --name-only main .claude/skills/ | wc -l    # muss 1 sein
+
+# 5. Die Modellvorgabe ist da. Erwartet: 3 Treffer.
+git grep -c 'model: sonnet' main -- .claude/agents/ | wc -l
 ```
 
 Schritt 4 fängt den Fall ab, dass ein Testlauf (Trainer-Guide §3.3) Spuren
@@ -339,6 +347,8 @@ Auf einem Arbeitsbaum mit `main` prüfen:
       Kommentare drin, `description` beginnt mit „UNVOLLSTÄNDIG". Das geht am
       ehesten kaputt, wenn du vorher einen Testlauf gemacht hast (Rezept im
       Trainer-Guide §3.3).
+- [ ] Alle drei Agenten tragen `model: sonnet`, und `SETUP.md` sowie `TASK.md`
+      nennen die Vorgabe.
 - [ ] `git status` ist sauber.
 
 ## Wenn eine Aufgabe dazukommt

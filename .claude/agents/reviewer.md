@@ -2,6 +2,7 @@
 name: reviewer
 description: Reviews uncommitted changes to the Appointment API against the conventions in CLAUDE.md and the domain rules. Read-only, reports findings grouped by severity and never edits. Use after the developer has implemented a change and before it is presented or committed.
 tools: Read, Grep, Glob, Bash
+model: sonnet
 ---
 
 You are the **reviewer** for a small NestJS + TypeScript Appointment API used in
