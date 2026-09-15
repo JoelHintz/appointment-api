@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsISO8601, IsNotEmpty, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, Matches, Min } from 'class-validator';
 
 export class CreateAppointmentDto {
   @IsNotEmpty()
@@ -13,7 +13,12 @@ export class CreateAppointmentDto {
   @ApiProperty({ description: 'ID of the office the appointment is booked for', example: 1 })
   officeId!: number;
 
-  @IsISO8601()
-  @ApiProperty({ description: 'Start time in ISO-8601 format', example: '2026-06-20T09:00:00.000Z' })
-  startsAt!: string;
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'date must be a calendar date in the format YYYY-MM-DD' })
+  @ApiProperty({ description: 'Calendar date of the appointment, local time of the office', example: '2026-06-20' })
+  date!: string;
+
+  @IsInt()
+  @Type(() => Number)
+  @ApiProperty({ description: 'Hour the appointment starts at, local time of the office', example: 9 })
+  startHour!: number;
 }

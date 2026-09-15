@@ -6,7 +6,8 @@ describe('CreateAppointmentDto', () => {
   const validPayload = {
     title: 'Applying for a passport',
     officeId: 1,
-    startsAt: '2026-06-20T09:00:00.000Z',
+    date: '2026-06-20',
+    startHour: 9,
   };
 
   const errorsFor = (payload: Record<string, unknown>) => validateSync(plainToInstance(CreateAppointmentDto, payload));
@@ -32,5 +33,17 @@ describe('CreateAppointmentDto', () => {
   it('rejects a zero or negative officeId', () => {
     expect(errorsFor({ ...validPayload, officeId: 0 })).toHaveLength(1);
     expect(errorsFor({ ...validPayload, officeId: -3 })).toHaveLength(1);
+  });
+
+  it('rejects a date that is not a plain calendar date', () => {
+    expect(errorsFor({ ...validPayload, date: '2026-06-20T12:00:00Z' })).toHaveLength(1);
+    expect(errorsFor({ ...validPayload, date: '20.06.2026' })).toHaveLength(1);
+  });
+
+  it('rejects a start hour that is not an integer', () => {
+    const errors = errorsFor({ ...validPayload, startHour: 9.5 });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0].property).toBe('startHour');
   });
 });

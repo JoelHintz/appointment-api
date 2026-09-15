@@ -6,18 +6,18 @@ import { Office } from './entity/office.entity';
 export const INITIAL_OFFICE_DATA: Array<Partial<Office>> = [
   {
     name: 'Nuremberg Central Citizens Office',
-    opensAt: '08:00',
-    closesAt: '16:00',
+    opensAtHour: 8,
+    closesAtHour: 16,
   },
   {
     name: 'Nuremberg Citizens Office South',
-    opensAt: '09:00',
-    closesAt: '15:00',
+    opensAtHour: 9,
+    closesAtHour: 15,
   },
   {
     name: 'Nuremberg Citizens Office East',
-    opensAt: '08:00',
-    closesAt: '14:00',
+    opensAtHour: 8,
+    closesAtHour: 14,
   },
 ];
 

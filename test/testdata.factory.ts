@@ -9,22 +9,24 @@ import { CreateContactRequestDto } from '../src/contact-requests/dto/create-cont
 import { UpdateContactRequestDto } from '../src/contact-requests/dto/update-contact-request.dto';
 import { ContactRequest, ContactRequestStatus } from '../src/contact-requests/entity/contact-request.entity';
 
-const DEFAULT_START = '2026-06-20T09:00:00.000Z';
-const DEFAULT_END = '2026-06-20T10:00:00.000Z';
+const DEFAULT_DATE = '2026-06-20';
+const DEFAULT_START_HOUR = 9;
+const DEFAULT_END_HOUR = 10;
 
 export const createOffice = (overrides: Partial<Office> = {}): Office => ({
   id: 1,
   name: 'Nuremberg Office',
-  opensAt: '08:00',
-  closesAt: '18:00',
+  opensAtHour: 8,
+  closesAtHour: 18,
   ...overrides,
 });
 
 export const createAppointment = (overrides: Partial<Appointment> = {}): Appointment => ({
   id: 1,
   title: 'Citizen appointment',
-  startsAt: DEFAULT_START,
-  endsAt: DEFAULT_END,
+  date: DEFAULT_DATE,
+  startHour: DEFAULT_START_HOUR,
+  endHour: DEFAULT_END_HOUR,
   status: AppointmentStatus.SCHEDULED,
   office: createOffice(),
   ...overrides,
@@ -35,8 +37,9 @@ export const createAppointmentResponseDto = (
 ): AppointmentResponseDto => ({
   id: 1,
   title: 'Citizen appointment',
-  startsAt: DEFAULT_START,
-  endsAt: DEFAULT_END,
+  date: DEFAULT_DATE,
+  startHour: DEFAULT_START_HOUR,
+  endHour: DEFAULT_END_HOUR,
   status: AppointmentStatus.SCHEDULED,
   officeId: 1,
   officeName: 'Nuremberg Office',
@@ -45,7 +48,8 @@ export const createAppointmentResponseDto = (
 
 export const createCreateAppointmentDto = (overrides: Partial<CreateAppointmentDto> = {}): CreateAppointmentDto => ({
   title: 'New appointment',
-  startsAt: DEFAULT_START,
+  date: DEFAULT_DATE,
+  startHour: DEFAULT_START_HOUR,
   officeId: 1,
   ...overrides,
 });

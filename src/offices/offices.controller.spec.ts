@@ -29,8 +29,8 @@ describe('OfficesController', () => {
   describe('findAll', () => {
     it('should return all offices from the service', async () => {
       const offices = [
-        { id: 1, name: 'Citizens Office Mitte', opensAt: '08:00', closesAt: '16:00' },
-        { id: 2, name: 'Citizens Office Nord', opensAt: '09:00', closesAt: '17:00' },
+        { id: 1, name: 'Citizens Office Mitte', opensAtHour: 8, closesAtHour: 16 },
+        { id: 2, name: 'Citizens Office Nord', opensAtHour: 9, closesAtHour: 17 },
       ];
 
       service.findAll.mockResolvedValue(offices);
@@ -44,7 +44,7 @@ describe('OfficesController', () => {
 
   describe('findAvailability', () => {
     it('should return available slots from the service', async () => {
-      const slots = [{ officeId: 1, startsAt: '2026-06-30T08:00:00.000Z', endsAt: '2026-06-30T09:00:00.000Z' }];
+      const slots = [{ officeId: 1, date: '2026-06-30', startHour: 8, endHour: 9 }];
 
       service.findAvailability.mockResolvedValue(slots);
 

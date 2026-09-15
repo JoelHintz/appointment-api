@@ -6,8 +6,9 @@ export class AppointmentMapper {
     return {
       id: entity.id ?? -1,
       title: entity.title,
-      startsAt: entity.startsAt,
-      endsAt: entity.endsAt,
+      date: entity.date,
+      startHour: entity.startHour,
+      endHour: entity.endHour,
       status: entity.status ?? AppointmentStatus.SCHEDULED,
       officeName: entity.office?.name,
       officeId: entity.office?.id,
