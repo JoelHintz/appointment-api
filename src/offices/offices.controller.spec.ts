@@ -22,10 +22,6 @@ describe('OfficesController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('findAll', () => {
     it('should return all offices from the service', async () => {
       const offices = [

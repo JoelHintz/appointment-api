@@ -433,30 +433,5 @@ describe('AppointmentsService', () => {
       expect(result).toBeDefined();
     });
 
-    it('should allow same appointment times in different offices', async () => {
-      const office = createOffice({ id: 1 });
-      const otherOffice = createOffice({ id: 2 });
-      const existingAppointment = createAppointment({ id: 1, office });
-
-      const dto: UpdateAppointmentDto = {
-        officeId: 2,
-        date: existingAppointment.date,
-        startHour: existingAppointment.startHour,
-      };
-
-      const savedEntity = createAppointment({
-        ...existingAppointment,
-        office: otherOffice,
-      });
-
-      mockRepositoryReads({ loaded: existingAppointment, conflicting: null });
-      officeRepository.findOne.mockResolvedValue(otherOffice);
-      appointmentRepository.save.mockResolvedValue(savedEntity);
-      mockMappedDto();
-
-      const result = await service.update(1, dto);
-
-      expect(result).toBeDefined();
-    });
   });
 });

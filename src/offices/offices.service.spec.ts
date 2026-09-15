@@ -57,10 +57,6 @@ describe('OfficesService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('findAll', () => {
     it('should load offices ordered by name and map them to response objects', async () => {
       const offices: Office[] = [
