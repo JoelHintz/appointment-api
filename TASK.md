@@ -17,7 +17,7 @@ Fachliche Grundregeln:
 |---|---|---|---|
 | 1 | [Codebasis erschließen, `CLAUDE.md`, erster Bugfix](tasks/task-1-explore-and-bugfix.md) | ~60 Min | App verstehen, Projektkontext festhalten, einen echten Bug finden |
 | 2 | [Feature: freie Termin-Slots](tasks/task-2-office-availability.md) | ~60 Min | Neuer Endpunkt im bestehenden Stil |
-| 3 | [Eigene Agenten bauen und ein neues Modul erzeugen](tasks/task-3-contact-requests.md) | ~95 Min | Erst das Werkzeug schreiben, dann damit ein Modul bauen |
+| 3 | [Eigene Agenten bauen und ein neues Modul erzeugen](tasks/task-3-contact-requests.md) | ~90 Min | Erst das Werkzeug schreiben, dann damit ein Modul bauen |
 
 Die Aufgaben 1 und 2 sind unabhängig voneinander.
 

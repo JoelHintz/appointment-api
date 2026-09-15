@@ -1,7 +1,7 @@
 # Trainer-Guide: Ganztags-Workshop „Agentisches Coding"
 
 Zielgruppe: Informatik-Studierende aller Level (Anfang Bachelor bis Ende Master),
-gemischte Gruppen. Dauer: ein Tag, 8:00–17:00. Werkzeug: Claude Code in VS Code,
+gemischte Gruppen. Dauer: ein Tag, 9:00–17:00. Werkzeug: Claude Code in VS Code,
 durchgehend mit dem Modell **Sonnet** (Kostenrahmen, siehe §3.5).
 Codebasis: dieses Repository (`appointment-api`), eine kleine NestJS/TypeScript-API.
 
@@ -31,45 +31,49 @@ Teil.**
 
 ---
 
-## 2. Zeitplan (8:00–17:00)
+## 2. Zeitplan (9:00–17:00)
 
 | Zeit | Block | Inhalt | Ergebnis |
 |---|---|---|---|
-| 08:00–08:20 | Ankommen & Setup-**Rettung** | Zugänge einrichten, `npm test` stichprobenartig prüfen, Ersatzgeräte verteilen, Modell auf **Sonnet** stellen | Jede Gruppe lauffähig |
-| 08:20–09:20 | **Vortrag**: Prinzipien agentischen Codings | siehe Abschnitt 4; `/init` einmal live vorführen | Mentales Modell |
-| 09:20–09:35 | Pause | | |
-| 09:35–09:50 | **App- & Swagger-Demo** | Die App einmal vorführen: `npm run start:dev`, Swagger unter `/api`, einen Termin anlegen, die Liste abrufen, einen Fehlerfall zeigen | Alle wissen, womit sie den ganzen Tag prüfen |
-| 09:50–10:50 | **Block 1**: `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** `startHour`-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
-| 10:50–11:00 | Pause | | |
-| 11:00–12:00 | **Block 2**: Aufgabe 2 (Feature) | Availability-Endpunkt: Plan anfordern, reviewen, schrittweise umsetzen | Feature im Projektstil |
+| 09:00–09:15 | Ankommen & Setup-**Rettung** | Zugänge einrichten, `npm test` stichprobenartig prüfen, Ersatzgeräte verteilen, Modell auf **Sonnet** stellen | Jede Gruppe lauffähig |
+| 09:15–10:10 | **Vortrag**: Prinzipien agentischen Codings | siehe Abschnitt 4; `/init` einmal live vorführen | Mentales Modell |
+| 10:10–10:25 | Pause | | |
+| 10:25–10:40 | **App- & Swagger-Demo** | Die App einmal vorführen: `npm run start:dev`, Swagger unter `/api`, einen Termin anlegen, die Liste abrufen, einen Fehlerfall zeigen | Alle wissen, womit sie den ganzen Tag prüfen |
+| 10:40–11:40 | **Block 1**: `CLAUDE.md` + Aufgabe 1 | **a)** App erkunden, Regeln benennen. **b)** `/init` + `CLAUDE.md` schärfen. **c)** `startHour`-Bug fixen | Codebasis verstanden, eigenes `CLAUDE.md`, erster Fix |
+| 11:40–12:00 | **Auflösung Aufgabe 1** | Bug auflösen; die Rubrik aus §5 an **Gruppenergebnissen** durchgehen — noch **ohne** das Referenz-`CLAUDE.md` | „Was ist ein gutes `CLAUDE.md`" |
 | 12:00–13:00 | Mittagspause | | |
-| 13:00–13:25 | **Mini-Input** | Referenz-`CLAUDE.md` zeigen & vergleichen; Aufgabe 1 **und** 2 auflösen | „Was ist ein gutes `CLAUDE.md`" |
-| 13:25–13:55 | **Input**: Agenten & Skills | Wie ein Subagent aufgebaut ist; `reviewer` + `module-review` vorführen; Faustregel „Agent = Rolle, Skill = Wissen" an zwei Skill-Beispielen; die zwei Gerüste zeigen | Wissen, was in Teil a zu tun ist |
-| 13:55–14:55 | **Block 3**, erste Hälfte | **a)** ~25 Min: eigene `architect`- und `developer`-Agenten schreiben. **b)** Start von `contact-requests/` | Eigene Agenten |
-| 14:55–15:10 | Pause | | |
-| 15:10–16:10 | **Block 3**, zweite Hälfte | `contact-requests/` fertig bauen und reviewen lassen | Reviewtes Modul |
-| 16:10–16:15 | Umbau | | |
-| 16:15–16:40 | **Abschlusspräsentationen** | **3 Min./Gruppe, hart getaktet**: Demo + „was hat der Agent falsch gemacht" | Teilen & Reflexion |
-| 16:40–16:50 | Abschluss & Feedback | | |
-| 16:50–17:00 | **Puffer** | nicht verplanen | |
+| 13:00–14:00 | **Block 2**: Aufgabe 2 (Feature) | Availability-Endpunkt: Plan anfordern, reviewen, schrittweise umsetzen | Feature im Projektstil |
+| 14:00–14:10 | **Auflösung Aufgabe 2** | Datums-Falle zeigen; **jetzt** das Referenz-`CLAUDE.md` zeigen — ab hier spoilert es nichts mehr | Vergleichsmaßstab |
+| 14:10–14:40 | **Input**: Agenten & Skills | Wie ein Subagent aufgebaut ist; `reviewer` + `module-review` vorführen; Faustregel „Agent = Rolle, Skill = Wissen" an zwei Skill-Beispielen; die zwei Gerüste zeigen | Wissen, was in Teil a zu tun ist |
+| 14:40–15:35 | **Block 3**, erste Hälfte | **a)** ~25 Min: eigene `architect`- und `developer`-Agenten schreiben. **b)** Start von `contact-requests/` | Eigene Agenten |
+| 15:35–15:50 | Pause | | |
+| 15:50–16:25 | **Block 3**, zweite Hälfte | `contact-requests/` fertig bauen und reviewen lassen | Reviewtes Modul |
+| 16:25–16:30 | Umbau | | |
+| 16:30–16:55 | **Abschlusspräsentationen** | **3 Min./Gruppe, hart getaktet**: Demo + „was hat der Agent falsch gemacht" | Teilen & Reflexion |
+| 16:55–17:00 | Abschluss & Feedback | | |
 
-Netto an Aufgaben: 4 h (60 / 60 / 120). Block 3 bleibt der engste Timebox — plane
-die Minimalvariante fest ein (Abschnitt 7).
+Netto an Aufgaben: 3,5 h (60 / 60 / 90). Block 3 bleibt die engste Timebox —
+plane die Minimalvariante fest ein (Abschnitt 7).
 
-**Zwei Dinge, die an diesem Zuschnitt hängen:**
+**Drei Dinge, die an diesem Zuschnitt hängen:**
 
-- **Der Vormittag hat zwischen 09:35 und 12:00 nur eine 10-Minuten-Pause.** Das
-  ist bewusst so, damit „Ankommen & Setup-Rettung" seine vollen 20 Minuten behält
-  — das ist laut Abschnitt 10 das größte Zeitrisiko des Tages. Wenn das Setup
-  glattläuft, verschiebe den Überhang in die Pause um 10:50.
-- **Beide Aufgaben sind vor dem Mittag fertig.** Damit ist das frühere
-  Spoiler-Problem beim Mini-Input erledigt: Du kannst um 13:00 das
-  `CLAUDE.md` des Trainer-Branchs ohne Kürzung zeigen, weil es nichts mehr
-  vorwegnimmt.
+- **Block 3 hat 90 Minuten, nicht 120.** Bei 9-Uhr-Start und einstündiger
+  Mittagspause bleiben 420 Minuten Inhalt; die drei Aufgaben belegen davon 210,
+  das Rahmenprogramm den Rest. Ein 120-Minuten-Block 3 ginge nur, wenn die
+  Abschlusspräsentationen entfielen — und die tragen Lernziel 5. Wenn du Block 3
+  doch dehnen willst, ist die **Auflösung von Aufgabe 2** (10 Min.) die einzige
+  Stelle, an der ohne Substanzverlust etwas zu holen ist.
+- **Das Referenz-`CLAUDE.md` kommt erst um 14:00.** Es beschreibt die
+  Availability-Implementierung und die Datums-Falle, also die Lösung von
+  Aufgabe 2. Um 11:40 gehst du die Rubrik deshalb an **Gruppenergebnissen**
+  durch, nicht an der Referenz. So brauchst du keine gekürzte Handout-Fassung.
+- **Die 15 Minuten „Ankommen" tragen nur, wenn das Setup wirklich Hausaufgabe
+  war.** Das ist laut Abschnitt 10 das größte Zeitrisiko des Tages; bei einer
+  Havarie nimmst du die Zeit aus dem Vortrag, nicht aus Aufgabe 1.
 
 **Setup ist Hausaufgabe.** `SETUP.md` geht mit ausreichend Vorlauf raus und
 verlangt ausdrücklich, dass die Gruppen `npm ci`, `npm run start:dev` und
-`npm test` vorher einmal ausgeführt haben. Die 20 Minuten am Morgen sind für
+`npm test` vorher einmal ausgeführt haben. Die 15 Minuten am Morgen sind für
 Zugänge und Havarien reserviert, nicht für Erstinstallationen. Weise in der
 Ankündigung darauf hin, dass eine Gruppe ohne fertiges Setup den Vormittag
 verliert.
@@ -281,7 +285,7 @@ steht an vier Stellen, damit sie nicht an einer einzelnen Erinnerung hängt:
 | `SETUP.md` §2.4 und Checkliste | `/model sonnet` direkt nach der Anmeldung |
 | `TASK.md`, Abschnitt „Arbeitsweise" | dieselbe Ansage für den ganzen Tag |
 | `.claude/agents/*.md` | `model: sonnet` im Frontmatter aller drei Agenten |
-| Zeitplan, 08:00–08:20 | du stellst es beim Einrichten der Zugänge gemeinsam ein |
+| Zeitplan, 09:00–09:15 | du stellst es beim Einrichten der Zugänge gemeinsam ein |
 
 **Der wichtigste Hebel ist die Hauptsitzung**, nicht die Subagenten: Architekt
 und Reviewer laufen je ein- bis zweimal auf kleinen Eingaben, während die
@@ -369,11 +373,15 @@ dass eine Gruppe Teil a überspringt, hol sie zurück.
   vollständig getestet.
 - **Folge für Aufgabe 3:** Der Reviewer-Agent wird fehlende Tests als Finding
   melden. Das ist erwünscht und zeigt ihn bei der Arbeit — kein Materialfehler.
-- **Nach der Mittagspause** (13:00–13:25): ein Referenz-`CLAUDE.md` zeigen und
-  gemeinsam gegen ein Gruppen-Ergebnis halten. Frage: Was fehlt? Was ist zu vage?
-  Was ist zu viel? Weil Aufgabe 2 vor dem Mittag abgeschlossen ist, kannst du
-  dafür das `CLAUDE.md` des Trainer-Branchs unverändert nehmen — es nimmt nichts
-  mehr vorweg.
+- **Direkt vor der Mittagspause** (11:40–12:00): Bug auflösen, danach die Rubrik
+  unten an zwei, drei **Gruppenergebnissen** durchgehen. Frage: Was fehlt? Was ist
+  zu vage? Was ist zu viel?
+
+> **Achtung, Spoiler.** Nimm dafür **nicht** das `CLAUDE.md` des Trainer-Branchs.
+> Es beschreibt die Availability-Implementierung *und* die Datums-Falle — also
+> die Lösung von Aufgabe 2, die um 13:00 startet. Das Referenz-`CLAUDE.md` zeigst
+> du um **14:00**, nach der Auflösung von Aufgabe 2. Dann brauchst du auch keine
+> gekürzte Handout-Fassung.
 
 ### „Woran erkennt man ein gutes `CLAUDE.md`" (Rubrik)
 
@@ -391,7 +399,7 @@ dass eine Gruppe Teil a überspringt, hol sie zurück.
 - **Kein Roman.** Eine Bildschirmseite reicht. Alles, was nicht das Verhalten des
   Agenten ändert, ist Ballast.
 
-### Teil c — der `startHour`-Bug, zum Auflösen um 13:00
+### Teil c — der `startHour`-Bug, zum Auflösen um 11:40
 
 Referenzlösung auf dem Trainer-Branch: `@Min(0)` und `@Max(23)` an `startHour` in
 `src/appointments/dto/create-appointment.dto.ts` plus zwei Tests in
@@ -495,7 +503,7 @@ Vergangene Daten ablehnen; „Amt an dem Wochentag geschlossen".
 
 ---
 
-## 7. Block 3 — Aufgabe 3: eigene Agenten + `contact-requests/` (120 Min.)
+## 7. Block 3 — Aufgabe 3: eigene Agenten + `contact-requests/` (90 Min.)
 
 Aufgabe in `tasks/task-3-contact-requests.md`. Zwei Teile: **erst das Werkzeug
 bauen, dann damit arbeiten.**
@@ -524,7 +532,7 @@ Worauf du beim Herumgehen achtest:
 
 Referenzfassungen zum Abgleich: `workshop/reference/`. Sparsam ausgeben.
 
-### Teil b — Modul bauen (~70 Min.)
+### Teil b — Modul bauen (~65 Min.)
 
 Ablauf: Feature fassen → **Architekt** → *Checkpoint Mensch* → **Developer** →
 **Reviewer** → *Checkpoint Mensch* → Fixes → erneutes Review.
@@ -635,7 +643,7 @@ Reflexionssatz ist der wertvollste Teil und darf als letzter fallen.
 
 | Risiko | Gegenmittel |
 |---|---|
-| Gruppe kommt ohne fertiges Setup | **grösstes Zeitrisiko**, weil nur 20 Min. eingeplant sind: `SETUP.md` mit Vorlauf verschicken, Erledigung ankündigen, Ersatzgeräte bereithalten |
+| Gruppe kommt ohne fertiges Setup | **grösstes Zeitrisiko**, weil nur 15 Min. eingeplant sind: `SETUP.md` mit Vorlauf verschicken, Erledigung ankündigen, Ersatzgeräte bereithalten |
 | `npm ci` / nativer `better-sqlite3`-Build scheitert | Ersatzgeräte, Cloud-Editor; `SETUP.md` §7 |
 | Schwaches `CLAUDE.md`, niemand merkt es | Referenz-Vergleich nach Mittag, Rubrik in §5 |
 | Aufgabe 2: Datetime kommt durch und liefert still eine falsche Liste | bekannt, gutes Lehrbeispiel — nicht „wegdebuggen", sondern zeigen |

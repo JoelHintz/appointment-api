@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Zeitbudget** | ca. 95 Minuten (25 für Teil a, 70 für Teil b) |
+| **Zeitbudget** | ca. 90 Minuten (25 für Teil a, 65 für Teil b) |
 | **Level** | alle (Kern), Erweiterungen nach Erfahrung |
 | **Voraussetzung** | Aufgaben 1 und 2 sind nicht nötig, aber hilfreich |
 
@@ -39,7 +39,7 @@ Füllt sie aus. In jedem Gerüst stehen die Leitfragen als Kommentare.
 
 ---
 
-## Teil b — Das Modul erzeugen (~70 Min)
+## Teil b — Das Modul erzeugen (~65 Min)
 
 ### Ziel
 
