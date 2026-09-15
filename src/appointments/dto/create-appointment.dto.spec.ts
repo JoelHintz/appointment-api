@@ -46,4 +46,15 @@ describe('CreateAppointmentDto', () => {
     expect(errors).toHaveLength(1);
     expect(errors[0].property).toBe('startHour');
   });
+
+  it('rejects a start hour outside a day', () => {
+    expect(errorsFor({ ...validPayload, startHour: 25 })).toHaveLength(1);
+    expect(errorsFor({ ...validPayload, startHour: 24 })).toHaveLength(1);
+    expect(errorsFor({ ...validPayload, startHour: -1 })).toHaveLength(1);
+  });
+
+  it('accepts the first and last hour of a day', () => {
+    expect(errorsFor({ ...validPayload, startHour: 0 })).toHaveLength(0);
+    expect(errorsFor({ ...validPayload, startHour: 23 })).toHaveLength(0);
+  });
 });
