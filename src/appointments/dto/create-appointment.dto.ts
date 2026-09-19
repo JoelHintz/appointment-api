@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, Matches, Max, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, Matches, Max, Min } from 'class-validator';
 
 export class CreateAppointmentDto {
   @IsNotEmpty()
@@ -28,4 +28,11 @@ export class CreateAppointmentDto {
     maximum: 23,
   })
   startHour!: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  @ApiPropertyOptional({ description: 'ID of the person the appointment is booked for', example: 1 })
+  applicantId?: number;
 }

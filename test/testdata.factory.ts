@@ -4,6 +4,9 @@ import { FindAppointmentsDto } from '../src/appointments/dto/find-appointments.d
 import { UpdateAppointmentDto } from '../src/appointments/dto/update-appointment.dto';
 import { Appointment, AppointmentStatus } from '../src/appointments/entity/appointment.entity';
 import { Office } from '../src/offices/entity/office.entity';
+import { Applicant } from '../src/applicants/entity/applicant.entity';
+import { ApplicantResponseDto } from '../src/applicants/dto/applicant-response.dto';
+import { CreateApplicantDto } from '../src/applicants/dto/create-applicant.dto';
 import { ContactRequestResponseDto } from '../src/contact-requests/dto/contact-request-response.dto';
 import { CreateContactRequestDto } from '../src/contact-requests/dto/create-contact-request.dto';
 import { UpdateContactRequestDto } from '../src/contact-requests/dto/update-contact-request.dto';
@@ -21,6 +24,32 @@ export const createOffice = (overrides: Partial<Office> = {}): Office => ({
   ...overrides,
 });
 
+export const createApplicant = (overrides: Partial<Applicant> = {}): Applicant => ({
+  id: 1,
+  firstName: 'Erika',
+  lastName: 'Mustermann',
+  email: 'erika.mustermann@example.com',
+  birthDate: '1984-03-12',
+  ...overrides,
+});
+
+export const createApplicantResponseDto = (overrides: Partial<ApplicantResponseDto> = {}): ApplicantResponseDto => ({
+  id: 1,
+  firstName: 'Erika',
+  lastName: 'Mustermann',
+  email: 'erika.mustermann@example.com',
+  birthDate: '1984-03-12',
+  ...overrides,
+});
+
+export const createCreateApplicantDto = (overrides: Partial<CreateApplicantDto> = {}): CreateApplicantDto => ({
+  firstName: 'Erika',
+  lastName: 'Mustermann',
+  email: 'erika.mustermann@example.com',
+  birthDate: '1984-03-12',
+  ...overrides,
+});
+
 export const createAppointment = (overrides: Partial<Appointment> = {}): Appointment => ({
   id: 1,
   title: 'Citizen appointment',
@@ -29,6 +58,7 @@ export const createAppointment = (overrides: Partial<Appointment> = {}): Appoint
   endHour: DEFAULT_END_HOUR,
   status: AppointmentStatus.SCHEDULED,
   office: createOffice(),
+  applicant: null,
   ...overrides,
 });
 
@@ -43,6 +73,8 @@ export const createAppointmentResponseDto = (
   status: AppointmentStatus.SCHEDULED,
   officeId: 1,
   officeName: 'Nuremberg Office',
+  applicantId: null,
+  applicantName: null,
   ...overrides,
 });
 

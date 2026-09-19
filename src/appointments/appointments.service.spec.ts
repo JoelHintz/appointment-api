@@ -3,19 +3,26 @@ import { Not, Repository } from 'typeorm';
 import { AppointmentsService } from './appointments.service';
 import { Appointment, AppointmentStatus } from './entity/appointment.entity';
 import { Office } from '../offices/entity/office.entity';
+import { Applicant } from '../applicants/entity/applicant.entity';
 import { AppointmentMapper } from './appointments.mapper';
 import { FindAppointmentsDto } from './dto/find-appointments.dto';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { createAppointment, createAppointmentResponseDto, createOffice } from '../../test/testdata.factory';
+import {
+  createApplicant,
+  createAppointment,
+  createAppointmentResponseDto,
+  createOffice,
+} from '../../test/testdata.factory';
 
 describe('AppointmentsService', () => {
   let service: AppointmentsService;
 
   let appointmentRepository: jest.Mocked<Repository<Appointment>>;
   let officeRepository: jest.Mocked<Repository<Office>>;
+  let applicantRepository: jest.Mocked<Repository<Applicant>>;
 
   const mockMappedDto = (dto = createAppointmentResponseDto()) =>
     jest.spyOn(AppointmentMapper, 'toResponseDto').mockReturnValue(dto as any);
@@ -44,6 +51,10 @@ describe('AppointmentsService', () => {
     findOne: jest.fn(),
   };
 
+  const mockApplicantRepository = {
+    findOne: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -56,12 +67,17 @@ describe('AppointmentsService', () => {
           provide: getRepositoryToken(Appointment),
           useValue: mockAppointmentRepository,
         },
+        {
+          provide: getRepositoryToken(Applicant),
+          useValue: mockApplicantRepository,
+        },
       ],
     }).compile();
 
     service = module.get<AppointmentsService>(AppointmentsService);
     appointmentRepository = module.get(getRepositoryToken(Appointment));
     officeRepository = module.get(getRepositoryToken(Office));
+    applicantRepository = module.get(getRepositoryToken(Applicant));
     jest.clearAllMocks();
   });
 
@@ -71,14 +87,24 @@ describe('AppointmentsService', () => {
   });
 
   /**
-   * `appointmentRepository.findOne` serves two purposes: loading an appointment
-   * by id, and looking for an appointment that already occupies the slot. The
-   * mock tells them apart by the shape of the where clause.
+   * `appointmentRepository.findOne` serves three purposes: loading an appointment
+   * by id, looking for an appointment that already occupies the slot, and looking
+   * for another appointment of the same applicant on that day. The mock tells
+   * them apart by the shape of the where clause.
    */
-  const mockRepositoryReads = (params: { loaded?: Appointment | null; conflicting?: Appointment | null }) => {
+  const mockRepositoryReads = (params: {
+    loaded?: Appointment | null;
+    conflicting?: Appointment | null;
+    sameDay?: Appointment | null;
+  }) => {
     appointmentRepository.findOne.mockImplementation(async (options: any) => {
-      const isSlotLookup = options?.where?.startHour !== undefined;
-      return (isSlotLookup ? params.conflicting : params.loaded) ?? null;
+      if (options?.where?.startHour !== undefined) {
+        return params.conflicting ?? null;
+      }
+      if (options?.where?.applicant !== undefined) {
+        return params.sameDay ?? null;
+      }
+      return params.loaded ?? null;
     });
   };
 
@@ -97,7 +123,7 @@ describe('AppointmentsService', () => {
         where: {},
         take: 10,
         order: { id: 'ASC' },
-        relations: { office: true },
+        relations: { office: true, applicant: true },
       });
       expect(result).toEqual(expected);
     });
@@ -117,7 +143,7 @@ describe('AppointmentsService', () => {
         where: { status: AppointmentStatus.CANCELED },
         take: 5,
         order: { id: 'ASC' },
-        relations: { office: true },
+        relations: { office: true, applicant: true },
       });
     });
   });
@@ -134,7 +160,7 @@ describe('AppointmentsService', () => {
 
       expect(appointmentRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
-        relations: { office: true },
+        relations: { office: true, applicant: true },
       });
       expect(result).toEqual(expected);
     });
@@ -203,6 +229,7 @@ describe('AppointmentsService', () => {
         startHour: dto.startHour,
         endHour: 10,
         office,
+        applicant: null,
       });
       expect(appointmentRepository.save).toHaveBeenCalledWith(createdEntity);
       expect(result).toEqual(expected);
@@ -281,6 +308,73 @@ describe('AppointmentsService', () => {
         where: { office: { id: 3 }, date: '2026-06-21', startHour: 9 },
       });
     });
+
+    it('should attach the applicant and check the same day at the same office', async () => {
+      const office = createOffice({ id: 3 });
+      const applicant = createApplicant({ id: 7 });
+      const dto: CreateAppointmentDto = {
+        title: 'New appointment',
+        date: '2026-06-21',
+        startHour: 9,
+        officeId: office.id,
+        applicantId: applicant.id,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      applicantRepository.findOne.mockResolvedValue(applicant);
+      appointmentRepository.create.mockImplementation((entity: any) => entity);
+      appointmentRepository.save.mockImplementation(async (entity: any) => entity);
+      mockMappedDto();
+
+      await service.create(dto);
+
+      expect(appointmentRepository.findOne).toHaveBeenCalledWith({
+        where: { applicant: { id: 7 }, office: { id: 3 }, date: '2026-06-21' },
+      });
+      expect(appointmentRepository.create).toHaveBeenCalledWith(expect.objectContaining({ applicant }));
+    });
+
+    it('should throw NotFoundException when the applicant does not exist', async () => {
+      const office = createOffice();
+      const dto: CreateAppointmentDto = {
+        title: 'New appointment',
+        date: '2026-06-21',
+        startHour: 9,
+        officeId: office.id,
+        applicantId: 999,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      applicantRepository.findOne.mockResolvedValue(null);
+
+      await expectNotFound(service.create(dto), 'Applicant with id 999 was not found');
+
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when the applicant already books that office that day', async () => {
+      const office = createOffice();
+      const applicant = createApplicant();
+      const dto: CreateAppointmentDto = {
+        title: 'Second appointment of the day',
+        date: '2026-06-21',
+        startHour: 11,
+        officeId: office.id,
+        applicantId: applicant.id,
+      };
+
+      officeRepository.findOne.mockResolvedValue(office);
+      applicantRepository.findOne.mockResolvedValue(applicant);
+      mockRepositoryReads({ conflicting: null, sameDay: createAppointment({ id: 2, applicant }) });
+
+      await expectBadRequest(
+        service.create(dto),
+        'Applicant already has an appointment at this office on the requested date',
+      );
+
+      expect(appointmentRepository.create).not.toHaveBeenCalled();
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
   });
 
   describe('update', () => {
@@ -321,7 +415,7 @@ describe('AppointmentsService', () => {
 
       expect(appointmentRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
-        relations: { office: true },
+        relations: { office: true, applicant: true },
       });
       expect(officeRepository.findOne).not.toHaveBeenCalled();
       expect(appointmentRepository.save).toHaveBeenCalledWith(
@@ -433,5 +527,23 @@ describe('AppointmentsService', () => {
       expect(result).toBeDefined();
     });
 
+    it('should reject a move onto a day the applicant already books at that office', async () => {
+      const office = createOffice({ id: 1 });
+      const applicant = createApplicant({ id: 7 });
+      const existingAppointment = createAppointment({ id: 1, office, applicant });
+
+      mockRepositoryReads({
+        loaded: existingAppointment,
+        conflicting: null,
+        sameDay: createAppointment({ id: 2, office, applicant }),
+      });
+
+      await expectBadRequest(
+        service.update(1, { date: '2026-06-22' }),
+        'Applicant already has an appointment at this office on the requested date',
+      );
+
+      expect(appointmentRepository.save).not.toHaveBeenCalled();
+    });
   });
 });

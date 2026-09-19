@@ -3,6 +3,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OfficesModule } from './offices/offices.module';
 import { ContactRequestsModule } from './contact-requests/contact-requests.module';
+import { ApplicantsModule } from './applicants/applicants.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ContactRequestsModule } from './contact-requests/contact-requests.modul
     }),
     AppointmentsModule,
     OfficesModule,
+    ApplicantsModule,
     ContactRequestsModule,
   ],
 })
