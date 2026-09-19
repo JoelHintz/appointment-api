@@ -17,13 +17,14 @@ Fachliche Grundregeln:
 |---|---|---|---|
 | 1 | [Codebasis erschließen, `CLAUDE.md`, erster Bugfix](tasks/task-1-explore-and-bugfix.md) | ~65 Min | Eine fremde Codebasis mit Claude erschließen, Projektkontext festhalten, die API härtetesten |
 | 2 | [Feature: freie Termin-Slots](tasks/task-2-office-availability.md) | ~60 Min | Neuer Endpunkt im bestehenden Stil |
-| 3 | [Eigene Agenten bauen und ein neues Modul erzeugen](tasks/task-3-contact-requests.md) | ~90 Min | Erst das Werkzeug schreiben, dann damit ein Modul bauen |
+| 3 | [Eigene Agenten und ein eigenes Skill bauen, dann ein Feature damit](tasks/task-3-applicants.md) | ~90 Min | Erst das Werkzeug schreiben, dann damit arbeiten |
+| — | [Zusatzaufgabe: Modul `contact-requests/`](tasks/optional-contact-requests.md) | ~45 Min | Kür für Gruppen, die Aufgabe 3 durch haben |
 
 Die Aufgaben 1 und 2 sind unabhängig voneinander.
 
-In Aufgabe 3 schreibt ihr **eure eigenen Agenten**. Unter `.claude/` liegt dafür
-ein vollständiges Beispiel — der Agent `reviewer` mit seinem Skill
-`module-review` — und daneben zwei leere Gerüste, die ihr ausfüllt.
+In Aufgabe 3 schreibt ihr **eure eigenen Agenten und ein eigenes Skill**. Unter
+`.claude/` liegt dafür ein ausgearbeitetes Beispiel — der Agent `reviewer` mit
+seinem Skill `module-review` — und daneben drei leere Gerüste, die ihr ausfüllt.
 
 ## Arbeitsweise
 

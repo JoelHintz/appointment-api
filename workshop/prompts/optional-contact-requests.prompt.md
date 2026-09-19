@@ -1,4 +1,4 @@
-# Trainer-Fallback: Feature-Beschreibung für Aufgabe 3
+# Trainer-Fallback: Feature-Beschreibung für die Zusatzaufgabe `contact-requests/`
 
 **Nicht standardmäßig ausgeben.** Die Gruppen sollen ihre Prompts selbst
 formulieren; das ist Teil der Übung. Nutze diesen Text nur, wenn eine Gruppe
