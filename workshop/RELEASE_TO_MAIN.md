@@ -60,11 +60,13 @@ gehört dem kurzen Format; das Ganztagsmaterial bekommt eigene Namen.
 | `.claude/agents/architect.md` | **Gerüst** — wird in Aufgabe 3a ausgefüllt |
 | `.claude/agents/developer.md` | **Gerüst** |
 | `.claude/skills/module-review/` | die Review-Checkliste zum Reviewer |
+| `.claude/skills/nest-feature-module/` | **Gerüst** — wird in Aufgabe 3a ausgefüllt |
 | `.claude/settings.json` | Permission-Allowlist, spart Rückfragen im Workshop |
 | `.gitignore` | nur die Zeile `/plan.md` |
 
 `.claude/` liegt auf dem Entwicklungsbranch bereits **genau** im Teilnehmerzustand
-(Reviewer vollständig, Architekt und Developer als Gerüst). Es ist also ein reines
+(Reviewer und `module-review` vollständig, Architekt, Developer und
+`nest-feature-module` als Gerüst). Es ist also ein reines
 Kopieren, nichts muss zurückgebaut werden.
 
 `README.md` und `SETUP.md` liegen ohnehin auf `main` und werden dort gepflegt —
@@ -88,6 +90,8 @@ man sie sofort im `git status`.
 | `src/appointments/dto/create-appointment.dto.spec.ts` | 1 |
 | `src/offices/dto/office-availability-query.dto.ts` | 2 |
 | `src/offices/dto/office-availability-slot.dto.ts` | 2 |
+| `src/applicants/` (komplettes Modulverzeichnis, 9 Dateien) | 3 |
+| `src/contact-requests/` (komplettes Modulverzeichnis, 9 Dateien) | Zusatzaufgabe |
 
 **Hunks in geteilten Dateien.** Diese Dateien gibt es auf `main` ebenfalls, nur in
 ihrer unreparierten Fassung. Ein Merge, der sie mitzieht, sieht harmlos aus und
@@ -113,9 +117,10 @@ Das ist die **einzige** Code-Datei mit einer Aufgabe-1-Lösung. `main` hat
    startHour!: number;
 ```
 
-`appointments.service.ts`, die Entities, der Mapper und
-`appointments.service.spec.ts` sind seit dem Datum-plus-Stunde-Umbau auf beiden
-Branches **identisch** — es gibt dort nichts mehr zurückzubauen.
+Seit dem Datum-plus-Stunde-Umbau trägt diese Datei nur noch die Aufgabe-1-Lösung
+— aber **Aufgabe 3 fasst sie erneut an** (das Feld `applicantId`), ebenso
+`appointments.service.ts`, die Appointment-Entität, den Mapper und
+`appointments.service.spec.ts`. Die Hunks stehen unten bei Aufgabe 3.
 
 #### `src/appointments/dto/create-appointment.dto.spec.ts` — Aufgabe 1
 
@@ -147,13 +152,33 @@ plus der Import von `Appointment`.
 Je ein `describe('findAvailability')`-Block; im Service-Spec zusätzlich die
 Mock-Registrierung des `Appointment`-Repositories.
 
-#### Aufgabe 3 — `contact-requests/`
+#### Aufgabe 3 — `applicants/`
+
+Gebaut. Neu ist das Modulverzeichnis `src/applicants/` — ausschließlich neue
+Dateien, die unkritische Sorte. **Gefährlich ist der Rest:** Anders als die
+Zusatzaufgabe hängt dieses Feature an acht geteilten Dateien, weil es den Termin
+um die buchende Person erweitert.
+
+| Datei | Hunk |
+|---|---|
+| `src/app.module.ts` | Import und `imports`-Eintrag von `ApplicantsModule` |
+| `src/main.ts` | `.addTag('applicants')` im `DocumentBuilder` |
+| `src/appointments/entity/appointment.entity.ts` | Import von `Applicant` und die `@ManyToOne`-Beziehung `applicant` (`nullable`, `@JoinColumn({ name: 'applicantId' })`) |
+| `src/appointments/dto/create-appointment.dto.ts` | das optionale Feld `applicantId` (zusätzlich zur Aufgabe-1-Lösung in derselben Datei) |
+| `src/appointments/dto/appointment-response.dto.ts` | `applicantId` und `applicantName` |
+| `src/appointments/appointments.mapper.ts` | Import des `ApplicantMapper` und die zwei Zeilen im Response-Objekt |
+| `src/appointments/appointments.module.ts` | `Applicant` in `TypeOrmModule.forFeature` |
+| `src/appointments/appointments.service.ts` | injiziertes `applicantRepository`, `loadApplicant`, `validateApplicantHasNoAppointment`, die Aufrufe in `create`/`update`/`mergeDtoIntoEntity` und `relations: { applicant: true }` |
+| `src/appointments/appointments.service.spec.ts` | Mock des `Applicant`-Repositories, die dritte Verzweigung in `mockRepositoryReads`, vier neue Tests |
+| `test/testdata.factory.ts` | die drei `createApplicant…`-Factories, `applicant: null` in `createAppointment`, `applicantId`/`applicantName` in `createAppointmentResponseDto` |
+
+#### Zusatzaufgabe — `contact-requests/`
 
 Gebaut. Der Kern ist `src/contact-requests/` — ein **eigenes Modulverzeichnis**,
-also ausschließlich neue Dateien, die unkritische Sorte.
+also ausschließlich neue Dateien.
 
-Das Modul hängt aber an **drei geteilten Dateien**, die es auf `main` ebenfalls
-gibt. Ohne sie ist es nicht verdrahtet, mit ihnen verrät der Diff die Lösung:
+Das Modul hängt an **drei geteilten Dateien**, die es auf `main` ebenfalls gibt.
+Ohne sie ist es nicht verdrahtet, mit ihnen verrät der Diff die Lösung:
 
 | Datei | Hunk |
 |---|---|
@@ -161,8 +186,9 @@ gibt. Ohne sie ist es nicht verdrahtet, mit ihnen verrät der Diff die Lösung:
 | `src/main.ts` | `.addTag('contact-requests')` im `DocumentBuilder` |
 | `test/testdata.factory.ts` | die vier `createContactRequest…`-Factories |
 
-Damit fällt auch Aufgabe 3 vollständig unter die `src/`-und-`test/`-Regel — die
-frühere Annahme, hier kämen nur neue Dateien dazu, war zu optimistisch.
+Damit fallen Aufgabe 3 und die Zusatzaufgabe vollständig unter die
+`src/`-und-`test/`-Regel — die frühere Annahme, hier kämen nur neue Dateien dazu,
+war zu optimistisch.
 
 ---
 
@@ -291,6 +317,7 @@ git grep -n '@Max(23)'           main -- src/appointments/dto/
 git grep -n 'findAvailability'   main -- src/
 git grep -n 'OfficeAvailability' main -- src/
 git grep -n 'ContactRequest'     main -- src/ test/
+git grep -n 'Applicant'          main -- src/ test/
 
 # 2. Gegenprobe: der Basis-Umbau ist da und die Lücke sitzt an der richtigen
 #    Stelle. Erwartet: mindestens 1 Treffer.
@@ -301,10 +328,11 @@ git cat-file -e main:src/offices/dto/office-availability-query.dto.ts
 git cat-file -e main:src/offices/dto/office-availability-slot.dto.ts
 git cat-file -e main:src/appointments/dto/create-appointment.dto.spec.ts
 git cat-file -e main:src/contact-requests/contact-requests.service.ts
+git cat-file -e main:src/applicants/applicants.service.ts
 
-# 4. Kein Rückstand aus einem Testlauf. Erwartet: exakt 3 Agenten, exakt 1 Skill.
+# 4. Kein Rückstand aus einem Testlauf. Erwartet: exakt 3 Agenten, exakt 2 Skills.
 git ls-tree --name-only main .claude/agents/ | wc -l    # muss 3 sein
-git ls-tree --name-only main .claude/skills/ | wc -l    # muss 1 sein
+git ls-tree --name-only main .claude/skills/ | wc -l    # muss 2 sein
 
 # 5. Die Modellvorgabe ist da. Erwartet: 3 Treffer.
 git grep -c 'model: sonnet' main -- .claude/agents/ | wc -l
@@ -312,9 +340,11 @@ git grep -c 'model: sonnet' main -- .claude/agents/ | wc -l
 
 Schritt 4 fängt den Fall ab, dass ein Testlauf (Trainer-Guide §3.3) Spuren
 hinterlässt: `.claude/` wird vom Rezept **komplett** kopiert, also würden ein
-vergessener `architect-ref` oder ein installiertes `nest-feature-module` an die
-Teilnehmenden ausgeliefert. Beim Skill wäre das keine Kleinigkeit — es beschreibt
-genau die Konventionen, die der Architekt in Aufgabe 3 selbst herleiten soll.
+vergessener `architect-ref` oder ein `nest-feature-module-ref` an die
+Teilnehmenden ausgeliefert. Beim Skill wäre das keine Kleinigkeit — die
+Referenzfassung beschreibt genau die Konventionen, die die Gruppen in Aufgabe 3a
+selbst herleiten sollen. Die **zwei** erwarteten Skills sind `module-review`
+(fertig) und `nest-feature-module` (Gerüst).
 
 Schritt 2 ist der wichtigere von beiden: Ein leeres Ergebnis in Schritt 1 könnte
 auch bedeuten, dass jemand am Muster vorbei umbenannt hat — oder dass der
