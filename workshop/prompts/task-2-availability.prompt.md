@@ -81,3 +81,30 @@ erklär mir jeden Test in einem Satz, damit ich ihn prüfen kann, statt ihn nur 
 - direkt aufeinanderfolgende Slots sind erlaubt
 - leeres Array, wenn kein Slot frei ist
 - ungültiger `date`-Parameter wird abgelehnt
+
+---
+
+## Fallback für Zusatzaufgabe 1 (Termin stornieren)
+
+Nur ausgeben, wenn eine Gruppe die Erweiterung sonst nicht anfängt. Der Prompt
+nennt die beiden Folgestellen bewusst **nicht** — das Finden ist die Aufgabe.
+
+In derselben Appointment API sollen Termine storniert werden können. Die Entität
+`Appointment` kennt den Status `canceled` bereits, aber keine Route kann ihn
+setzen.
+
+Regeln:
+
+- Ein stornierter Termin behält seine Daten und bleibt über `GET /appointments/:id`
+  abrufbar.
+- Ein stornierter Termin belegt keinen Slot mehr: Er darf in der Verfügbarkeit
+  nicht mehr blockieren, und sein Slot muss neu buchbar sein.
+- Ein bereits stornierter Termin lässt sich erneut stornieren, ohne dass sich
+  etwas ändert. Eine Übergangsprüfung brauche ich nicht.
+
+Die Route soll zum bestehenden REST-Stil passen: keine Verb-Routen, kein `DELETE`,
+Rückgabe als DTO. Schlag mir zwei Varianten mit einem Satz Begründung vor, bevor
+du dich für eine entscheidest.
+
+Sieh dir vorher an, welche Stellen im Code heute Termine laden, und sag mir, ob
+deine Änderung dort etwas ändern muss. Plan zuerst, dann umsetzen.

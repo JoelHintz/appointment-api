@@ -15,7 +15,7 @@ Fachliche Grundregeln:
 
 | | Aufgabe | Zeit | Inhalt |
 |---|---|---|---|
-| 1 | [Codebasis erschließen, `CLAUDE.md`, erster Bugfix](tasks/task-1-explore-and-bugfix.md) | ~60 Min | App verstehen, Projektkontext festhalten, einen echten Bug finden |
+| 1 | [Codebasis erschließen, `CLAUDE.md`, erster Bugfix](tasks/task-1-explore-and-bugfix.md) | ~65 Min | Eine fremde Codebasis mit Claude erschließen, Projektkontext festhalten, die API härtetesten |
 | 2 | [Feature: freie Termin-Slots](tasks/task-2-office-availability.md) | ~60 Min | Neuer Endpunkt im bestehenden Stil |
 | 3 | [Eigene Agenten bauen und ein neues Modul erzeugen](tasks/task-3-contact-requests.md) | ~90 Min | Erst das Werkzeug schreiben, dann damit ein Modul bauen |
 
@@ -41,8 +41,9 @@ ein vollständiges Beispiel — der Agent `reviewer` mit seinem Skill
 - Für jede Aufgabe: erst einen **kurzen Plan** anfordern, ihn lesen, dann
   schrittweise umsetzen lassen. **Prüft jeden Diff.**
 - Schreibt eure eigenen kurzen Prompts. Kopiert nicht ganze Aufgabendateien in
-  Claude. Ihr bekommt bewusst keine fertigen Prompts — das Formulieren ist Teil
-  der Übung.
+  Claude. In Aufgabe 1 steht **ein** Musterprompt, an dem ihr die Merkmale eines
+  brauchbaren Prompts ablesen könnt; ab da formuliert ihr selbst. Fertige Prompts
+  bekommt ihr bewusst nicht — das Formulieren ist Teil der Übung.
 
 ## Nützliche Befehle
 

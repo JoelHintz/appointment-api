@@ -54,12 +54,38 @@ Prüft in Swagger:
 
 ## Zusatzaufgaben, wenn ihr Zeit habt
 
-1. **Tests.** Ergänzt fokussierte Unit-Tests — alle Slots frei, belegter Slot
-   ausgeschlossen, leeres Ergebnis, ungültiges Datum. Lasst Claude sie schreiben
-   und **lest sie**, bevor ihr sie übernehmt.
-2. Daten in der Vergangenheit ablehnen.
-3. Sinnvoll reagieren, wenn das Amt an dem Tag geschlossen ist.
-4. Nach Aufgabe 3: ein optionaler `?serviceId=`-Filter.
+### Tests
+
+Fokussierte Unit-Tests: alle Slots frei, belegter Slot ausgeschlossen, leeres
+Ergebnis, ungültiges Datum. Lasst Claude sie schreiben und **lest sie**, bevor
+ihr sie übernehmt.
+
+### Einen Termin stornieren
+
+Termine lassen sich anlegen und ändern, aber nicht absagen. Der Status `canceled`
+existiert in der Entität — setzen kann ihn keine Route.
+
+- Ein stornierter Termin bleibt abrufbar und belegt keinen Slot mehr.
+- Ein bereits stornierter Termin lässt sich erneut stornieren, ohne Wirkung.
+
+Die Route wählt ihr selbst und begründet sie in einem Satz. Es gelten die Regeln
+des Projekts: keine Verb-Routen, kein `DELETE`, Rückgabe als DTO.
+
+| Request | erwartet |
+|---|---|
+| Termin um 10 Uhr anlegen, stornieren, abrufen | `200`, `status: canceled`, Daten unverändert |
+| `GET /offices/:id/availability` für denselben Tag | 10 Uhr ist wieder frei |
+| erneut einen Termin um 10 Uhr anlegen | `201` |
+
+Die letzten beiden Zeilen brauchen mehr als den neuen Endpunkt. Und wenn ihr zum
+Prüfen `GET /appointments?status=canceled` benutzt: Der Filter nimmt auch
+unsinnige Werte an, statt sie abzulehnen — das ist eine Zeile, die ihr gleich
+mitnehmen könnt.
+
+### Vergangene Daten ablehnen
+
+Ein Datum in der Vergangenheit soll `400` liefern. Klärt vorher: Woher kommt
+„heute" — und wie prüft ein Test eine Regel, die von der Uhr abhängt?
 
 ## Abnahmekriterien
 
