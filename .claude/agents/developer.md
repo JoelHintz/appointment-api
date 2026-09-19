@@ -37,6 +37,9 @@ model: sonnet
   Schritt für sich prüfbar bleibt? Schaut euch `src/offices` an.
 
   Woran orientiert er sich, damit das neue Modul wie die bestehenden aussieht?
+  Ein Teil dieses Wissens steht in eurem Skill `nest-feature-module`. Wie kommt
+  der Agent dort hin? Seht nach, wie `reviewer.md` auf `module-review` verweist —
+  und haltet hier alles kurz, was dort schon steht.
 
   Wie überprüft er selbst, dass seine Arbeit funktioniert, bevor er sie abgibt?
 -->
