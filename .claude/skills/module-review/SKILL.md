@@ -43,18 +43,21 @@ to read next to the existing ones.
 - [ ] Request shapes validated with `class-validator` decorators.
 - [ ] Date-only values constrained with `@Matches(/^\d{4}-\d{2}-\d{2}$/)` — not
       just `@IsISO8601()` / `@IsDateString()`, which also accept
-      `2026-06-30T12:00:00Z` and then break naive date parsing.
+      `2026-06-30T12:00:00Z` and would smuggle a time into a date-only field.
+- [ ] Hour values constrained with `@IsInt()` + `@Min(0)` + `@Max(23)`.
 - [ ] Numeric path/body fields are actually numbers (`@Type(() => Number)` +
       `@IsInt()` / `@Min()`), not unvalidated `any`.
 - [ ] Response DTOs are simple and readable in Swagger.
 
 **Domain rules**
-- [ ] Appointments start on a full hour, UTC (minutes/seconds/ms all zero).
-- [ ] `endsAt` is derived as `startsAt + 60 min`, never taken from input.
-- [ ] Overlap prevention: exact `startsAt` equality per office; on update the
-      edited row is excluded.
-- [ ] Availability treats `opensAt` / `closesAt` as UTC hours (documented
-      simplification) and drops already-booked slots.
+- [ ] A slot is a calendar `date` plus a full `startHour`; the contract carries
+      no timestamp and the API converts no time zones.
+- [ ] `endHour` is derived in the service as `startHour + 1`, never taken from
+      input.
+- [ ] Overlap prevention: equality on office, `date` and `startHour`; on update
+      the edited row is excluded via `ignoredAppointmentId`.
+- [ ] Availability builds hourly slots between `opensAtHour` and `closesAtHour`
+      and drops the ones already booked.
 
 **REST & Swagger**
 - [ ] Nouns not verbs; path params for identity; query params for filters.

@@ -26,10 +26,11 @@ If time is short, these catch the most real problems:
 - Business rules in the service, not in the controller or the DTOs.
 - Response DTOs returned, never TypeORM entities.
 - Date-only values constrained explicitly — `@IsISO8601()` and `@IsDateString()`
-  also accept full date-times, which then break naive date parsing.
-- The domain invariants: one-hour slots on the full hour in UTC, no two
-  appointments with the same start time in one office, `endsAt` derived rather
-  than accepted from input.
+  also accept full date-times and would smuggle a time into a date-only field.
+- The domain invariants: a slot is a calendar `date` plus a full `startHour` in
+  local time of the office, `endHour` is derived as `startHour + 1` rather than
+  accepted from input, and one office never holds two appointments with the same
+  `date` and `startHour`.
 - Scope creep: an unrequested `DELETE`, a new dependency, an unrelated refactor
   mixed into the diff.
 - Tests that assert real behaviour rather than just `toBeDefined()`.
