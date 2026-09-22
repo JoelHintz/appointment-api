@@ -28,3 +28,6 @@ lerna-debug.log*
 
 # IntelliJ
 .idea
+
+# Workshop scratch: the approved plan the architect agent produces (task 3)
+/plan.md
