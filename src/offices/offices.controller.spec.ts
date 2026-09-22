@@ -6,7 +6,7 @@ describe('OfficesController', () => {
   let controller: OfficesController;
   let service: jest.Mocked<OfficesService>;
 
-  const mockOfficesService = { findAll: jest.fn() };
+  const mockOfficesService = { findAll: jest.fn(), findAvailability: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,25 +22,11 @@ describe('OfficesController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('findAll', () => {
     it('should return all offices from the service', async () => {
       const offices = [
-        {
-          id: 1,
-          name: 'Citizens Office Mitte',
-          opensAtHour: 8,
-          closesAtHour: 16,
-        },
-        {
-          id: 2,
-          name: 'Citizens Office Nord',
-          opensAtHour: 9,
-          closesAtHour: 17,
-        },
+        { id: 1, name: 'Citizens Office Mitte', opensAtHour: 8, closesAtHour: 16 },
+        { id: 2, name: 'Citizens Office Nord', opensAtHour: 9, closesAtHour: 17 },
       ];
 
       service.findAll.mockResolvedValue(offices);
@@ -49,6 +35,19 @@ describe('OfficesController', () => {
 
       expect(service.findAll).toHaveBeenCalledTimes(1);
       expect(result).toEqual(offices);
+    });
+  });
+
+  describe('findAvailability', () => {
+    it('should return available slots from the service', async () => {
+      const slots = [{ officeId: 1, date: '2027-06-30', startHour: 8, endHour: 9 }];
+
+      service.findAvailability.mockResolvedValue(slots);
+
+      const result = await controller.findAvailability(1, { date: '2027-06-30' });
+
+      expect(service.findAvailability).toHaveBeenCalledWith(1, '2027-06-30');
+      expect(result).toEqual(slots);
     });
   });
 });
