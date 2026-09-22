@@ -1,11 +1,11 @@
-# Aufgabe 3: Eigenes Werkzeug bauen und ein Feature damit
+# Aufgabe 3: Workflow bauen und Feature umsetzen
 
 ## Ziel
 
-Ihr schreibt euer eigenes Werkzeug (zwei Agenten, ihre Skills und den Ablauf,
-der sie verbindet) und setzt damit das Ticket `APP01` um.
+Ihr baut euren eigenen Workflow aus zwei Agenten, ihren Skills und dem Ablauf,
+der sie verbindet, und setzt damit das Ticket `APP01` um.
 
-## Teil a: Werkzeug schreiben
+## Teil a: Den Workflow bauen
 
 Zu Beginn bekommt ihr ein ausgearbeitetes `CLAUDE.md` als Datei. Gleicht euer
 eigenes damit ab und übernehmt, was euren Agenten fehlen würde; eure Skills

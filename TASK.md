@@ -17,7 +17,7 @@ Fachliche Grundregeln:
 |---|---|---|
 | 1 | [Codebasis erschließen, `CLAUDE.md` schreiben, ersten Bug fixen](tasks/task-1-explore-and-bugfix.md) | Eine fremde Codebasis mit Claude erschließen, Projektkontext festhalten, die API einem Härtetest unterziehen |
 | 2 | [Feature für freie Termin-Slots eines Amts](tasks/task-2-office-availability.md) | Neuer Endpunkt im bestehenden Stil |
-| 3 | [Eigenes Werkzeug bauen und ein Feature damit](tasks/task-3-applicants.md) | Zwei Agenten, ihre Skills und den Ablauf schreiben, dann damit ein Ticket umsetzen |
+| 3 | [Workflow bauen und Feature umsetzen](tasks/task-3-applicants.md) | Zwei Agenten, ihre Skills und den Ablauf schreiben, dann damit ein Ticket umsetzen |
 
 ## Arbeitsweise
 
