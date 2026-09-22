@@ -19,8 +19,8 @@ export class OfficesService {
     return offices.map((office) => ({
       id: office.id,
       name: office.name,
-      opensAt: office.opensAt,
-      closesAt: office.closesAt,
+      opensAtHour: office.opensAtHour,
+      closesAtHour: office.closesAtHour,
     }));
   }
 }

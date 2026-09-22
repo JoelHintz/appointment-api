@@ -7,9 +7,9 @@ export class OfficeResponseDto {
   @ApiProperty()
   name!: string;
 
-  @ApiProperty()
-  opensAt!: string;
+  @ApiProperty({ description: 'First hour the office is open, local time', example: 8 })
+  opensAtHour!: number;
 
-  @ApiProperty()
-  closesAt!: string;
+  @ApiProperty({ description: 'Hour the office closes, local time', example: 16 })
+  closesAtHour!: number;
 }

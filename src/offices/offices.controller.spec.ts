@@ -32,14 +32,14 @@ describe('OfficesController', () => {
         {
           id: 1,
           name: 'Citizens Office Mitte',
-          opensAt: '08:00',
-          closesAt: '16:00',
+          opensAtHour: 8,
+          closesAtHour: 16,
         },
         {
           id: 2,
           name: 'Citizens Office Nord',
-          opensAt: '09:00',
-          closesAt: '17:00',
+          opensAtHour: 9,
+          closesAtHour: 17,
         },
       ];
 

@@ -9,8 +9,8 @@ export class Office {
   name!: string;
 
   @Column()
-  opensAt!: string;
+  opensAtHour!: number;
 
   @Column()
-  closesAt!: string;
+  closesAtHour!: number;
 }

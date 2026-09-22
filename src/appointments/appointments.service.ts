@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { Appointment } from './entity/appointment.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
 import { AppointmentResponseDto } from './dto/appointment-response.dto';
@@ -11,8 +11,6 @@ import { Office } from '../offices/entity/office.entity';
 
 @Injectable()
 export class AppointmentsService {
-  private readonly appointmentDurationMinutes = 60;
-
   constructor(
     @InjectRepository(Appointment)
     private readonly appointmentRepository: Repository<Appointment>,
@@ -51,19 +49,19 @@ export class AppointmentsService {
   }
 
   async create(dto: CreateAppointmentDto): Promise<AppointmentResponseDto> {
-    this.validateStartsAt(dto.startsAt);
-
     const office = await this.loadOffice(dto.officeId);
 
     await this.validateOfficeIsAvailable({
       officeId: office.id,
-      startsAt: dto.startsAt,
+      date: dto.date,
+      startHour: dto.startHour,
     });
 
     const toSave = {
       title: dto.title,
-      startsAt: dto.startsAt,
-      endsAt: this.calculateEndTime(dto.startsAt),
+      date: dto.date,
+      startHour: dto.startHour,
+      endHour: this.calculateEndHour(dto.startHour),
       office,
     };
 
@@ -85,10 +83,12 @@ export class AppointmentsService {
 
     const toSave = await this.mergeDtoIntoEntity(appointment, dto);
 
-    this.validateStartsAt(toSave.startsAt);
+    toSave.endHour = this.calculateEndHour(toSave.startHour);
+
     await this.validateOfficeIsAvailable({
       officeId: toSave.office.id,
-      startsAt: toSave.startsAt,
+      date: toSave.date,
+      startHour: toSave.startHour,
       ignoredAppointmentId: id,
     });
 
@@ -100,9 +100,11 @@ export class AppointmentsService {
     if (dto.title !== undefined) {
       appointment.title = dto.title;
     }
-    if (dto.startsAt !== undefined) {
-      appointment.startsAt = dto.startsAt;
-      appointment.endsAt = this.calculateEndTime(dto.startsAt);
+    if (dto.date !== undefined) {
+      appointment.date = dto.date;
+    }
+    if (dto.startHour !== undefined) {
+      appointment.startHour = dto.startHour;
     }
     if (dto.officeId !== undefined && appointment.office.id !== dto.officeId) {
       appointment.office = await this.loadOffice(dto.officeId);
@@ -122,42 +124,30 @@ export class AppointmentsService {
     return office;
   }
 
-  private calculateEndTime(startsAt: string): string {
-    const start = new Date(startsAt);
-    const end = new Date(start.getTime() + this.appointmentDurationMinutes * 60 * 1000);
-
-    return end.toISOString();
-  }
-
-  private validateStartsAt(startsAt: string): void {
-    const start = new Date(startsAt);
-
-    if (Number.isNaN(start.getTime())) {
-      throw new BadRequestException('startsAt must be a valid ISO date string');
-    }
-
-    if (start.getUTCMinutes() !== 0 || start.getUTCSeconds() !== 0 || start.getUTCMilliseconds() !== 0) {
-      throw new BadRequestException('Appointment must start at a full hour');
-    }
+  /** Every appointment fills exactly one hourly slot. */
+  private calculateEndHour(startHour: number): number {
+    return startHour + 1;
   }
 
   private async validateOfficeIsAvailable(params: {
     officeId: number;
-    startsAt: string;
+    date: string;
+    startHour: number;
     ignoredAppointmentId?: number;
   }): Promise<void> {
-    const { officeId, startsAt, ignoredAppointmentId } = params;
+    const { officeId, date, startHour, ignoredAppointmentId } = params;
 
-    const query = this.appointmentRepository
-      .createQueryBuilder('appointment')
-      .where('appointment.officeId = :officeId', { officeId })
-      .andWhere('appointment.startsAt = :startsAt', { startsAt });
+    const where: FindOptionsWhere<Appointment> = {
+      office: { id: officeId },
+      date,
+      startHour,
+    };
 
     if (ignoredAppointmentId !== undefined) {
-      query.andWhere('appointment.id != :ignoredAppointmentId', { ignoredAppointmentId });
+      where.id = Not(ignoredAppointmentId);
     }
 
-    const conflictingAppointment = await query.getOne();
+    const conflictingAppointment = await this.appointmentRepository.findOne({ where });
 
     if (conflictingAppointment) {
       throw new BadRequestException('Office is already booked for the requested time');

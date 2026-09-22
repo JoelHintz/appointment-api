@@ -15,10 +15,13 @@ export class Appointment {
   title!: string;
 
   @Column()
-  startsAt!: string;
+  date!: string;
 
   @Column()
-  endsAt!: string;
+  startHour!: number;
+
+  @Column()
+  endHour!: number;
 
   @Column({
     type: 'simple-enum',

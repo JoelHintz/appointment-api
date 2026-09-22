@@ -75,8 +75,10 @@ describe('AppointmentsController', () => {
   });
 
   describe('findOne', () => {
+    // The id is deliberately not 1: with the factory default the test would also
+    // pass if the controller ignored the path parameter and hardcoded an id.
     it('should delegate the id to the service and return the appointment', async () => {
-      const id = 1;
+      const id = 7;
       const expected = createAppointmentResponseDto({ id });
 
       appointmentsService.findOne.mockResolvedValue(expected);
@@ -91,7 +93,7 @@ describe('AppointmentsController', () => {
 
   describe('update', () => {
     it('should delegate id and dto to the service and return the updated appointment', async () => {
-      const id = 1;
+      const id = 7;
       const dto = createUpdateAppointmentDto({
         title: 'Updated title',
         officeId: 2,
@@ -113,7 +115,7 @@ describe('AppointmentsController', () => {
     });
 
     it('should support partial update dto', async () => {
-      const id = 1;
+      const id = 9;
       const dto = createUpdateAppointmentDto({
         title: undefined,
         officeId: 3,
