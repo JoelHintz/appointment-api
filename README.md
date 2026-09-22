@@ -2,7 +2,7 @@
 
 This repository contains a small **NestJS + TypeScript** backend project to learn AI-assisted software engineering with Claude Code.
 
-The application models a simplified appointment booking service for public administration. Citizens can book appointments at preconfigured public offices, such as a citizens office office.
+The application models a simplified appointment booking service for public administration. Citizens can book appointments at preconfigured public offices, such as a citizens office.
 
 ## What the App Can Do
 
@@ -18,8 +18,6 @@ Core rules:
 - Appointments start at a full hour.
 - An office cannot have two appointments at the same start time.
 - Seed data creates initial offices for the workshop.
-
-The intended student task is to implement an endpoint that returns available appointment slots for an office.
 
 ## Tech Stack
 
@@ -56,7 +54,6 @@ http://localhost:3000/api
 ```bash
 npm run start:dev
 npm run test
-npm run test:e2e
 npm run lint
 ```
 
