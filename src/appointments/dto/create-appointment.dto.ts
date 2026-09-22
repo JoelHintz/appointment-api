@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, Matches, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, Matches, Max, Min } from 'class-validator';
 
 export class CreateAppointmentDto {
   @IsNotEmpty()
@@ -18,7 +18,14 @@ export class CreateAppointmentDto {
   date!: string;
 
   @IsInt()
+  @Min(0)
+  @Max(23)
   @Type(() => Number)
-  @ApiProperty({ description: 'Hour the appointment starts at, local time of the office', example: 9 })
+  @ApiProperty({
+    description: 'Hour the appointment starts at, local time of the office',
+    example: 9,
+    minimum: 0,
+    maximum: 23,
+  })
   startHour!: number;
 }
